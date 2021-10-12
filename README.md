@@ -9,8 +9,9 @@ Autori
 ------
 
 Bratwursti
-- xchoch09 - David Chocholatý
+
 - xbakaj00 - Štěpán Bakaj
+- xchoch09 - David Chocholatý
 - xkanko00 - Adam Kaňkovský
 - xserej00 - Radek Šerejch
 
