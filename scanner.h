@@ -14,9 +14,9 @@
 #ifndef IFJ_BRATWURST2021_SCANNER_H
 #define IFJ_BRATWURST2021_SCANNER_H
 
-enum state {
+enum state{
     S_APOSTROPHE,
-    S_CHAR_NUMBER,
+    S_CHAR_CNT,
     S_MUL,
     S_DIV,
     S_INT_DIV,
@@ -60,6 +60,54 @@ enum state {
     S_ESC_SEQ_X_X,
     S_ESC_SEQ_TWO,
     S_ESC_SEQ_TWO_FIVE
+};
+
+enum keyword{
+    K_DO,
+    K_ELSE,
+    K_END,
+    K_FUNCTION,
+    K_GLOBAL,
+    K_IF,
+    K_INTEGER,
+    K_LOCAL,
+    K_NIL,
+    K_NUMBER,
+    K_REQUIRE,
+    K_RETURN,
+    K_STRING,
+    K_THEN,
+    K_WHILE
+};
+
+enum token{
+    T_MUL, // Multiply *
+    T_DIV,  // Divided /
+    T_INT_DIV, // Integer divided //
+    T_PLUS, // Plus +
+    T_MINUS, // Minus -
+
+    T_CHAR_CNT, // Length of char #
+
+    T_CONCAT, // Concatenation ..
+    T_LESS_THAN, // Less than <
+    T_LESS_EQ,  // Less than equal <=
+    T_GTR_THAN, // Greater than >
+    T_GTR_EQ, // Greater than equal >=
+    T_NOT_EQ, // Not equal ~=
+    T_ASSIGN, // Assignment =
+    T_EQ, // Equal ==
+
+    T_COLON, // Data type init :
+    T_LEFT_BRACKET, // Left bracket (
+    T_RIGHT_BRACKET, // Right bracket )
+    T_COMMA, // Comma ,
+    T_INT, // Integer number
+    T_DECIMAL, // Double number
+    T_IDENTIFIER_KEYWORD, // Identifier or keyword
+    T_DECIMAL_W_EXP, // Decimal with exponent
+    T_STRING, // String
+
 };
 
 #endif //IFJ_BRATWURST2021_SCANNER_H
