@@ -1,0 +1,8 @@
+//
+// Created by Stepan Bakaj on 23.10.2021.
+//
+
+#ifndef IFJ_BRATWURST2021_STRING_H
+#define IFJ_BRATWURST2021_STRING_H
+
+#endif //IFJ_BRATWURST2021_STRING_H
