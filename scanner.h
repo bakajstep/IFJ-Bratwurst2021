@@ -1,0 +1,8 @@
+//
+// Created by adam on 23.10.21.
+//
+
+#ifndef IFJ_BRATWURST2021_SCANNER_H
+#define IFJ_BRATWURST2021_SCANNER_H
+
+#endif //IFJ_BRATWURST2021_SCANNER_H
