@@ -14,9 +14,15 @@
 #ifndef IFJ_BRATWURST2021_SCANNER_H
 #define IFJ_BRATWURST2021_SCANNER_H
 
+typedef struct struct_token
+{
+    int val;
+    //TODO atribut
+} token_t;
+
 enum state {
-    S_APOSTROPHE,
-    S_CHAR_NUMBER,
+    S_INIT,    
+    S_CHAR_CNT,
     S_MUL,
     S_DIV,
     S_INT_DIV,
@@ -24,7 +30,7 @@ enum state {
     S_MINUS,
     S_ONE_LINE_COMMENT,
     S_BLOCK_COMMENT,
-    S_BLOCK_COMMENT_EOL,
+    S_ONE_LINE_COMMENT_EOL,
     S_CONCAT,
     S_LESS_THAN,
     S_LESS_EQ,
@@ -61,5 +67,6 @@ enum state {
     S_ESC_SEQ_TWO,
     S_ESC_SEQ_TWO_FIVE
 };
+
 
 #endif //IFJ_BRATWURST2021_SCANNER_H
