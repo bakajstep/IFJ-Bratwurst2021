@@ -13,9 +13,47 @@
 #include <ctype.h>
 
 #include "scanner.h"
+#include <string.h>
 
 #define ASCII_PRINTABLE 32
 #define ASCII_NUMS_START 48
+
+void get_identifier(token_t* Token, char* str){
+    if(strcmp(str,"do")==0){
+        //    K_DO
+    }else if(strcmp(str,"else")==0){
+        //    K_ELSE
+    }else if(strcmp(str,"end")==0){
+        //    K_END
+    }else if(strcmp(str,"function")==0){
+        //    K_FUNCTION
+    }else if(strcmp(str,"global")==0){
+        //    K_GLOBAL
+    }else if(strcmp(str,"if")==0){
+        //    K_IF
+    }else if(strcmp(str,"integer")==0){
+        //    K_INTEGER
+    }else if(strcmp(str,"local")==0){
+        //    K_LOCAL
+    }else if(strcmp(str,"nil")==0){
+        //    K_NIL
+    }else if(strcmp(str,"number")==0){
+        //    K_NUMBER
+    }else if(strcmp(str,"require")==0){
+        //    K_REQUIRE
+    }else if(strcmp(str,"return")==0){
+        //    K_RETURN
+    }else if(strcmp(str,"string")==0){
+        //    K_STRING
+    }else if(strcmp(str,"then")==0){
+        //    K_THEN
+    }else if(strcmp(str,"while")==0){
+        //    K_WHILE
+    }else{
+        //Token->val=identifier
+        // TODO pořešit stav identifier
+    }
+}
 
 token_t get_next_token ()
 {
