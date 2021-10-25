@@ -63,7 +63,8 @@ token_t get_next_token ()
 
     while (true)
     {
-        // TODO cteni znaku
+        char symbol; //readed character from stdin
+        read(1, &symbol, 1);
 
         switch (state)
         {
