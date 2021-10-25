@@ -11,8 +11,10 @@
  * Date:    23-10-2021
  */
 #include <ctype.h>
+#include <stdbool.h>
 
 #include "scanner.h"
+
 
 #define ASCII_PRINTABLE 32
 #define ASCII_NUMS_START 48
@@ -421,8 +423,9 @@ token_t get_next_token ()
                 break;                
 
             // TODO cisla    
-            //case (S_INT):
-            //    break;
+            case (S_INT):
+                
+                break;
             //case (S_DECIMAL):
             //    break;
             //case (S_IDENTIFIER_KEYWORD):

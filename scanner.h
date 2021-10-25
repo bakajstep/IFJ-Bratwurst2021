@@ -14,10 +14,12 @@
 #ifndef IFJ_BRATWURST2021_SCANNER_H
 #define IFJ_BRATWURST2021_SCANNER_H
 
+#include <stdint.h>
+
 typedef struct struct_token
 {
-    int val;
-    //TODO atribut
+    uint8_t val;
+    char* atribut;
 } token_t;
 
 enum state {
