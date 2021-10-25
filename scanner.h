@@ -14,7 +14,6 @@
 #ifndef IFJ_BRATWURST2021_SCANNER_H
 #define IFJ_BRATWURST2021_SCANNER_H
 
-<<<<<<< HEAD
 typedef struct struct_token
 {
     int val;
@@ -23,10 +22,6 @@ typedef struct struct_token
 
 enum state {
     S_INIT,    
-=======
-enum state{
-    S_APOSTROPHE,
->>>>>>> 745d241ee0b17111b6a0dd4de86c83b9137b78a5
     S_CHAR_CNT,
     S_MUL,
     S_DIV,
@@ -73,8 +68,6 @@ enum state{
     S_ESC_SEQ_TWO_FIVE
 };
 
-<<<<<<< HEAD
-=======
 enum keyword{
     K_DO,
     K_ELSE,
@@ -122,6 +115,5 @@ enum token{
     T_STRING, // String
 
 };
->>>>>>> 745d241ee0b17111b6a0dd4de86c83b9137b78a5
 
 #endif //IFJ_BRATWURST2021_SCANNER_H
