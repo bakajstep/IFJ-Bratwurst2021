@@ -21,7 +21,13 @@
 #define ASCII_PRINTABLE 32
 #define ASCII_NUMS_START 48
 
-// TODO vymyslet EOF, co s tim
+/*
+TODO:
+- ungetc
+- error
+- EOF
+- zastaveni while (true) a vraceni tokenu
+*/
 
 void get_identifier(token_t* Token, char* str){
     if(strcmp(str,"do")==0){
