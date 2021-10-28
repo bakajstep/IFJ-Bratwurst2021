@@ -14,7 +14,8 @@
 #include <stdbool.h>
 
 #include "scanner.h"
-#include <string.h>
+#include "string.h"
+
 
 
 #define ASCII_PRINTABLE 32
@@ -60,8 +61,13 @@ void get_identifier(token_t* Token, char* str){
 token_t get_next_token ()
 {
     token_t token;
-
+    StringPtr str;
     int state = S_INIT;
+
+    if (!String_Init(str))
+    {
+        // TODO error a konec
+    }            
 
     while (true)
     {
@@ -131,16 +137,19 @@ token_t get_next_token ()
                 else if (isdigit(symbol))
                 {
                     state = S_INT;
+                    String_Append_Character(str, symbol);
                 }
                 else if (isalpha(symbol) || symbol == '_')
                 {
                     state = S_IDENTIFIER_KEYWORD;
+                    String_Append_Character(str, symbol);
+                    
                 }
                 else if (symbol == '"')
                 {
                     state = S_STRING_CONTENT;
                 }                
-                else if (symbol != '\n' && symbol != ' ')
+                else if (symbol != '\n' && symbol != '\t' && symbol != ' ')
                 {
                     //TODO error
                 }
@@ -216,6 +225,7 @@ token_t get_next_token ()
                 if (isdigit(symbol))
                 {
                     state = S_DECIMAL;
+                    String_Append_Character(str, symbol);
                 }
                 else
                 {
@@ -228,10 +238,12 @@ token_t get_next_token ()
                 if (symbol == '+' || symbol == '-')
                 {
                     state = S_DECIMAL_PLUS_MINUS;
+                    String_Append_Character(str, symbol);
                 }
                 else if(isdigit(symbol))
                 {
                     state = S_DECIMAL_W_EXP;
+                    String_Append_Character(str, symbol);
                 }
                 else
                 {
@@ -244,6 +256,7 @@ token_t get_next_token ()
                 if (isdigit(symbol))
                 {
                     state = S_DECIMAL_W_EXP;
+                    String_Append_Character(str, symbol);
                 }
                 else
                 {
@@ -447,7 +460,7 @@ token_t get_next_token ()
                 break;
 
             case (S_LEFT_BRACKET):
-                token.val = T_LEFT_BACKET;
+                token.val = T_LEFT_BRACKET;
                 
                 break;
                 
@@ -463,15 +476,77 @@ token_t get_next_token ()
 
             // TODO cisla    
             case (S_INT):
+                if (symbol == 'e' || symbol == 'E')
+                {                    
+                    state = S_EXP;
+                    String_Append_Character(str, symbol);
+                }
+                else if (symbol == ".")
+                {
+                    state = S_DECIMAL_POINT;
+                    String_Append_Character(str, symbol);
+                }
+                else if (isdigit(symbol))
+                {
+                    String_Append_Character(str, symbol);                    
+                }                
+                else
+                {
+                    // TODO asi ungetc
+                    token.val = T_INT;
+                    token.atribut = str->string; 
+                }                                
                 
                 break;
-            //case (S_DECIMAL):
-            //    break;
-            //case (S_IDENTIFIER_KEYWORD):
-            //    break;
-            //case (S_DECIMAL_W_EXP):
-            //    break;                   
-            // end TODO
+            case (S_DECIMAL):
+                if (isdigit(symbol))
+                {
+                    String_Append_Character(str, symbol);
+                }
+                else if (symbol == 'e' || symbol == 'E')
+                {
+                    state = S_EXP;
+                    String_Append_Character(str, symbol);
+                }
+                else
+                {
+                    // TODO asi ungetc
+                    token.val = T_DECIMAL;
+                    token.atribut = str->string;
+                }
+                                
+                break;
+
+            case (S_IDENTIFIER_KEYWORD):
+                if (isdigit(symbol) || isalpha(symbol))
+                {
+                    String_Append_Character(str, symbol);
+                }
+                else
+                {
+                    //TODO asi ungetc                    
+                    
+                    // TODO s Radkem
+                    //token.val = ;
+                    token.atribut = str->string;
+
+                }
+                
+                break;
+
+            case (S_DECIMAL_W_EXP):
+                if (isdigit(symbol))
+                {
+                    String_Append_Character(str, symbol);
+                }
+                else
+                {
+                    //TODO asi ungetc
+                    token.val = T_DECIMAL_W_EXP;
+                    token.atribut = str->string;
+                }
+                
+                break;                               
         }
     }    
 }
