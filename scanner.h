@@ -67,7 +67,8 @@ enum state {
     S_ESC_SEQ_ONE,
     S_ESC_SEQ_X_X,
     S_ESC_SEQ_TWO,
-    S_ESC_SEQ_TWO_FIVE
+    S_ESC_SEQ_TWO_FIVE,
+    S_ONE_LINE_COMMENT
 };
 
 enum keyword{

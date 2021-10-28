@@ -21,6 +21,8 @@
 #define ASCII_PRINTABLE 32
 #define ASCII_NUMS_START 48
 
+// TODO vymyslet EOF, co s tim
+
 void get_identifier(token_t* Token, char* str){
     if(strcmp(str,"do")==0){
         //    K_DO
@@ -80,11 +82,11 @@ token_t get_next_token ()
             case (S_INIT):
                 if (symbol == '#')
                 {
-                    state = S_CHAR_CNT;
+                    token.val = T_CHAR_CNT;
                 }
                 else if (symbol == '*')
                 {
-                    state = S_MUL;
+                    token.val = T_MUL;
                 }
                 else if (symbol == '/')
                 {
@@ -92,7 +94,7 @@ token_t get_next_token ()
                 }
                 else if (symbol == '+')
                 {
-                    state = S_PLUS;
+                    token.val = T_PLUS;
                 }
                 else if (symbol == '-')
                 {
@@ -120,19 +122,19 @@ token_t get_next_token ()
                 }
                 else if (symbol == ':')
                 {
-                    state = S_COLON;
+                    token.val = T_COLON;
                 }
                 else if (symbol == '(')
                 {
-                    state = S_LEFT_BRACKET;
+                    token.val = T_LEFT_BRACKET;
                 }
                 else if (symbol == ')')
                 {
-                    state = S_RIGHT_BRACKET;
+                    token.val = T_RIGHT_BRACKET;
                 }
                 else if (symbol == ',')
                 {
-                    state = S_COMMA;
+                    token.val = T_COMMA;
                 }
                 else if (isdigit(symbol))
                 {
@@ -200,11 +202,11 @@ token_t get_next_token ()
             case (S_DOT):
                 if (symbol == '.')
                 {
-                    state = S_CONCAT;
+                    token.val = T_CONCAT;
                 }
                 else
                 {
-                    //TODO chyba
+                    //TODO error
                 }
 
                 break;
@@ -267,8 +269,9 @@ token_t get_next_token ()
 
             case (S_STRING_CONTENT):            
                 if (symbol == '"')
-                {
-                    //TODO vytvareni stringu a token string
+                {                    
+                    token.val = S_STRING;
+                    token.atribut = get_char_arr(str);
                 }
                 else if (symbol == '\\')
                 {
@@ -294,6 +297,11 @@ token_t get_next_token ()
                 {
                     state = S_ESC_SEQ_TWO;
                 }
+                else if (symbol == '"' || symbol == 'n' || 
+                         symbol == 't' || symbol == '\\')
+                {
+                    state = S_STRING_CONTENT;
+                }                
                 else
                 {
                     // TODO error
@@ -376,44 +384,51 @@ token_t get_next_token ()
                 {
                     state = S_STRING_CONTENT;
                 }
+                else
+                {
+                    //TODO error
+                }
+                
+                break;
+
+            case (S_ONE_LINE_COMMENT):
+                if (symbol == '[')
+                {
+                    state = S_LEFT_SQUARE_BRACKET;
+                }
+                else
+                {
+                    state = S_ONE_LINE_COMMENT_CONTENT;
+                }
                 
                 break;
     //-------------------------------------------------------------------
             //f states        
-            case (S_CHAR_CNT):
-                token.val = T_CHAR_CNT;
-                
-                break;
-
-            case (S_MUL):
-                token.val = T_MUL;
-                
-                break;
-
             case (S_DIV):
-                token.val = T_DIV;
+                if (symbol == '/')
+                {
+                    token.val = T_INT_DIV;
+                }
+                else
+                {
+                    // TODO asi ungetc
+                    token.val = T_DIV;
+                }                
                 
-                break;
-
-            case (S_INT_DIV):
-                token.val = T_INT_DIV;
-                
-                break;
-
-            case (S_PLUS):
-                token.val = T_PLUS;
-                
-                break;
+                break;       
 
             case (S_MINUS):
-                token.val = T_MINUS;
+                if (symbol == '-')
+                {
+                    state = S_ONE_LINE_COMMENT;
+                }
+                else
+                {
+                    //TODO asi ungetc
+                    token.val = T_MINUS;
+                }
                 
-                break;        
-                
-            case (S_CONCAT):                
-                token.val = T_CONCAT;
-
-                break;
+                break;                                             
 
             case (S_LESS_THAN):
                 if (symbol == '=')
@@ -452,29 +467,8 @@ token_t get_next_token ()
                     token.val = T_ASSIGN;
                 }
 
-                break;        
-
-            case (S_COLON):
-                token.val = T_COLON;
-                
-                break;
-
-            case (S_LEFT_BRACKET):
-                token.val = T_LEFT_BRACKET;
-                
-                break;
-                
-            case (S_RIGHT_BRACKET):
-                token.val = T_RIGHT_BRACKET;
-                
-                break;
-
-            case (S_COMMA):
-                token.val = T_COMMA;
-                
-                break;                
-
-            // TODO cisla    
+                break;                               
+            
             case (S_INT):
                 if (symbol == 'e' || symbol == 'E')
                 {                    
@@ -494,31 +488,31 @@ token_t get_next_token ()
                 {
                     // TODO asi ungetc
                     token.val = T_INT;
-                    token.atribut = str->string; 
+                    token.atribut = get_char_arr(str);
                 }                                
                 
                 break;
-            case (S_DECIMAL):
-                if (isdigit(symbol))
-                {
-                    string_append_character(str, symbol);
-                }
-                else if (symbol == 'e' || symbol == 'E')
+            case (S_DECIMAL):                
+                if (symbol == 'e' || symbol == 'E')
                 {
                     state = S_EXP;
+                    string_append_character(str, symbol);
+                }
+                else if (isdigit(symbol))
+                {
                     string_append_character(str, symbol);
                 }
                 else
                 {
                     // TODO asi ungetc
                     token.val = T_DECIMAL;
-                    token.atribut = str->string;
+                    token.atribut = get_char_arr(str);
                 }
                                 
                 break;
 
             case (S_IDENTIFIER_KEYWORD):
-                if (isdigit(symbol) || isalpha(symbol))
+                if (isalpha(symbol) || isdigit(symbol))
                 {
                     string_append_character(str, symbol);
                 }
