@@ -23,34 +23,19 @@ typedef struct struct_token
 } token_t;
 
 enum state {
-    S_INIT,    
-    S_CHAR_CNT,
-    S_MUL,
-    S_DIV,
-    S_INT_DIV,
-    S_PLUS,
+    S_INIT,            
+    S_DIV,        
     S_MINUS,
-    S_ONE_LINE_COMMENT,
-    S_BLOCK_COMMENT,
-    S_ONE_LINE_COMMENT_EOL,
-    S_CONCAT,
-    S_LESS_THAN,
-    S_LESS_EQ,
-    S_GTR_THAN,
-    S_GTR_EQ,
-    S_NOT_EQ,
-    S_ASSIGN,
-    S_EQ,
-    S_COLON,
-    S_LEFT_BRACKET,
-    S_RIGHT_BRACKET,
-    S_COMMA,
+    S_ONE_LINE_COMMENT,            
+    S_LESS_THAN,    
+    S_GTR_THAN,        
+    S_ASSIGN,                    
     S_INT,
     S_DECIMAL,
     S_IDENTIFIER_KEYWORD,
-    S_DECIMAL_W_EXP,
-    S_STRING,
+    S_DECIMAL_W_EXP,    
 
+    S_ONE_LINE_COMMENT,
     S_ONE_LINE_COMMENT_CONTENT,
     S_LEFT_SQUARE_BRACKET,
     S_BLOCK_COMMENT_CONTENT,
@@ -67,8 +52,7 @@ enum state {
     S_ESC_SEQ_ONE,
     S_ESC_SEQ_X_X,
     S_ESC_SEQ_TWO,
-    S_ESC_SEQ_TWO_FIVE,
-    S_ONE_LINE_COMMENT
+    S_ESC_SEQ_TWO_FIVE    
 };
 
 enum keyword{
@@ -113,10 +97,10 @@ enum token{
     T_COMMA, // Comma ,
     T_INT, // Integer number
     T_DECIMAL, // Double number
-    T_IDENTIFIER_KEYWORD, // Identifier or keyword
+    T_IDENTIFIER, // Identifier
+    T_KEYWORD, // Keyword
     T_DECIMAL_W_EXP, // Decimal with exponent
     T_STRING, // String
-
 };
 
 #endif //IFJ_BRATWURST2021_SCANNER_H

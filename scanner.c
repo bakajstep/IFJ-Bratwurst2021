@@ -270,7 +270,7 @@ token_t get_next_token ()
             case (S_STRING_CONTENT):            
                 if (symbol == '"')
                 {                    
-                    token.val = S_STRING;
+                    token.val = T_STRING;
                     token.atribut = get_char_arr(str);
                 }
                 else if (symbol == '\\')
