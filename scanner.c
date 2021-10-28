@@ -528,7 +528,7 @@ token_t get_next_token ()
                     
                     // TODO s Radkem
                     //token.val = ;
-                    token.atribut = str->string;
+                    token.atribut = get_char_arr(str);
 
                 }
                 
@@ -543,7 +543,7 @@ token_t get_next_token ()
                 {
                     //TODO asi ungetc
                     token.val = T_DECIMAL_W_EXP;
-                    token.atribut = str->string;
+                    token.atribut = get_char_arr(str);
                 }
                 
                 break;                               

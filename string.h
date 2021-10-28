@@ -16,7 +16,7 @@
 // kdyz budete chtit nejakou funkci napisteto sem do todo
 // nebo me na fb
 //TODO
-// char *to_char_arr(string_ptr_t string)
+// char *get_char_arr(string_ptr_t string)
 
 
 typedef struct string {
