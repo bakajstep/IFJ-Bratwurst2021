@@ -16,12 +16,14 @@
 // kdyz budete chtit nejakou funkci napisteto sem do todo
 // nebo me na fb
 //TODO
+// char *to_char_arr(string_ptr_t string)
 
-typedef struct String {
+
+typedef struct string {
     char* string;
     unsigned alloc_lenght;
     unsigned lenght;
-} *StringPtr;
+} *string_ptr_t;
 
 
 /**
@@ -30,7 +32,7 @@ typedef struct String {
  * @param string Pointer to string.
  * @return True if inicialization was successful, false otherwise.
  */
-bool String_Init(StringPtr string);
+bool string_init(string_ptr_t string);
 
 
 /**
@@ -38,7 +40,7 @@ bool String_Init(StringPtr string);
  *
  * @param string Pointer to string.
  */
-void String_Free(StringPtr string);
+void string_free(string_ptr_t string);
 
 
 /**
@@ -49,7 +51,7 @@ void String_Free(StringPtr string);
  * @return True if append was successful, false otherwise.
  *
  */
-bool String_Append_Character(StringPtr string, char a);
+bool string_append_character(string_ptr_t string, char a);
 
 
 

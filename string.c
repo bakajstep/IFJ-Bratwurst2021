@@ -14,7 +14,7 @@
 
 #define ALLOCATE_LENGTH 8
 
-bool String_Init(StringPtr string){
+bool string_init(string_ptr_t string){
 
     string->string = (char *) malloc(ALLOCATE_LENGTH); //we could multiply it with size of char,but it would be multiply by 1
     if (!string->string){
@@ -25,13 +25,13 @@ bool String_Init(StringPtr string){
     return true;
 }
 
-void String_Free(StringPtr string){
+void string_free(string_ptr_t string){
     free(string->string);
     string->alloc_lenght = 0;
     string->lenght = 0;
 }
 
-bool String_Append_Character(StringPtr string, char a){
+bool string_append_character(string_ptr_t string, char a){
     if (string->lenght + 1 >= string->alloc_lenght){
         string->alloc_lenght = string->alloc_lenght + ALLOCATE_LENGTH; //add 8 bytes of memory to field
         string->string = (char *) realloc(string->string,string->alloc_lenght);
