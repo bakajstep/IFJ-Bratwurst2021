@@ -77,8 +77,8 @@ token_t get_next_token ()
         read(1, &symbol, 1);
 
         switch (state)
-        {
-            // INIT state
+        {            
+            //**************** INIT STATE ****************//            
             case (S_INIT):
                 if (symbol == '#')
                 {
@@ -157,8 +157,20 @@ token_t get_next_token ()
                 }
 
                 break;
-    //------------------------------------------------------------------------------------------
-            // q states            
+
+            //***************** Q STATES *****************//            
+            case (S_ONE_LINE_COMMENT):
+                if (symbol == '[')
+                {
+                    state = S_LEFT_SQUARE_BRACKET;
+                }
+                else
+                {
+                    state = S_ONE_LINE_COMMENT_CONTENT;
+                }
+                
+                break;
+
             case (S_ONE_LINE_COMMENT_CONTENT):                                   
                 if (symbol == '\n')
                 {
@@ -389,21 +401,9 @@ token_t get_next_token ()
                     //TODO error
                 }
                 
-                break;
-
-            case (S_ONE_LINE_COMMENT):
-                if (symbol == '[')
-                {
-                    state = S_LEFT_SQUARE_BRACKET;
-                }
-                else
-                {
-                    state = S_ONE_LINE_COMMENT_CONTENT;
-                }
-                
-                break;
-    //-------------------------------------------------------------------
-            //f states        
+                break;                
+            
+            //***************** F STATES *****************//
             case (S_DIV):
                 if (symbol == '/')
                 {
