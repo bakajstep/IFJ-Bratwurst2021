@@ -25,15 +25,14 @@ typedef struct struct_token
 enum state {
     S_INIT,            
     S_DIV,        
-    S_MINUS,
-    S_ONE_LINE_COMMENT,            
+    S_MINUS,                
     S_LESS_THAN,    
     S_GTR_THAN,        
     S_ASSIGN,                    
     S_INT,
     S_DECIMAL,
-    S_IDENTIFIER_KEYWORD,
-    S_DECIMAL_W_EXP,    
+    S_DECIMAL_W_EXP,  
+    S_IDENTIFIER_KEYWORD,      
 
     S_ONE_LINE_COMMENT,
     S_ONE_LINE_COMMENT_CONTENT,
@@ -44,7 +43,7 @@ enum state {
     S_TILDE,
     S_DECIMAL_POINT,
     S_EXP,
-    S_DECIMAL_PLUS_MINUS,
+    S_EXP_PLUS_MINUS,
     S_STRING_CONTENT,
     S_ESC_SEQ_BACKSLASH,
     S_ESC_SEQ_ZERO,
@@ -97,9 +96,9 @@ enum token{
     T_COMMA, // Comma ,
     T_INT, // Integer number
     T_DECIMAL, // Double number
-    T_IDENTIFIER, // Identifier
-    T_KEYWORD, // Keyword
     T_DECIMAL_W_EXP, // Decimal with exponent
+    T_IDENTIFIER, // Identifier
+    T_KEYWORD, // Keyword    
     T_STRING, // String
 };
 

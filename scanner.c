@@ -257,7 +257,7 @@ token_t get_next_token ()
             case (S_EXP):
                 if (symbol == '+' || symbol == '-')
                 {
-                    state = S_DECIMAL_PLUS_MINUS;
+                    state = S_EXP_PLUS_MINUS;
                     string_append_character(str, symbol);
                 }
                 else if(isdigit(symbol))
@@ -272,7 +272,7 @@ token_t get_next_token ()
 
                 break;
 
-            case (S_DECIMAL_PLUS_MINUS):
+            case (S_EXP_PLUS_MINUS):
                 if (isdigit(symbol))
                 {
                     state = S_DECIMAL_W_EXP;
