@@ -13,6 +13,7 @@
 
 #include <ctype.h>
 #include <stdbool.h>
+#include <stdio.h>
 
 #include "scanner.h"
 #include "string.h"
@@ -24,7 +25,6 @@
 
 /*
 TODO:
-- ungetc
 - error
 - EOF
 - zastaveni while (true) a vraceni tokenu
@@ -418,7 +418,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    // TODO asi ungetc
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }                    
+
                     token.val = T_DIV;
                 }                
                 
@@ -431,7 +435,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO asi ungetc
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_MINUS;
                 }
                 
@@ -444,7 +452,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO ungetchar symbol
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_LESS_THAN;
                 }
 
@@ -457,7 +469,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO ungetchar symbol
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_GTR_THAN;
                 }
 
@@ -470,7 +486,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO ungetchar symbol
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_ASSIGN;
                 }
 
@@ -493,7 +513,11 @@ token_t get_next_token ()
                 }                
                 else
                 {
-                    // TODO asi ungetc
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_INT;
                     token.atribut = get_char_arr(str);
                 }                                
@@ -511,7 +535,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    // TODO asi ungetc
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_DECIMAL;
                     token.atribut = get_char_arr(str);
                 }
@@ -525,7 +553,10 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO asi ungetc                    
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }                                     
                     
                     // TODO s Radkem
                     //token.val = ;
@@ -542,7 +573,11 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO asi ungetc
+                    if (ungetc(symbol, stdin) == EOF)
+                    {
+                        //TODO error
+                    }
+
                     token.val = T_DECIMAL_W_EXP;
                     token.atribut = get_char_arr(str);
                 }
