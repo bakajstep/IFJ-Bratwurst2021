@@ -17,6 +17,7 @@
 
 #include "scanner.h"
 #include "string.h"
+#include "error.h"
 
 
 
@@ -25,9 +26,8 @@
 
 /*
 TODO:
-- error
+- token na token* a predelani vraceni po chybe na NULL
 - EOF
-- zastaveni while (true) a vraceni tokenu
 */
 
 void get_identifier(token_t* Token, char* str){
@@ -71,11 +71,12 @@ token_t get_next_token ()
 {
     token_t token;
     string_ptr_t str;
-    int state = S_INIT;
+    uint8_t state = S_INIT;    
 
     if (!string_init(str))
     {
-        // TODO error a konec
+        err = E_INTERNAL;
+        return token; // TODO NULL
     }            
 
     while (true)
@@ -160,7 +161,8 @@ token_t get_next_token ()
                 }                
                 else if (symbol != '\n' && symbol != '\t' && symbol != ' ')
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -225,7 +227,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -237,7 +240,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }  
 
                 break;
@@ -250,7 +254,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -268,7 +273,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -281,7 +287,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -298,7 +305,8 @@ token_t get_next_token ()
                 }
                 else if((int)symbol < ASCII_PRINTABLE)
                 {
-                    // TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 } 
 
                 break;
@@ -323,7 +331,8 @@ token_t get_next_token ()
                 }                
                 else
                 {
-                    // TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -339,7 +348,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -351,7 +361,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -363,7 +374,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -375,7 +387,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -392,7 +405,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
 
                 break;
@@ -405,7 +419,8 @@ token_t get_next_token ()
                 }
                 else
                 {
-                    //TODO error
+                    err = E_LEX;
+                    return token; //TODO NULL
                 }
                 
                 break;                
@@ -420,10 +435,13 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }                    
 
                     token.val = T_DIV;
+
+                    return token;
                 }                
                 
                 break;       
@@ -437,10 +455,13 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_MINUS;
+
+                    return token;
                 }
                 
                 break;                                             
@@ -454,10 +475,13 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_LESS_THAN;
+                    
+                    return token;
                 }
 
                 break;        
@@ -471,10 +495,13 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_GTR_THAN;
+
+                    return token;
                 }
 
                 break;                
@@ -488,10 +515,13 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_ASSIGN;
+
+                    return token;
                 }
 
                 break;                               
@@ -515,11 +545,14 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_INT;
                     token.atribut = get_char_arr(str);
+                    
+                    return token;
                 }                                
                 
                 break;
@@ -537,11 +570,14 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_DECIMAL;
                     token.atribut = get_char_arr(str);
+
+                    return token;
                 }
                                 
                 break;
@@ -555,13 +591,15 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }                                     
                     
                     // TODO s Radkem
                     //token.val = ;
                     token.atribut = get_char_arr(str);
 
+                    return token;
                 }
                 
                 break;
@@ -575,11 +613,14 @@ token_t get_next_token ()
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
-                        //TODO error
+                        err = E_INTERNAL;
+                        return token; //TODO NULL
                     }
 
                     token.val = T_DECIMAL_W_EXP;
                     token.atribut = get_char_arr(str);
+
+                    return token;
                 }
                 
                 break;                               
