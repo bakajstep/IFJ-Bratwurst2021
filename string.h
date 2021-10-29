@@ -16,6 +16,11 @@
 // kdyz budete chtit nejakou funkci napisteto sem do todo
 // nebo me na fb
 //TODO
+/*
+- get_char_arr
+- string_to_int
+- string_to_dec (double)
+*/
 
 
 typedef struct string {

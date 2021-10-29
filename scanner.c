@@ -27,13 +27,7 @@
 /*
 TODO:
 - token na token* a predelani vraceni po chybe na NULL
-- EOF
 - get_identifier
-
-funkce:
-- get_char_arr
-- string_to_int
-- string_to_dec
 */
 
 void get_identifier(token_t* Token, char* str){
@@ -75,9 +69,10 @@ void get_identifier(token_t* Token, char* str){
 
 token_t get_next_token ()
 {
+    char symbol; //readed character from stdin
     token_t token;
     string_ptr_t str;
-    state_t state = S_INIT;    
+    state_t state = S_INIT;        
 
     if (!string_init(str))
     {
@@ -85,11 +80,9 @@ token_t get_next_token ()
         return token; // TODO NULL
     }            
 
-    while (true)
-    {
-        char symbol; //readed character from stdin
-        read(1, &symbol, 1);
 
+    while (read(1, &symbol, 1))
+    {              
         switch (state)
         {            
             //**************** INIT STATE ****************//            
@@ -605,7 +598,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }                                     
                     
-                    // TODO s Radkem
+                    // TODO s Radkem (potato)
                     //token.type = ;
                     //token.atribut = get_char_arr(str);
 
@@ -637,5 +630,7 @@ token_t get_next_token ()
                 
                 break;                               
         }
-    }    
+    }
+
+    return token; // TODO NULL    
 }
