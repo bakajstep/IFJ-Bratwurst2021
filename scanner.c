@@ -19,15 +19,9 @@
 #include "string.h"
 #include "error.h"
 
-
-
 #define ASCII_PRINTABLE 32
 #define ASCII_NUMS_START 48
 
-/*
-TODO:
-- token na token* a predelani vraceni po chybe na NULL
-*/
 
 void set_id_keyword (token_t* token, char* str){
     if(strcmp(str,"do")==0){
@@ -81,17 +75,37 @@ void set_id_keyword (token_t* token, char* str){
     }
 }
 
-token_t get_next_token ()
+token_t* create_token ()
+{
+    return (token_t*) malloc(sizeof(token_t));
+}
+
+void delete_token (token_t* token)
+{
+    // TODO
+}
+
+token_t* get_next_token ()
 {
     char symbol; //readed character from stdin
-    token_t token;
+    token_t* token;
     string_ptr_t str;
     state_t state = S_INIT;        
+
+    token = create_token();
+
+    if (!token)
+    {
+        err = E_INTERNAL;
+        return NULL;
+    }    
 
     if (!string_init(str))
     {
         err = E_INTERNAL;
-        return token; // TODO NULL
+        delete_token(token);
+        
+        return NULL;
     }            
 
 
@@ -103,11 +117,11 @@ token_t get_next_token ()
             case (S_INIT):
                 if (symbol == '#')
                 {
-                    token.type = T_CHAR_CNT;
+                    token->type = T_CHAR_CNT;
                 }
                 else if (symbol == '*')
                 {
-                    token.type = T_MUL;
+                    token->type = T_MUL;
                 }
                 else if (symbol == '/')
                 {
@@ -115,7 +129,7 @@ token_t get_next_token ()
                 }
                 else if (symbol == '+')
                 {
-                    token.type = T_PLUS;
+                    token->type = T_PLUS;
                 }
                 else if (symbol == '-')
                 {
@@ -143,19 +157,19 @@ token_t get_next_token ()
                 }
                 else if (symbol == ':')
                 {
-                    token.type = T_COLON;
+                    token->type = T_COLON;
                 }
                 else if (symbol == '(')
                 {
-                    token.type = T_LEFT_BRACKET;
+                    token->type = T_LEFT_BRACKET;
                 }
                 else if (symbol == ')')
                 {
-                    token.type = T_RIGHT_BRACKET;
+                    token->type = T_RIGHT_BRACKET;
                 }
                 else if (symbol == ',')
                 {
-                    token.type = T_COMMA;
+                    token->type = T_COMMA;
                 }
                 else if (isdigit(symbol))
                 {
@@ -175,7 +189,10 @@ token_t get_next_token ()
                 else if (symbol != '\n' && symbol != '\t' && symbol != ' ')
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -236,12 +253,15 @@ token_t get_next_token ()
             case (S_DOT):
                 if (symbol == '.')
                 {
-                    token.type = T_CONCAT;
+                    token->type = T_CONCAT;
                 }
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -249,12 +269,15 @@ token_t get_next_token ()
             case (S_TILDE):
                 if (symbol == '=')
                 {
-                    token.type = T_NOT_EQ;
+                    token->type = T_NOT_EQ;
                 }
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }  
 
                 break;
@@ -268,7 +291,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -287,7 +313,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -301,7 +330,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -309,8 +341,8 @@ token_t get_next_token ()
             case (S_STRING_CONTENT):            
                 if (symbol == '"')
                 {                    
-                    token.type = T_STRING;
-                    token.attribute.string = get_char_arr(str);
+                    token->type = T_STRING;
+                    token->attribute.string = get_char_arr(str);
                 }
                 else if (symbol == '\\')
                 {
@@ -319,7 +351,10 @@ token_t get_next_token ()
                 else if((int)symbol < ASCII_PRINTABLE)
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 } 
 
                 break;
@@ -345,7 +380,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -362,7 +400,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -375,7 +416,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -388,7 +432,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -401,7 +448,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -419,7 +469,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
 
                 break;
@@ -433,7 +486,10 @@ token_t get_next_token ()
                 else
                 {
                     err = E_LEX;
-                    return token; //TODO NULL
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
                 }
                 
                 break;                
@@ -442,17 +498,20 @@ token_t get_next_token ()
             case (S_DIV):
                 if (symbol == '/')
                 {
-                    token.type = T_INT_DIV;
+                    token->type = T_INT_DIV;
                 }
                 else
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }                    
 
-                    token.type = T_DIV;
+                    token->type = T_DIV;
 
                     return token;
                 }                
@@ -469,10 +528,13 @@ token_t get_next_token ()
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_MINUS;
+                    token->type = T_MINUS;
 
                     return token;
                 }
@@ -482,17 +544,20 @@ token_t get_next_token ()
             case (S_LESS_THAN):
                 if (symbol == '=')
                 {
-                    token.type = T_LESS_EQ;
+                    token->type = T_LESS_EQ;
                 }
                 else
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_LESS_THAN;
+                    token->type = T_LESS_THAN;
                     
                     return token;
                 }
@@ -502,17 +567,20 @@ token_t get_next_token ()
             case (S_GTR_THAN):
                 if (symbol == '=')
                 {
-                    token.type = T_GTR_EQ;
+                    token->type = T_GTR_EQ;
                 }
                 else
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_GTR_THAN;
+                    token->type = T_GTR_THAN;
 
                     return token;
                 }
@@ -522,17 +590,20 @@ token_t get_next_token ()
             case (S_ASSIGN):
                 if (symbol == '=')
                 {
-                    token.type = T_EQ;
+                    token->type = T_EQ;
                 }
                 else
                 {
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_ASSIGN;
+                    token->type = T_ASSIGN;
 
                     return token;
                 }
@@ -559,13 +630,23 @@ token_t get_next_token ()
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_INT;
+                    token->type = T_INT;                                        
+                    token->attribute.integer = string_to_int(str);
+
+                    if (err != E_NO_ERR)
+                    {
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                     
-                    // TODO se string_to_int - osetreni chyby
-                    //token.attribute.integer = get_char_arr(str);
                     
                     return token;
                 }                                
@@ -586,13 +667,23 @@ token_t get_next_token ()
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_DECIMAL;
+                    token->type = T_DECIMAL;                    
+                    token->attribute.decimal = string_to_dec(str);
+
+                    if (err != E_NO_ERR)
+                    {
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                     
-                    // TODO se string_to_dec - osetreni chyby
-                    //token.atribut = get_char_arr(str);
 
                     return token;
                 }
@@ -609,7 +700,10 @@ token_t get_next_token ()
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }                                     
                     
                     char* id_keyword = get_char_arr(str);
@@ -620,7 +714,10 @@ token_t get_next_token ()
                     }
                     else
                     {
-                        // TODO
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }                                         
 
                     return token;
@@ -638,13 +735,22 @@ token_t get_next_token ()
                     if (ungetc(symbol, stdin) == EOF)
                     {
                         err = E_INTERNAL;
-                        return token; //TODO NULL
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
                     }
 
-                    token.type = T_DECIMAL_W_EXP;
+                    token->type = T_DECIMAL_W_EXP;
+                    token->attribute.decimal = string_to_dec(str);
 
-                    // TODO se string_to_dec - osetreni chyby
-                    //token.atribut = get_char_arr(str);
+                    if (err != E_NO_ERR)
+                    {
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
 
                     return token;
                 }
@@ -653,5 +759,8 @@ token_t get_next_token ()
         }
     }
 
-    return token; // TODO NULL    
+    delete_token(token);
+    string_free(str);
+
+    return NULL;
 }
