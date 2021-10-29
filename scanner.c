@@ -30,55 +30,55 @@ TODO:
 - get_identifier
 */
 
-void get_identifier(token_t* Token, char* str){
+void set_id_keyword (token_t* token, char* str){
     if(strcmp(str,"do")==0){
-        Token->attribute.keyword = K_DO;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_DO;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"else")==0){
-        Token->attribute.keyword = K_ELSE;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_ELSE;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"end")==0){
-        Token->attribute.keyword = K_END;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_END;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"function")==0){
-        Token->attribute.keyword = K_FUNCTION;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_FUNCTION;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"global")==0){
-        Token->attribute.keyword = K_GLOBAL;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_GLOBAL;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"if")==0){
-        Token->attribute.keyword = K_IF;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_IF;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"integer")==0){
-        Token->attribute.keyword = K_INTEGER;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_INTEGER;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"local")==0){
-        Token->attribute.keyword = K_LOCAL;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_LOCAL;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"nil")==0){
-        Token->attribute.keyword = K_NIL;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_NIL;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"number")==0){
-        Token->attribute.keyword = K_NUMBER;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_NUMBER;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"require")==0){
-        Token->attribute.keyword = K_REQUIRE;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_REQUIRE;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"return")==0){
-        Token->attribute.keyword = K_RETURN;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_RETURN;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"string")==0){
-        Token->attribute.keyword = K_STRING;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_STRING;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"then")==0){
-        Token->attribute.keyword = K_THEN;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_THEN;
+        token->type=T_KEYWORD;
     }else if(strcmp(str,"while")==0){
-        Token->attribute.keyword = K_WHILE;
-        Token->type=T_KEYWORD;
+        token->attribute.keyword = K_WHILE;
+        token->type=T_KEYWORD;
     }else{
-        Token->type=T_IDENTIFIER;
-        Token->attribute.string=str;
+        token->type=T_IDENTIFIER;
+        token->attribute.string=str;
     }
 }
 
@@ -613,9 +613,16 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }                                     
                     
-                    // TODO s Radkem (potato)
-                    //token.type = ;
-                    //token.atribut = get_char_arr(str);
+                    char* id_keyword = get_char_arr(str);
+
+                    if (err == E_NO_ERR)
+                    {
+                        set_id_keyword(token, id_keyword);
+                    }
+                    else
+                    {
+                        // TODO
+                    }                                         
 
                     return token;
                 }
