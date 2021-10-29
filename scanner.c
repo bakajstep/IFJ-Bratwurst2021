@@ -32,38 +32,53 @@ TODO:
 
 void get_identifier(token_t* Token, char* str){
     if(strcmp(str,"do")==0){
-        //    K_DO
+        Token->attribute.keyword = K_DO;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"else")==0){
-        //    K_ELSE
+        Token->attribute.keyword = K_ELSE;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"end")==0){
-        //    K_END
+        Token->attribute.keyword = K_END;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"function")==0){
-        //    K_FUNCTION
+        Token->attribute.keyword = K_FUNCTION;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"global")==0){
-        //    K_GLOBAL
+        Token->attribute.keyword = K_GLOBAL;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"if")==0){
-        //    K_IF
+        Token->attribute.keyword = K_IF;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"integer")==0){
-        //    K_INTEGER
+        Token->attribute.keyword = K_INTEGER;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"local")==0){
-        //    K_LOCAL
+        Token->attribute.keyword = K_LOCAL;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"nil")==0){
-        //    K_NIL
+        Token->attribute.keyword = K_NIL;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"number")==0){
-        //    K_NUMBER
+        Token->attribute.keyword = K_NUMBER;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"require")==0){
-        //    K_REQUIRE
+        Token->attribute.keyword = K_REQUIRE;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"return")==0){
-        //    K_RETURN
+        Token->attribute.keyword = K_RETURN;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"string")==0){
-        //    K_STRING
+        Token->attribute.keyword = K_STRING;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"then")==0){
-        //    K_THEN
+        Token->attribute.keyword = K_THEN;
+        Token->type=T_KEYWORD;
     }else if(strcmp(str,"while")==0){
-        //    K_WHILE
+        Token->attribute.keyword = K_WHILE;
+        Token->type=T_KEYWORD;
     }else{
-        //Token->type=identifier
-        // TODO pořešit stav identifier
+        Token->type=T_IDENTIFIER;
+        Token->attribute.string=str;
     }
 }
 
