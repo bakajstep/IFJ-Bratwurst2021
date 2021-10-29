@@ -46,15 +46,15 @@ bool string_append_character(string_ptr_t string, char a){
 
 char* get_char_arr(string_ptr_t string)
 {
-
+    return string->string;
 }
 
 int string_to_int (string_ptr_t string)
 {
-
+    return atoi(string->string);
 }
 
 double string_to_dec (string_ptr_t string)
 {
-
+    return atof(string->string);
 }

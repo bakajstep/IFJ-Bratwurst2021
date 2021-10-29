@@ -57,13 +57,31 @@ void string_free(string_ptr_t string);
  */
 bool string_append_character(string_ptr_t string, char a);
 
-// TODO
+/**
+ * Get parametr of struct and returned pointer of char.
+ *
+ * @param string Pointer to string.
+ * @return Pointer to string.
+ *
+ */
 char* get_char_arr(string_ptr_t string);
 
-// TODO
+/**
+ * String from struct parse to int.
+ *
+ * @param string Pointer to string.
+ * @return Parse string to int value.
+ *
+ */
 int string_to_int (string_ptr_t string);
 
-// TODO
+/**
+ * String from struct parse to double.
+ *
+ * @param string Pointer to string.
+ * @return Parse string to double value.
+ *
+ */
 double string_to_dec (string_ptr_t string);
 
 #endif //IFJ_BRATWURST2021_STRING_H
