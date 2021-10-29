@@ -27,7 +27,6 @@
 /*
 TODO:
 - token na token* a predelani vraceni po chybe na NULL
-- get_identifier
 */
 
 void set_id_keyword (token_t* token, char* str){
