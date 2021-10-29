@@ -24,54 +24,54 @@
 
 
 void set_id_keyword (token_t* token, char* str){
-    if(strcmp(str,"do")==0){
+    if(strcmp(str,"do") == 0){
         token->attribute.keyword = K_DO;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"else")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"else") == 0){
         token->attribute.keyword = K_ELSE;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"end")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"end") == 0){
         token->attribute.keyword = K_END;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"function")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"function") == 0){
         token->attribute.keyword = K_FUNCTION;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"global")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"global") == 0){
         token->attribute.keyword = K_GLOBAL;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"if")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"if") == 0){
         token->attribute.keyword = K_IF;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"integer")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"integer") == 0){
         token->attribute.keyword = K_INTEGER;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"local")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"local") == 0){
         token->attribute.keyword = K_LOCAL;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"nil")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"nil") == 0){
         token->attribute.keyword = K_NIL;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"number")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"number") == 0){
         token->attribute.keyword = K_NUMBER;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"require")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"require") == 0){
         token->attribute.keyword = K_REQUIRE;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"return")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"return") == 0){
         token->attribute.keyword = K_RETURN;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"string")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"string") == 0){
         token->attribute.keyword = K_STRING;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"then")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"then") == 0){
         token->attribute.keyword = K_THEN;
-        token->type=T_KEYWORD;
-    }else if(strcmp(str,"while")==0){
+        token->type = T_KEYWORD;
+    }else if(strcmp(str,"while") == 0){
         token->attribute.keyword = K_WHILE;
-        token->type=T_KEYWORD;
+        token->type = T_KEYWORD;
     }else{
-        token->type=T_IDENTIFIER;
-        token->attribute.string=str;
+        token->type = T_IDENTIFIER;
+        token->attribute.string = str;
     }
 }
 
@@ -82,7 +82,8 @@ token_t* create_token ()
 
 void delete_token (token_t* token)
 {
-    // TODO
+    free(token);
+    token = NULL;
 }
 
 token_t* get_next_token ()
@@ -118,10 +119,16 @@ token_t* get_next_token ()
                 if (symbol == '#')
                 {
                     token->type = T_CHAR_CNT;
+                    string_free(str);
+
+                    return token;
                 }
                 else if (symbol == '*')
                 {
                     token->type = T_MUL;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else if (symbol == '/')
                 {
@@ -130,6 +137,9 @@ token_t* get_next_token ()
                 else if (symbol == '+')
                 {
                     token->type = T_PLUS;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else if (symbol == '-')
                 {
@@ -158,18 +168,30 @@ token_t* get_next_token ()
                 else if (symbol == ':')
                 {
                     token->type = T_COLON;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else if (symbol == '(')
                 {
                     token->type = T_LEFT_BRACKET;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else if (symbol == ')')
                 {
                     token->type = T_RIGHT_BRACKET;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else if (symbol == ',')
                 {
                     token->type = T_COMMA;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else if (isdigit(symbol))
                 {
@@ -254,6 +276,9 @@ token_t* get_next_token ()
                 if (symbol == '.')
                 {
                     token->type = T_CONCAT;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else
                 {
@@ -270,6 +295,9 @@ token_t* get_next_token ()
                 if (symbol == '=')
                 {
                     token->type = T_NOT_EQ;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else
                 {
@@ -342,7 +370,9 @@ token_t* get_next_token ()
                 if (symbol == '"')
                 {                    
                     token->type = T_STRING;
-                    token->attribute.string = get_char_arr(str);
+                    token->attribute.string = get_char_arr(str);                    
+                    
+                    return token;                 
                 }
                 else if (symbol == '\\')
                 {
@@ -499,6 +529,9 @@ token_t* get_next_token ()
                 if (symbol == '/')
                 {
                     token->type = T_INT_DIV;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else
                 {
@@ -512,6 +545,7 @@ token_t* get_next_token ()
                     }                    
 
                     token->type = T_DIV;
+                    string_free(str);                                        
 
                     return token;
                 }                
@@ -535,6 +569,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_MINUS;
+                    string_free(str);                    
 
                     return token;
                 }
@@ -545,6 +580,9 @@ token_t* get_next_token ()
                 if (symbol == '=')
                 {
                     token->type = T_LESS_EQ;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else
                 {
@@ -558,6 +596,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_LESS_THAN;
+                    string_free(str);                    
                     
                     return token;
                 }
@@ -568,6 +607,9 @@ token_t* get_next_token ()
                 if (symbol == '=')
                 {
                     token->type = T_GTR_EQ;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else
                 {
@@ -581,6 +623,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_GTR_THAN;
+                    string_free(str);                    
 
                     return token;
                 }
@@ -591,6 +634,9 @@ token_t* get_next_token ()
                 if (symbol == '=')
                 {
                     token->type = T_EQ;
+                    string_free(str);
+                    
+                    return token;
                 }
                 else
                 {
@@ -604,6 +650,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_ASSIGN;
+                    string_free(str);                    
 
                     return token;
                 }
@@ -647,7 +694,8 @@ token_t* get_next_token ()
                         return NULL;
                     }
                     
-                    
+                    string_free(str);
+                                        
                     return token;
                 }                                
                 
@@ -683,7 +731,8 @@ token_t* get_next_token ()
 
                         return NULL;
                     }
-                    
+
+                    string_free(str);                    
 
                     return token;
                 }
@@ -708,18 +757,21 @@ token_t* get_next_token ()
                     
                     char* id_keyword = get_char_arr(str);
 
-                    if (err == E_NO_ERR)
-                    {
-                        set_id_keyword(token, id_keyword);
-                    }
-                    else
+                    if (err != E_NO_ERR)
                     {
                         delete_token(token);
                         string_free(str);
 
                         return NULL;
-                    }                                         
+                    }                    
 
+                    set_id_keyword(token, id_keyword);                                      
+                    
+                    if (token->type == T_KEYWORD)
+                    {
+                        string_free(str);
+                    }
+                    
                     return token;
                 }
                 
@@ -751,6 +803,8 @@ token_t* get_next_token ()
 
                         return NULL;
                     }
+
+                    string_free(str);                    
 
                     return token;
                 }
