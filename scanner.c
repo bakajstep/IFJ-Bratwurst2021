@@ -28,6 +28,12 @@
 TODO:
 - token na token* a predelani vraceni po chybe na NULL
 - EOF
+- get_identifier
+
+funkce:
+- get_char_arr
+- string_to_int
+- string_to_dec
 */
 
 void get_identifier(token_t* Token, char* str){
@@ -297,7 +303,7 @@ token_t get_next_token ()
                 if (symbol == '"')
                 {                    
                     token.type = T_STRING;
-                    token.atribut = get_char_arr(str);
+                    token.attribute.string = get_char_arr(str);
                 }
                 else if (symbol == '\\')
                 {
@@ -550,7 +556,9 @@ token_t get_next_token ()
                     }
 
                     token.type = T_INT;
-                    token.atribut = get_char_arr(str);
+                    
+                    // TODO se string_to_int - osetreni chyby
+                    //token.attribute.integer = get_char_arr(str);
                     
                     return token;
                 }                                
@@ -575,7 +583,9 @@ token_t get_next_token ()
                     }
 
                     token.type = T_DECIMAL;
-                    token.atribut = get_char_arr(str);
+                    
+                    // TODO se string_to_dec - osetreni chyby
+                    //token.atribut = get_char_arr(str);
 
                     return token;
                 }
@@ -597,7 +607,7 @@ token_t get_next_token ()
                     
                     // TODO s Radkem
                     //token.type = ;
-                    token.atribut = get_char_arr(str);
+                    //token.atribut = get_char_arr(str);
 
                     return token;
                 }
@@ -618,7 +628,9 @@ token_t get_next_token ()
                     }
 
                     token.type = T_DECIMAL_W_EXP;
-                    token.atribut = get_char_arr(str);
+
+                    // TODO se string_to_dec - osetreni chyby
+                    //token.atribut = get_char_arr(str);
 
                     return token;
                 }

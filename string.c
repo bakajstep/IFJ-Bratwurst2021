@@ -44,7 +44,17 @@ bool string_append_character(string_ptr_t string, char a){
     return true;
 }
 
+char* get_char_arr(string_ptr_t string)
+{
 
+}
 
+int string_to_int (string_ptr_t string)
+{
 
+}
 
+double string_to_dec (string_ptr_t string)
+{
+
+}

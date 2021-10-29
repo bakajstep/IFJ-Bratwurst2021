@@ -16,7 +16,6 @@
 // kdyz budete chtit nejakou funkci napisteto sem do todo
 // nebo me na fb
 //TODO
-// char *get_char_arr(string_ptr_t string)
 
 
 typedef struct string {
@@ -53,6 +52,13 @@ void string_free(string_ptr_t string);
  */
 bool string_append_character(string_ptr_t string, char a);
 
+// TODO
+char* get_char_arr(string_ptr_t string);
 
+// TODO
+int string_to_int (string_ptr_t string);
+
+// TODO
+double string_to_dec (string_ptr_t string);
 
 #endif //IFJ_BRATWURST2021_STRING_H

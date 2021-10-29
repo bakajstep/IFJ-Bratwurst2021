@@ -14,7 +14,7 @@
 
 #define INTERNAL_ERR_IDX 10
 
-void print_err (uint8_t err)
+void print_err (error_t err)
 {        
     const char *error_msg[] =
     {

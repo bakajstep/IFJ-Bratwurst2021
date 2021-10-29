@@ -16,10 +16,18 @@
 
 #include <stdint.h>
 
+typedef union attribute
+{
+    int integer;
+    double decimal;
+    char* string;
+    keyword_t keyword;
+} attribute_t;
+
 typedef struct struct_token
 {
     token_type_t type;
-    char* atribut;
+    attribute_t attribute;
 } token_t;
 
 typedef enum state {
