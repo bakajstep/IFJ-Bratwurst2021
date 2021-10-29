@@ -7,3 +7,18 @@
  * 
  * Date:    28-10-2021
  */
+
+#ifndef IFJ_BRATWURST2021_ERROR_H
+#define IFJ_BRATWURST2021_ERROR_H
+
+#include <stdint.h>
+
+enum error {
+    E_NO_ERR   = 0,
+    E_LEX      = 1,
+    E_INTERNAL = 99    
+};
+
+void print_err (uint8_t);
+
+#endif //IFJ_BRATWURST2021_ERROR_H
