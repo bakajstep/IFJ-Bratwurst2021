@@ -18,11 +18,11 @@
 
 typedef struct struct_token
 {
-    uint8_t val;
+    token_type_t type;
     char* atribut;
 } token_t;
 
-enum state {
+typedef enum state {
     S_INIT,            
     S_DIV,        
     S_MINUS,                
@@ -52,9 +52,9 @@ enum state {
     S_ESC_SEQ_X_X,
     S_ESC_SEQ_TWO,
     S_ESC_SEQ_TWO_FIVE    
-};
+} state_t;
 
-enum keyword{
+typedef enum keyword{
     K_DO,
     K_ELSE,
     K_END,
@@ -70,9 +70,9 @@ enum keyword{
     K_STRING,
     K_THEN,
     K_WHILE
-};
+} keyword_t;
 
-enum token{
+typedef enum token{
     T_MUL, // Multiply *
     T_DIV,  // Divided /
     T_INT_DIV, // Integer divided //
@@ -100,6 +100,6 @@ enum token{
     T_IDENTIFIER, // Identifier
     T_KEYWORD, // Keyword    
     T_STRING, // String
-};
+} token_type_t;
 
 #endif //IFJ_BRATWURST2021_SCANNER_H

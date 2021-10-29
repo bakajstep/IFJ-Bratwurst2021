@@ -62,7 +62,7 @@ void get_identifier(token_t* Token, char* str){
     }else if(strcmp(str,"while")==0){
         //    K_WHILE
     }else{
-        //Token->val=identifier
+        //Token->type=identifier
         // TODO pořešit stav identifier
     }
 }
@@ -71,7 +71,7 @@ token_t get_next_token ()
 {
     token_t token;
     string_ptr_t str;
-    uint8_t state = S_INIT;    
+    state_t state = S_INIT;    
 
     if (!string_init(str))
     {
@@ -90,11 +90,11 @@ token_t get_next_token ()
             case (S_INIT):
                 if (symbol == '#')
                 {
-                    token.val = T_CHAR_CNT;
+                    token.type = T_CHAR_CNT;
                 }
                 else if (symbol == '*')
                 {
-                    token.val = T_MUL;
+                    token.type = T_MUL;
                 }
                 else if (symbol == '/')
                 {
@@ -102,7 +102,7 @@ token_t get_next_token ()
                 }
                 else if (symbol == '+')
                 {
-                    token.val = T_PLUS;
+                    token.type = T_PLUS;
                 }
                 else if (symbol == '-')
                 {
@@ -130,19 +130,19 @@ token_t get_next_token ()
                 }
                 else if (symbol == ':')
                 {
-                    token.val = T_COLON;
+                    token.type = T_COLON;
                 }
                 else if (symbol == '(')
                 {
-                    token.val = T_LEFT_BRACKET;
+                    token.type = T_LEFT_BRACKET;
                 }
                 else if (symbol == ')')
                 {
-                    token.val = T_RIGHT_BRACKET;
+                    token.type = T_RIGHT_BRACKET;
                 }
                 else if (symbol == ',')
                 {
-                    token.val = T_COMMA;
+                    token.type = T_COMMA;
                 }
                 else if (isdigit(symbol))
                 {
@@ -223,7 +223,7 @@ token_t get_next_token ()
             case (S_DOT):
                 if (symbol == '.')
                 {
-                    token.val = T_CONCAT;
+                    token.type = T_CONCAT;
                 }
                 else
                 {
@@ -236,7 +236,7 @@ token_t get_next_token ()
             case (S_TILDE):
                 if (symbol == '=')
                 {
-                    token.val = T_NOT_EQ;
+                    token.type = T_NOT_EQ;
                 }
                 else
                 {
@@ -296,7 +296,7 @@ token_t get_next_token ()
             case (S_STRING_CONTENT):            
                 if (symbol == '"')
                 {                    
-                    token.val = T_STRING;
+                    token.type = T_STRING;
                     token.atribut = get_char_arr(str);
                 }
                 else if (symbol == '\\')
@@ -429,7 +429,7 @@ token_t get_next_token ()
             case (S_DIV):
                 if (symbol == '/')
                 {
-                    token.val = T_INT_DIV;
+                    token.type = T_INT_DIV;
                 }
                 else
                 {
@@ -439,7 +439,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }                    
 
-                    token.val = T_DIV;
+                    token.type = T_DIV;
 
                     return token;
                 }                
@@ -459,7 +459,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_MINUS;
+                    token.type = T_MINUS;
 
                     return token;
                 }
@@ -469,7 +469,7 @@ token_t get_next_token ()
             case (S_LESS_THAN):
                 if (symbol == '=')
                 {
-                    token.val = T_LESS_EQ;
+                    token.type = T_LESS_EQ;
                 }
                 else
                 {
@@ -479,7 +479,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_LESS_THAN;
+                    token.type = T_LESS_THAN;
                     
                     return token;
                 }
@@ -489,7 +489,7 @@ token_t get_next_token ()
             case (S_GTR_THAN):
                 if (symbol == '=')
                 {
-                    token.val = T_GTR_EQ;
+                    token.type = T_GTR_EQ;
                 }
                 else
                 {
@@ -499,7 +499,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_GTR_THAN;
+                    token.type = T_GTR_THAN;
 
                     return token;
                 }
@@ -509,7 +509,7 @@ token_t get_next_token ()
             case (S_ASSIGN):
                 if (symbol == '=')
                 {
-                    token.val = T_EQ;
+                    token.type = T_EQ;
                 }
                 else
                 {
@@ -519,7 +519,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_ASSIGN;
+                    token.type = T_ASSIGN;
 
                     return token;
                 }
@@ -549,7 +549,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_INT;
+                    token.type = T_INT;
                     token.atribut = get_char_arr(str);
                     
                     return token;
@@ -574,7 +574,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_DECIMAL;
+                    token.type = T_DECIMAL;
                     token.atribut = get_char_arr(str);
 
                     return token;
@@ -596,7 +596,7 @@ token_t get_next_token ()
                     }                                     
                     
                     // TODO s Radkem
-                    //token.val = ;
+                    //token.type = ;
                     token.atribut = get_char_arr(str);
 
                     return token;
@@ -617,7 +617,7 @@ token_t get_next_token ()
                         return token; //TODO NULL
                     }
 
-                    token.val = T_DECIMAL_W_EXP;
+                    token.type = T_DECIMAL_W_EXP;
                     token.atribut = get_char_arr(str);
 
                     return token;

@@ -13,14 +13,14 @@
 
 #include <stdint.h>
 
-enum error {
+typedef enum error {
     E_NO_ERR   = 0,
     E_LEX      = 1,
     E_INTERNAL = 99    
-};
+} error_t;
 
-extern uint8_t err = E_NO_ERR;
+extern error_t err = E_NO_ERR;
 
-void print_err (uint8_t);
+void print_err (error_t err);
 
 #endif //IFJ_BRATWURST2021_ERROR_H
