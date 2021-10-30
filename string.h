@@ -17,9 +17,11 @@
 // nebo me na fb
 //TODO
 /*
-- get_char_arr
-- string_to_int
-- string_to_dec (double)
+- Good, mozna jenom jestli by jsi mohl jeste osetrit, kdyby ti 
+atoi nebo atof vratil chybu, ze by jsi nastavil 
+chybovou promennou err. Kdyz bych ti tam poslal nejakej bullsh*t.
+Ale teoreticky by se to nemelo stat. :D Kdyztak mi napis na fb,
+kdyby jsi se rozhodl to neosetrovat, abych to jeste upravil ve scanner.c
 */
 
 
