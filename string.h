@@ -13,6 +13,17 @@
 
 #include <stdbool.h>
 
+// kdyz budete chtit nejakou funkci napisteto sem do todo
+// nebo me na fb
+//TODO
+/*
+- Good, mozna jenom jestli by jsi mohl jeste osetrit, kdyby ti 
+atoi nebo atof vratil chybu, ze by jsi nastavil 
+chybovou promennou err. Kdyz bych ti tam poslal nejakej bullsh*t.
+Ale teoreticky by se to nemelo stat. :D Kdyztak mi napis na fb,
+kdyby jsi se rozhodl to neosetrovat, abych to jeste upravil ve scanner.c
+*/
+
 
 typedef struct string {
     char* string;
