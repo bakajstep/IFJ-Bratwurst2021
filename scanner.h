@@ -16,19 +16,6 @@
 
 #include <stdint.h>
 
-typedef union attribute
-{
-    int integer;
-    double decimal;
-    char* string;
-    keyword_t keyword;
-} attribute_t;
-
-typedef struct struct_token
-{
-    token_type_t type;
-    attribute_t attribute;
-} token_t;
 
 typedef enum state {
     S_INIT,            
@@ -109,5 +96,21 @@ typedef enum token{
     T_KEYWORD, // Keyword    
     T_STRING, // String
 } token_type_t;
+
+typedef union attribute
+{
+    int integer;
+    double decimal;
+    char* string;
+    keyword_t keyword;
+} attribute_t;
+
+typedef struct struct_token
+{
+    token_type_t type;
+    attribute_t attribute;
+} token_t;
+
+token_t* get_next_token ();
 
 #endif //IFJ_BRATWURST2021_SCANNER_H
