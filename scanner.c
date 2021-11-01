@@ -684,15 +684,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_INT;                                        
-                    token->attribute.integer = string_to_int(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }
+                    token->attribute.integer = string_to_int(str);                    
                     
                     string_free(str);
                                         
@@ -722,15 +714,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_DECIMAL;                    
-                    token->attribute.decimal = string_to_dec(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }
+                    token->attribute.decimal = string_to_dec(str);                    
 
                     string_free(str);                    
 
@@ -755,15 +739,7 @@ token_t* get_next_token ()
                         return NULL;
                     }                                     
                     
-                    char* id_keyword = get_char_arr(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }                    
+                    char* id_keyword = get_char_arr(str);                                        
 
                     set_id_keyword(token, id_keyword);                                      
                     
@@ -794,15 +770,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_DECIMAL_W_EXP;
-                    token->attribute.decimal = string_to_dec(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }
+                    token->attribute.decimal = string_to_dec(str);                    
 
                     string_free(str);                    
 
