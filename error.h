@@ -19,7 +19,7 @@ typedef enum error {
     E_INTERNAL = 99    
 } error_t;
 
-extern error_t err = E_NO_ERR;
+extern error_t err;
 
 void print_err (error_t err);
 

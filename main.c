@@ -9,9 +9,9 @@
 
 
 int main() {
-    token_t* token = get_next_token();
+    //token_t* token = get_next_token();
 
-    printf("%d",token->attribute.integer);
+    //printf("%d",token->attribute.integer);
 
     return EXIT_SUCCESS;
 }

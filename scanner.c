@@ -14,6 +14,9 @@
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
 
 #include "scanner.h"
 #include "string.h"
@@ -21,6 +24,8 @@
 
 #define ASCII_PRINTABLE 32
 #define ASCII_NUMS_START 48
+
+error_t err;
 
 
 void set_id_keyword (token_t* token, char* str){
@@ -90,9 +95,10 @@ token_t* get_next_token ()
 {
     char symbol; //readed character from stdin
     token_t* token;
-    string_ptr_t str;
-    state_t state = S_INIT;        
-
+    string_ptr_t str = NULL;
+    state_t state = S_INIT;    
+    
+    err = E_NO_ERR;
     token = create_token();
 
     if (!token)
@@ -663,7 +669,7 @@ token_t* get_next_token ()
                     state = S_EXP;
                     string_append_character(str, symbol);
                 }
-                else if (symbol == ".")
+                else if (symbol == '.')
                 {
                     state = S_DECIMAL_POINT;
                     string_append_character(str, symbol);
@@ -684,15 +690,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_INT;                                        
-                    token->attribute.integer = string_to_int(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }
+                    token->attribute.integer = string_to_int(str);                    
                     
                     string_free(str);
                                         
@@ -722,15 +720,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_DECIMAL;                    
-                    token->attribute.decimal = string_to_dec(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }
+                    token->attribute.decimal = string_to_dec(str);                    
 
                     string_free(str);                    
 
@@ -755,15 +745,7 @@ token_t* get_next_token ()
                         return NULL;
                     }                                     
                     
-                    char* id_keyword = get_char_arr(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }                    
+                    char* id_keyword = get_char_arr(str);                     
 
                     set_id_keyword(token, id_keyword);                                      
                     
@@ -794,15 +776,7 @@ token_t* get_next_token ()
                     }
 
                     token->type = T_DECIMAL_W_EXP;
-                    token->attribute.decimal = string_to_dec(str);
-
-                    if (err != E_NO_ERR)
-                    {
-                        delete_token(token);
-                        string_free(str);
-
-                        return NULL;
-                    }
+                    token->attribute.decimal = string_to_dec(str);                    
 
                     string_free(str);                    
 
