@@ -1,6 +1,5 @@
---závorky u stringu? --je write identifier
 T_KEYWORD - 10
-T_STRING - "ifj21"
+T_STRING - ifj21
 T_KEYWORD - 3
 T_IDENTIFIER - main
 T_LEFT_BRACKET
@@ -17,7 +16,7 @@ T_ASSIGN
 T_INT - 0
 T_IDENTIFIER - write
 T_LEFT_BRACKET
-T_STRING - "Zadejte cislo pro vypocet faktorialu\n"
+T_STRING - Zadejte cislo pro vypocet faktorialu\n
 T_RIGHT_BRACKET
 T_IDENTIFIER - a
 T_ASSIGN
@@ -31,7 +30,7 @@ T_KEYWORD - 8
 T_KEYWORD - 13
 T_IDENTIFIER - write
 T_LEFT_BRACKET
-T_STRING - "a je nil\n"
+T_STRING - a je nil\n
 T_RIGHT_BRACKET
 T_KEYWORD - 11
 T_KEYWORD - 1
@@ -43,7 +42,7 @@ T_INT - 0
 T_KEYWORD - 13
 T_IDENTIFIER - write
 T_LEFT_BRACKET
-T_STRING - "Faktorial nelze spocitat\n"
+T_STRING - Faktorial nelze spocitat\n
 T_RIGHT_BRACKET
 T_KEYWORD - 1
 T_IDENTIFIER - vysl
@@ -67,11 +66,11 @@ T_INT - 1
 T_KEYWORD - 2
 T_IDENTIFIER - write
 T_LEFT_BRACKET
-T_STRING - "Vysledek je: "
+T_STRING - Vysledek je:
 T_COMMA
 T_IDENTIFIER - vysl
 T_COMMA
-T_STRING - "\n"
+T_STRING - \n
 T_RIGHT_BRACKET
 T_KEYWORD - 2
 T_KEYWORD - 2
