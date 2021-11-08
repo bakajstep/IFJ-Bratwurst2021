@@ -105,15 +105,15 @@ token_t* get_next_token ()
     {
         err = E_INTERNAL;
         return NULL;
-    }    
+    }
 
     if (!string_init(str))
     {
         err = E_INTERNAL;
         delete_token(token);
-        
+
         return NULL;
-    }            
+    }
 
 
     while (read(1, &symbol, 1))
