@@ -50,21 +50,21 @@ typedef enum state {
 } state_t;
 
 typedef enum keyword{
-    K_DO,
-    K_ELSE,
-    K_END,
-    K_FUNCTION,
-    K_GLOBAL,
-    K_IF,
-    K_INTEGER,
-    K_LOCAL,
-    K_NIL,
-    K_NUMBER,
-    K_REQUIRE,
-    K_RETURN,
-    K_STRING,
-    K_THEN,
-    K_WHILE
+    K_DO,       //0
+    K_ELSE,     //1
+    K_END,      //2
+    K_FUNCTION, //3
+    K_GLOBAL,   //4
+    K_IF,       //5
+    K_INTEGER,  //6
+    K_LOCAL,    //7
+    K_NIL,      //8
+    K_NUMBER,   //9
+    K_REQUIRE,  //10
+    K_RETURN,   //11
+    K_STRING,   //12
+    K_THEN,     //13
+    K_WHILE     //14
 } keyword_t;
 
 typedef enum token{
