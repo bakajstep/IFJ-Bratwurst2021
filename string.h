@@ -27,7 +27,7 @@ typedef struct string {
  * @param string Pointer to string.
  * @return True if inicialization was successful, false otherwise.
  */
-bool string_init(string_ptr_t string);
+string_ptr_t string_init();
 
 
 /**

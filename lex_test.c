@@ -87,7 +87,7 @@ int main() {
                 printf("T_IDENTIFIER - %s\n",token->attribute.string);
                 break;
             case T_KEYWORD:
-                printf("T_KEYWORD - %s\n",token->attribute.string);
+                printf("T_KEYWORD - %d\n",token->attribute.keyword);
                 break;
             case T_STRING:
                 printf("T_STRING - %s\n",token->attribute.string);

@@ -107,17 +107,16 @@ token_t* get_next_token ()
         return NULL;
     }
 
-    if (!string_init(str))
+    if ((str = string_init()) == NULL)
     {
         err = E_INTERNAL;
         delete_token(token);
 
         return NULL;
     }
-
-
-    while (read(1, &symbol, 1))
-    {              
+    
+    while ((symbol = (char)getc(stdin)) != EOF)
+    {                         
         switch (state)
         {            
             //**************** INIT STATE ****************//            
@@ -213,10 +212,11 @@ token_t* get_next_token ()
                 else if (symbol == '"')
                 {
                     state = S_STRING_CONTENT;
-                }                
+                }                            
                 else if (symbol != '\n' && symbol != '\t' && symbol != ' ')
                 {
-                    err = E_LEX;
+                    printf("%d", (int)symbol);
+                    err = E_LEX;                    
                     delete_token(token);
                     string_free(str);
 
@@ -376,8 +376,8 @@ token_t* get_next_token ()
                 if (symbol == '"')
                 {                    
                     token->type = T_STRING;
-                    token->attribute.string = get_char_arr(str);                    
-                    
+                    token->attribute.string = get_char_arr(str);
+
                     return token;                 
                 }
                 else if (symbol == '\\')
@@ -392,6 +392,8 @@ token_t* get_next_token ()
 
                     return NULL;
                 } 
+
+                string_append_character(str, symbol);
 
                 break;
 
@@ -421,6 +423,8 @@ token_t* get_next_token ()
 
                     return NULL;
                 }
+
+                string_append_character(str, symbol);
 
                 break;
 

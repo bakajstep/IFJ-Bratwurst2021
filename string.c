@@ -14,15 +14,15 @@
 
 #define ALLOCATE_LENGTH 8
 
-bool string_init(string_ptr_t string){
-    string = (string_ptr_t) malloc(sizeof(struct string));
+string_ptr_t string_init(){
+    string_ptr_t string = (string_ptr_t) malloc(sizeof(struct string));
     if (!string){
-        return false;
+        return NULL;
     }
     string->string = NULL;
     string->alloc_lenght = 0;
     string->lenght = 0;
-    return true;
+    return string;
 }
 
 void string_free(string_ptr_t string){
@@ -34,7 +34,7 @@ bool string_append_character(string_ptr_t string, char a){
     if (string->lenght + 1 >= string->alloc_lenght){
         string->alloc_lenght =  string->lenght == 0 ? ALLOCATE_LENGTH : string->alloc_lenght * 2; //twice much memmory
         string->string = (char *) realloc(string->string,string->alloc_lenght);
-        if (!string->string){ // failed realloc
+        if (!string->string){ // failed realloc            
             return false;
         }
     }
