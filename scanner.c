@@ -201,21 +201,35 @@ token_t* get_next_token ()
                 else if (isdigit(symbol))
                 {
                     state = S_INT;
-                    string_append_character(str, symbol);
+
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }                                        
                 }
                 else if (isalpha(symbol) || symbol == '_')
                 {
                     state = S_IDENTIFIER_KEYWORD;
-                    string_append_character(str, symbol);
                     
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }                    
                 }
                 else if (symbol == '"')
                 {
                     state = S_STRING_CONTENT;
                 }                            
                 else if (symbol != '\n' && symbol != '\t' && symbol != ' ')
-                {
-                    printf("%d", (int)symbol);
+                {                    
                     err = E_LEX;                    
                     delete_token(token);
                     string_free(str);
@@ -320,7 +334,15 @@ token_t* get_next_token ()
                 if (isdigit(symbol))
                 {
                     state = S_DECIMAL;
-                    string_append_character(str, symbol);
+                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else
                 {
@@ -337,12 +359,28 @@ token_t* get_next_token ()
                 if (symbol == '+' || symbol == '-')
                 {
                     state = S_EXP_PLUS_MINUS;
-                    string_append_character(str, symbol);
+                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else if(isdigit(symbol))
                 {
                     state = S_DECIMAL_W_EXP;
-                    string_append_character(str, symbol);
+                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else
                 {
@@ -359,7 +397,15 @@ token_t* get_next_token ()
                 if (isdigit(symbol))
                 {
                     state = S_DECIMAL_W_EXP;
-                    string_append_character(str, symbol);
+                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else
                 {
@@ -393,7 +439,14 @@ token_t* get_next_token ()
                     return NULL;
                 } 
 
-                string_append_character(str, symbol);
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
 
                 break;
 
@@ -424,7 +477,14 @@ token_t* get_next_token ()
                     return NULL;
                 }
 
-                string_append_character(str, symbol);
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
 
                 break;
 
@@ -440,6 +500,15 @@ token_t* get_next_token ()
                 else
                 {
                     err = E_LEX;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
+
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
                     delete_token(token);
                     string_free(str);
 
@@ -462,6 +531,15 @@ token_t* get_next_token ()
                     return NULL;
                 }
 
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
+
                 break;
 
             case (S_ESC_SEQ_ONE):
@@ -478,6 +556,15 @@ token_t* get_next_token ()
                     return NULL;
                 }
 
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
+
                 break;
 
             case (S_ESC_SEQ_X_X):
@@ -488,6 +575,15 @@ token_t* get_next_token ()
                 else
                 {
                     err = E_LEX;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
+
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
                     delete_token(token);
                     string_free(str);
 
@@ -515,6 +611,15 @@ token_t* get_next_token ()
                     return NULL;
                 }
 
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
+
                 break;
 
             case (S_ESC_SEQ_TWO_FIVE):
@@ -526,6 +631,15 @@ token_t* get_next_token ()
                 else
                 {
                     err = E_LEX;
+                    delete_token(token);
+                    string_free(str);
+
+                    return NULL;
+                }
+
+                if (!string_append_character(str, symbol))
+                {
+                    err = E_INTERNAL;
                     delete_token(token);
                     string_free(str);
 
@@ -671,16 +785,39 @@ token_t* get_next_token ()
                 if (symbol == 'e' || symbol == 'E')
                 {                    
                     state = S_EXP;
-                    string_append_character(str, symbol);
+                
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else if (symbol == '.')
                 {
                     state = S_DECIMAL_POINT;
-                    string_append_character(str, symbol);
+                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else if (isdigit(symbol))
                 {
-                    string_append_character(str, symbol);                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }                
                 }                
                 else
                 {
@@ -706,11 +843,26 @@ token_t* get_next_token ()
                 if (symbol == 'e' || symbol == 'E')
                 {
                     state = S_EXP;
-                    string_append_character(str, symbol);
+                    
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else if (isdigit(symbol))
                 {
-                    string_append_character(str, symbol);
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }                    
                 }
                 else
                 {
@@ -736,7 +888,14 @@ token_t* get_next_token ()
             case (S_IDENTIFIER_KEYWORD):
                 if (isalpha(symbol) || isdigit(symbol))
                 {
-                    string_append_character(str, symbol);
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else
                 {
@@ -766,7 +925,14 @@ token_t* get_next_token ()
             case (S_DECIMAL_W_EXP):
                 if (isdigit(symbol))
                 {
-                    string_append_character(str, symbol);
+                    if (!string_append_character(str, symbol))
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }
                 }
                 else
                 {
