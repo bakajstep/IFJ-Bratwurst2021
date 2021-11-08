@@ -32,7 +32,7 @@ void string_free(string_ptr_t string){
 
 bool string_append_character(string_ptr_t string, char a){
     if (string->lenght + 1 >= string->alloc_lenght){
-        string->alloc_lenght = string->alloc_lenght * 2; //twice much memmory
+        string->alloc_lenght =  string->lenght == 0 ? ALLOCATE_LENGTH : string->alloc_lenght * 2; //twice much memmory
         string->string = (char *) realloc(string->string,string->alloc_lenght);
         if (!string->string){ // failed realloc
             return false;
