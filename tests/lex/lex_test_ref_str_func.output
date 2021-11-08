@@ -77,11 +77,11 @@ T_STRING - \n
 T_RIGHT_BRACKET
 T_IDENTIFIER - write
 T_LEFT_BRACKET
-T_STRING - Zadejte serazenou posloupnost vsech malych pismen a-h,
+T_STRING - Zadejte serazenou posloupnost vsech malych pismen a-h, 
 T_RIGHT_BRACKET
 T_IDENTIFIER - write
 T_LEFT_BRACKET
-T_STRING - pricemz se pismena nesmeji v posloupnosti opakovat:
+T_STRING - pricemz se pismena nesmeji v posloupnosti opakovat: 
 T_RIGHT_BRACKET
 T_IDENTIFIER - s1
 T_ASSIGN
@@ -102,7 +102,7 @@ T_IDENTIFIER - write
 T_LEFT_BRACKET
 T_STRING - \n
 T_COMMA
-T_STRING -Spatne zadana posloupnost, zkuste znovu:
+T_STRING - Spatne zadana posloupnost, zkuste znovu:
 T_RIGHT_BRACKET
 T_IDENTIFIER - s1
 T_ASSIGN

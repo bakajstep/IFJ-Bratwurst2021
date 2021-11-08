@@ -56,3 +56,7 @@ dkms.conf
 
 # VScode files
 .vscode/
+
+# Generated files by tests
+tests/lex/*cur*.output
+tests/lex/lex-test
