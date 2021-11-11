@@ -111,6 +111,7 @@ typedef struct struct_token
     attribute_t attribute;
 } token_t;
 
+void delete_token (token_t* token);
 token_t* get_next_token ();
 
 #endif //IFJ_BRATWURST2021_SCANNER_H
