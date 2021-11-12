@@ -90,7 +90,46 @@ bool main_b (p_data_ptr_t data)
  */
 bool stats (p_data_ptr_t data)
 {
-    // TODO
+    bool ret_val = false;
+    token_type_t token_type = data->token->type;
+    keyword_t keyword = data->token->attribute.keyword;
+
+    /* 6. <stats> -> local id : <type> <assign> <stats> */
+    if (token_type == T_KEYWORD && keyword == K_LOCAL)
+    {
+        next_token(data);
+        token_type = data->token->type;
+
+        if (token_type == T_IDENTIFIER)
+        {
+            next_token(data);
+            token_type = data->token->type;
+
+            if (token_type == T_COLON)
+            {
+                next_token(data);
+
+                if (type(data))
+                {
+                    next_token(data);
+                    // TODO
+                }
+                
+            }            
+        }        
+    }
+    
+    /* 7. <stats> -> if <exp> then <stats> else <stats> end <stats> */
+
+    /* 8. <stats> -> while <exp> do <stats> end <stats> */
+
+    /* 9. <stats> -> return <ret_vals> <stats> */
+
+    /* 10. <stats> -> id <id_func> <stats> */
+
+    /* 11. <stats> -> epsilon */
+
+    return ret_val;
 }
 
 /*
@@ -104,21 +143,9 @@ bool id_func (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;
-
-    /* 12. <id_func> -> <n_ids> = <as_vals> */
-    if (n_ids(data))
-    {
-        token_type = data->token->type;
-
-        if (token_type == T_ASSIGN)
-        {
-            next_token(data);
-
-            ret_val = as_vals(data);
-        }        
-    }    
+      
     /* 13. <id_func> -> (<args>) */
-    else if (token_type == T_LEFT_BRACKET)
+    if (token_type == T_LEFT_BRACKET)
     {
         next_token(data);
 
@@ -129,9 +156,22 @@ bool id_func (p_data_ptr_t data)
             if (token_type == T_RIGHT_BRACKET)
             {
                 ret_val = true;
+                next_token(data);
             }                
         }            
-    }         
+    }
+    /* 12. <id_func> -> <n_ids> = <as_vals> */
+    else if (n_ids(data))
+    {
+        token_type = data->token->type;
+
+        if (token_type == T_ASSIGN)
+        {
+            next_token(data);
+
+            ret_val = as_vals(data);
+        }        
+    }           
 
     return ret_val;
 }
@@ -157,9 +197,7 @@ bool params (p_data_ptr_t data)
         if (token_type == T_COLON)
         {
             if (type(data))
-            {
-                next_token(data);
-
+            {                
                 ret_val = n_params(data);
             }            
         }        
@@ -191,9 +229,7 @@ bool n_params (p_data_ptr_t data)
         next_token(data);
 
         if (type(data))
-        {
-            next_token(data);
-
+        {            
             ret_val = n_params(data);
         }        
     }    
@@ -248,6 +284,7 @@ bool vals (p_data_ptr_t data)
     if (/*TODO exp*/)
     {
         /*TODO*/
+        /* TODO next token */
     }
     
 
@@ -275,6 +312,7 @@ bool n_vals (p_data_ptr_t data)
         if (/*TODO exp*/)
         {
             /* TODO */
+            /* TODO next token */
         }        
     }
     /* 22. <n_vals> -> epsilon */
@@ -311,13 +349,8 @@ bool as_vals (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type = data->token->type;
 
-    /* 23. <as_vals> -> <vals> */
-    if (vals(data))
-    {
-        ret_val = true;
-    }
     /* 24. <as_vals> -> id (<args>) */
-    else if (token_type == T_IDENTIFIER)
+    if (token_type == T_IDENTIFIER)
     {
         next_token(data);
         token_type = data->token->type;
@@ -333,10 +366,16 @@ bool as_vals (p_data_ptr_t data)
                 if (token_type == T_RIGHT_BRACKET)
                 {
                     ret_val = true;
+                    next_token(data);
                 }                
             }            
         }        
     }            
+    /* 23. <as_vals> -> <vals> */
+    else if (vals(data))
+    {
+        ret_val = true;
+    }
 
     return ret_val;
 }
@@ -354,13 +393,8 @@ bool ret_vals (p_data_ptr_t data)
     token_type_t token_type = data->token->type;
     keyword_t keyword;
 
-    /* 25. <ret_vals> -> <vals> */
-    if (vals(data))
-    {
-        ret_val = true;
-    }
     /* 26. <ret_vals> -> epsilon */
-    else if(token_type == T_KEYWORD)
+    if(token_type == T_KEYWORD)
     {
         keyword = data->token->attribute.keyword;
 
@@ -369,13 +403,18 @@ bool ret_vals (p_data_ptr_t data)
             keyword == K_WHILE ||
             keyword == K_RETURN)
         {
-            ret_val = true;
+            ret_val = true;            
         }        
     }    
     else if (token_type == T_IDENTIFIER)
     {
+        ret_val = true;        
+    }   
+    /* 25. <ret_vals> -> <vals> */ 
+    else if (vals(data))
+    {
         ret_val = true;
-    }    
+    }
 
     return ret_val;
 }
@@ -410,12 +449,12 @@ bool assign (p_data_ptr_t data)
             keyword == K_WHILE ||
             keyword == K_RETURN)
         {
-            ret_val = true;
+            ret_val = true;            
         }                
     }
     else if (token_type == T_IDENTIFIER)
     {
-        ret_val = true;
+        ret_val = true;        
     }            
 
     return ret_val;
@@ -437,6 +476,7 @@ bool assign_val (p_data_ptr_t data)
     if (/*TODO exp*/)
     {
         /* code */
+        /* TODO next token */
     }    
     /* 30. <assign_val> -> id (<args>) */    
     else if (token_type == T_IDENTIFIER)
@@ -455,6 +495,7 @@ bool assign_val (p_data_ptr_t data)
                 if (token_type == T_RIGHT_BRACKET)
                 {
                     ret_val = true;
+                    next_token(data);
                 }                
             }            
         }        
@@ -479,11 +520,12 @@ bool term (p_data_ptr_t data)
     if (token_type == T_IDENTIFIER)
     {
         ret_val = true;
+        next_token(data);
     }
     /* 32. <term> -> <const> */
     else if (constant(data))
     {
-        ret_val = true;
+        ret_val = true;        
     }            
 
     return ret_val;
@@ -501,17 +543,16 @@ bool args (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type = data->token->type;
 
-    /* 33. <args> -> <term> <n_args> */    
-    if (term(data))
-    {
-        next_token(data);
-        ret_val = n_args(data);
-    }
     /* 34. <args> -> epsilon */
-    else if (token_type == T_RIGHT_BRACKET)
+    if (token_type == T_RIGHT_BRACKET)
     {
         ret_val = true;
-    }            
+    }                
+    /* 33. <args> -> <term> <n_args> */    
+    else if (term(data))
+    {        
+        ret_val = n_args(data);
+    }    
 
     return ret_val;
 }
@@ -534,8 +575,7 @@ bool n_args (p_data_ptr_t data)
         next_token(data);
 
         if (term(data))
-        {
-            next_token(data);
+        {            
             ret_val = n_args(data);
         }        
     }
@@ -559,17 +599,17 @@ bool arg_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type = data->token->type;
-
-    /* 37. <arg_def_types> -> <func_def_types> */  
-    if (func_def_types(data))
+    
+    /* 38. <arg_def_types> -> epsilon*/  
+    if (token_type = T_RIGHT_BRACKET)
+    {
+        ret_val = true;
+    }   
+    /* 37. <arg_def_types> -> <func_def_types> */       
+    else if (func_def_types(data))
     {
         ret_val = true;
     }
-    /* 38. <arg_def_types> -> epsilon*/  
-    else if (token_type = T_RIGHT_BRACKET)
-    {
-        ret_val = true;
-    }        
 
     return ret_val;
 }
@@ -664,8 +704,7 @@ bool func_types (p_data_ptr_t data)
     bool ret_val = false;
 
     if (type(data))
-    {
-        next_token(data);
+    {        
         ret_val = n_func_types(data);
     }    
 
@@ -691,8 +730,7 @@ bool n_func_types (p_data_ptr_t data)
         next_token(data);        
         
         if (type(data))
-        {
-            next_token(data);
+        {            
             ret_val = n_func_types(data);
         } 
     }    
@@ -730,8 +768,7 @@ bool func_def_types (p_data_ptr_t data)
     keyword_t keyword;
                            
     if (type(data))
-    {
-        next_token(data);
+    {        
         ret_val = n_func_def_types(data);
     }            
 
@@ -757,8 +794,7 @@ bool n_func_def_types (p_data_ptr_t data)
         next_token(data);        
         
         if (type(data))
-        {
-            next_token(data);
+        {            
             ret_val = n_func_def_types(data);
         }                 
     }    
@@ -770,13 +806,13 @@ bool n_func_def_types (p_data_ptr_t data)
         if (keyword == K_FUNCTION ||
             keyword == K_GLOBAL)
         {
-            ret_val = true;
+            ret_val = true;            
         }        
     }
     else if (token_type == T_IDENTIFIER ||
              token_type == T_RIGHT_BRACKET)
     {
-        ret_val = true;
+        ret_val = true;        
     }
 
     return ret_val;        
@@ -805,6 +841,7 @@ bool type (p_data_ptr_t data)
             keyword == K_STRING)
         {
             ret_val = true;
+            next_token(data);
         }        
     }
     
@@ -833,6 +870,7 @@ bool constant (p_data_ptr_t data)
          data->token->attribute.keyword == K_NIL))
     {
         ret_val = true;
+        next_token(data);
     }
     
     return ret_val;
