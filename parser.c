@@ -1,7 +1,9 @@
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "parser.h"
 #include "scanner.h"
+#include "error.h"
 
 /*
     NON-TERMINALS
@@ -74,7 +76,132 @@ bool prog (p_data_ptr_t data)
  */
 bool main_b (p_data_ptr_t data)
 {    
-    // TODO
+    bool ret_val = false;
+    token_type_t token_type = data->token->type;
+    keyword_t keyword = data->token->attribute.keyword;
+
+    /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
+    if (token_type == T_KEYWORD && keyword == K_FUNCTION)
+    {
+        next_token(data);
+        token_type = data->token->type;
+
+        if (token_type == T_IDENTIFIER)
+        {
+            next_token(data);
+            token_type = data->token->type;
+
+            if (token_type == T_LEFT_BRACKET)
+            {
+                next_token(data);
+
+                if (params(data))
+                {
+                    token_type = data->token->type;
+
+                    if (token_type == T_RIGHT_BRACKET)
+                    {
+                        next_token(data);
+
+                        if (ret_func_types(data) && stats(data))
+                        {
+                            token_type = data->token->type;
+                            keyword = data->token->attribute.keyword;
+
+                            if (token_type == T_KEYWORD && keyword == K_END)
+                            {
+                                next_token(data);
+                                
+                                if (main_b(data))
+                                {
+                                    ret_val = true;
+                                }                                
+                            }                            
+                        }                        
+                    }                    
+                }                
+            }            
+        }        
+    }        
+    /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
+    else if (token_type == T_KEYWORD && keyword == K_GLOBAL)
+    {
+        next_token(data);
+        token_type = data->token->type;
+
+        if (token_type == T_IDENTIFIER)
+        {
+            next_token(data);
+            token_type = data->token->type;
+
+            if (token_type == T_COLON)
+            {
+                next_token(data);
+                token_type = data->token->type;
+                keyword = data->token->attribute.keyword;
+
+                if (token_type == T_KEYWORD && keyword == K_FUNCTION)
+                {
+                    next_token(data);
+                    token_type = data->token->type;
+
+                    if (token_type == T_LEFT_BRACKET)
+                    {
+                        next_token(data);
+
+                        if (arg_def_types(data))
+                        {
+                            token_type = data->token->type;
+
+                            if (token_type == T_RIGHT_BRACKET)
+                            {
+                                next_token(data);
+
+                                if (ret_def_types(data) && main_b(data))
+                                {
+                                    ret_val = true;
+                                }                                
+                            }                            
+                        }                        
+                    }                    
+                }                
+            }            
+        }        
+    }    
+    /* 4. <main_b> -> id (<args>) <main_b> */
+    else if (token_type == T_IDENTIFIER)
+    {
+        next_token(data);
+        token_type = data->token->type;
+
+        if (token_type == T_LEFT_BRACKET)
+        {
+            next_token(data);
+
+            if (args(data))
+            {
+                token_type = data->token->type;
+
+                if (token_type = T_RIGHT_BRACKET)
+                {
+                    next_token(data);
+
+                    if (main_b(data))
+                    {
+                        ret_val = true;
+                    }                    
+                }                
+            }            
+        }        
+    }    
+    /* 5. <main_b> -> epsilon */
+    else if (data->token == NULL && err == E_NO_ERR)
+    {
+        /* EOF */
+        ret_val = true;
+    }    
+
+    return ret_val;
 }
 
 /*
