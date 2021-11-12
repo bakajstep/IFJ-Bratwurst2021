@@ -109,25 +109,117 @@ bool stats (p_data_ptr_t data)
             {
                 next_token(data);
 
-                if (type(data))
+                if (type(data) &&
+                    assign(data) &&
+                    stats(data))
                 {
-                    next_token(data);
-                    // TODO
-                }
-                
+                    ret_val = true;                              
+                }                
             }            
         }        
-    }
-    
+    }    
     /* 7. <stats> -> if <exp> then <stats> else <stats> end <stats> */
+    else if (token_type == T_KEYWORD && keyword == K_IF)
+    {
+        next_token(data);
 
+        if (/* TODO exp */)
+        {
+            token_type = data->token->type;
+            keyword = data->token->attribute.keyword;
+
+            if (token_type == T_KEYWORD && keyword == K_THEN)
+            {
+                next_token(data);
+
+                if (stats(data))
+                {
+                    token_type = data->token->type;
+                    keyword = data->token->attribute.keyword;
+
+                    if (token_type == T_KEYWORD && keyword == K_ELSE)
+                    {
+                        next_token(data);
+
+                        if (stats(data))
+                        {
+                            token_type = data->token->type;
+                            keyword = data->token->attribute.keyword;
+
+                            if (token_type == T_KEYWORD && keyword == K_END)
+                            {
+                                next_token(data);
+
+                                if (stats(data))
+                                {
+                                    ret_val = true;
+                                }                                
+                            }
+                        }                        
+                    }                    
+                }                
+            }            
+        }        
+    }    
     /* 8. <stats> -> while <exp> do <stats> end <stats> */
+    else if (token_type == T_KEYWORD && keyword == K_WHILE)
+    {
+        next_token(data);
 
+        if (/* TODO exp */)
+        {
+            token_type = data->token->type;
+            keyword = data->token->attribute.keyword;     
+
+            if (token_type == T_KEYWORD && keyword == K_DO)
+            {
+                next_token(data);
+
+                if (stats(data))
+                {
+                    token_type = data->token->type;
+                    keyword = data->token->attribute.keyword;    
+
+                    if (token_type == T_KEYWORD && keyword == K_END)
+                    {
+                        if (stats(data))
+                        {
+                            ret_val = true;
+                        }                        
+                    }                    
+                }                
+            }            
+        }        
+    }    
     /* 9. <stats> -> return <ret_vals> <stats> */
+    else if (token_type == T_KEYWORD && keyword == K_RETURN)
+    {
+        next_token(data);
 
+        if (ret_vals(data) && stats(data))
+        {
+            ret_val = true;
+        }        
+    }    
     /* 10. <stats> -> id <id_func> <stats> */
+    else if (token_type == T_IDENTIFIER)
+    {
+        next_token(data);
 
+        if (id_func(data) && stats(data))
+        {
+            ret_val = true;
+        }        
+    }    
     /* 11. <stats> -> epsilon */
+    else if (token_type == T_KEYWORD)
+    {
+        if (keyword == K_END ||
+            keyword == K_ELSE)
+        {
+            ret_val = true;
+        }                
+    }    
 
     return ret_val;
 }
