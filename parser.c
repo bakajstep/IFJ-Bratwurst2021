@@ -49,9 +49,12 @@ void delete_data (p_data_ptr_t data)
     data = NULL;
 }
 
-int parser ()
+/*
+ * Parser main function
+ */
+int parser (/* TODO */)
 {
-    
+    /* TODO */
 }
 
 /*************** NON-TERMINALS RULES ***************/
@@ -273,7 +276,7 @@ bool stats (p_data_ptr_t data)
     {
         next_token(data);
 
-        if (/* TODO exp */)
+        if (exp(data))
         {
             token_type = data->token->type;
             keyword = data->token->attribute.keyword;
@@ -316,7 +319,7 @@ bool stats (p_data_ptr_t data)
     {
         next_token(data);
 
-        if (/* TODO exp */)
+        if (exp(data))
         {
             token_type = data->token->type;
             keyword = data->token->attribute.keyword;     
@@ -523,12 +526,10 @@ bool vals (p_data_ptr_t data)
     bool ret_val = false;
 
     /* 20. <vals> -> <exp> <n_vals> */
-    if (/*TODO exp*/)
+    if (exp(data) && n_vals(data))
     {
-        /*TODO*/
-        /* TODO next token */
-    }
-    
+        ret_val = true;
+    }    
 
     return ret_val;
 }
@@ -551,10 +552,9 @@ bool n_vals (p_data_ptr_t data)
     {
         next_token(data);        
 
-        if (/*TODO exp*/)
+        if (exp(data) && n_vals(data))
         {
-            /* TODO */
-            /* TODO next token */
+            ret_val = true;
         }        
     }
     /* 22. <n_vals> -> epsilon */
@@ -715,10 +715,9 @@ bool assign_val (p_data_ptr_t data)
     token_type_t token_type = data->token->type;
 
     /* 29. <assign_val> -> <exp> */
-    if (/*TODO exp*/)
+    if (exp(data))
     {
-        /* code */
-        /* TODO next token */
+        ret_val = true;
     }    
     /* 30. <assign_val> -> id (<args>) */    
     else if (token_type == T_IDENTIFIER)
@@ -1122,4 +1121,9 @@ void next_token(p_data_ptr_t data)
 {
     delete_token(data->token);
     data->token = get_next_token();
+}
+
+bool exp (p_data_ptr_t data)
+{
+    // TODO
 }
