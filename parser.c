@@ -1,10 +1,12 @@
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "parser.h"
 #include "scanner.h"
 #include "error.h"
 
+#define PROLOG "ifj21"
 /*
     NON-TERMINALS
     <prog>
@@ -62,7 +64,28 @@ int parser ()
  */
 bool prog (p_data_ptr_t data)
 {
-    // TODO
+    bool ret_val = true;
+    token_type_t token_type = data->token->type;
+    keyword_t keyword = data->token->attribute.keyword;    
+
+    if (token_type == T_KEYWORD && keyword == K_REQUIRE)
+    {
+        next_token(data);
+        token_type = data->token->type;
+
+        if (token_type == T_STRING &&
+            strcmp(data->token->attribute.string, PROLOG) == 0)
+        {
+            next_token(data);
+
+            if (main_b(data))
+            {
+                ret_val = true;
+            }            
+        }        
+    }    
+
+    return ret_val;
 }
 
 /*
