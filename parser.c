@@ -341,8 +341,8 @@ bool main_b (p_data_ptr_t data)
  *
  * RULES:       
  * 6. <stats> -> local id : <type> <assign> <stats>
- * 7. <stats> -> if <exp> then <stats> else <stats> end <stats>
- * 8. <stats> -> while <exp> do <stats> end <stats>
+ * 7. <stats> -> if exp then <stats> else <stats> end <stats>
+ * 8. <stats> -> while exp do <stats> end <stats>
  * 9. <stats> -> return <ret_vals> <stats>
  * 10. <stats> -> id <id_func> <stats>
  * 11. <stats> -> epsilon
@@ -384,7 +384,7 @@ bool stats (p_data_ptr_t data)
             }            
         }        
     }    
-    /* 7. <stats> -> if <exp> then <stats> else <stats> end <stats> */
+    /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
     else if (token_type == T_KEYWORD && keyword == K_IF)
     {
         next_token(data);
@@ -430,7 +430,7 @@ bool stats (p_data_ptr_t data)
             }            
         }        
     }    
-    /* 8. <stats> -> while <exp> do <stats> end <stats> */
+    /* 8. <stats> -> while exp do <stats> end <stats> */
     else if (token_type == T_KEYWORD && keyword == K_WHILE)
     {
         next_token(data);
@@ -656,13 +656,13 @@ bool n_ids (p_data_ptr_t data)
  * NON-TERMINAL: <vals>
  *
  * RULES:       
- * 20. <vals> -> <exp> <n_vals>
+ * 20. <vals> -> exp <n_vals>
  */
 bool vals (p_data_ptr_t data)
 {
     bool ret_val = false;
 
-    /* 20. <vals> -> <exp> <n_vals> */
+    /* 20. <vals> -> exp <n_vals> */
     if (expression(data))
     {
         ret_val = n_vals(data);
@@ -675,7 +675,7 @@ bool vals (p_data_ptr_t data)
  * NON-TERMINAL: <n_vals>
  *
  * RULES:     
- * 21. <n_vals> -> , <exp> <n_vals>
+ * 21. <n_vals> -> , exp <n_vals>
  * 22. <n_vals> -> epsilon
  */
 bool n_vals (p_data_ptr_t data)
@@ -688,7 +688,7 @@ bool n_vals (p_data_ptr_t data)
 
     token_type = data->token->type;
 
-    /* 21. <n_vals> -> , <exp> <n_vals> */    
+    /* 21. <n_vals> -> , exp <n_vals> */    
     if (token_type == T_COMMA)
     {
         next_token(data);        
@@ -861,7 +861,7 @@ bool assign (p_data_ptr_t data)
  * NON-TERMINAL: <assign_val>
  *
  * RULES:       
- * 29. <assign_val> -> <exp>
+ * 29. <assign_val> -> exp
  * 30. <assign_val> -> id (<args>)
  */
 bool assign_val (p_data_ptr_t data)
@@ -873,13 +873,8 @@ bool assign_val (p_data_ptr_t data)
 
     token_type = data->token->type;
 
-    /* 29. <assign_val> -> <exp> */
-    if (expression(data))
-    {
-        ret_val = true;
-    }    
     /* 30. <assign_val> -> id (<args>) */    
-    else if (token_type == T_IDENTIFIER)
+    if (token_type == T_IDENTIFIER)
     {
         next_token(data);
         VALIDATE_TOKEN(data->token);
@@ -901,7 +896,12 @@ bool assign_val (p_data_ptr_t data)
                 }                
             }            
         }        
-    }    
+    }
+    /* 29. <assign_val> -> exp */
+    else if (expression(data))
+    {
+        ret_val = true;
+    }        
 
     return ret_val;
 }
