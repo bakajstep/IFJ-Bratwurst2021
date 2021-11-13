@@ -5,8 +5,15 @@
 #include "parser.h"
 #include "scanner.h"
 #include "error.h"
+#include "psa.h"
 
 #define PROLOG "ifj21"
+#define VALIDATE_TOKEN(token)    \
+        if (!valid_token(token)) \
+        {                        \
+            return false;        \
+        }
+        
 /*
     NON-TERMINALS
     <prog>
@@ -35,6 +42,33 @@
     <type>
     <const>
 */
+bool prog (p_data_ptr_t data);
+bool main_b (p_data_ptr_t data);
+bool stats (p_data_ptr_t data);
+bool id_func (p_data_ptr_t data);
+bool params (p_data_ptr_t data);
+bool n_params (p_data_ptr_t data);
+bool n_ids (p_data_ptr_t data);
+bool vals (p_data_ptr_t data);
+bool n_vals (p_data_ptr_t data);
+bool as_vals (p_data_ptr_t data);
+bool ret_vals (p_data_ptr_t data);
+bool assign (p_data_ptr_t data);
+bool assign_val (p_data_ptr_t data);
+bool term (p_data_ptr_t data);
+bool args (p_data_ptr_t data);
+bool n_args (p_data_ptr_t data);
+bool arg_def_types (p_data_ptr_t data);
+bool ret_func_types (p_data_ptr_t data);
+bool ret_def_types (p_data_ptr_t data);
+bool func_types (p_data_ptr_t data);
+bool n_func_types (p_data_ptr_t data);
+bool func_def_types (p_data_ptr_t data);
+bool n_func_def_types (p_data_ptr_t data);
+bool type (p_data_ptr_t data);
+bool constant (p_data_ptr_t data);
+
+/***************** DATA FUNCTIONS ******************/
 
 p_data_ptr_t create_data ()
 {
@@ -49,12 +83,60 @@ void delete_data (p_data_ptr_t data)
     data = NULL;
 }
 
+/**************** BACKEND FUNCTIONS ****************/
+
+void next_token(p_data_ptr_t data)
+{
+    delete_token(data->token);
+    data->token = get_next_token();
+}
+
+bool valid_token (token_t* token)
+{
+    return (token != NULL || (token == NULL && err == E_NO_ERR));
+}
+
+bool expression (p_data_ptr_t data)
+{
+    return psa(data);
+}
+
+/******************* PARSER MAIN *******************/
 /*
  * Parser main function
  */
-int parser (/* TODO */)
+parser_error_t parser ()
 {
-    /* TODO */
+    err = E_NO_ERR;
+    p_data_ptr_t data;
+
+    data = create_data();
+
+    if (!data)
+    {
+        err = E_INTERNAL;
+        return PARSE_ERR;
+    }
+    
+    next_token(data);
+    
+    if (!valid_token(data->token))
+    {
+        err = E_SYNTAX; 
+        return PARSE_ERR;
+    }
+    
+    if (!prog(data))
+    {
+        if (err == E_NO_ERR)
+        {
+            err = E_SYNTAX;
+        }
+        
+        return PARSE_ERR;
+    }
+    
+    return PARSE_NO_ERR;
 }
 
 /*************** NON-TERMINALS RULES ***************/
@@ -67,25 +149,33 @@ int parser (/* TODO */)
  */
 bool prog (p_data_ptr_t data)
 {
-    bool ret_val = true;
-    token_type_t token_type = data->token->type;
-    keyword_t keyword = data->token->attribute.keyword;    
+    bool ret_val = false;
+    token_type_t token_type;
+    keyword_t keyword;    
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
+    keyword = data->token->attribute.keyword;    
 
     if (token_type == T_KEYWORD && keyword == K_REQUIRE)
-    {
-        next_token(data);
+    {        
+        next_token(data);        
+        VALIDATE_TOKEN(data->token);
+
         token_type = data->token->type;
 
         if (token_type == T_STRING &&
             strcmp(data->token->attribute.string, PROLOG) == 0)
-        {
-            next_token(data);
+        {            
+            next_token(data);            
 
             if (main_b(data))
-            {
+            {                                
                 ret_val = true;
             }            
-        }        
+        }
+                                
     }    
 
     return ret_val;
@@ -103,40 +193,49 @@ bool prog (p_data_ptr_t data)
 bool main_b (p_data_ptr_t data)
 {    
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
-    keyword_t keyword = data->token->attribute.keyword;
+    token_type_t token_type;
+    keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
+    keyword = data->token->attribute.keyword;    
 
     /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
     if (token_type == T_KEYWORD && keyword == K_FUNCTION)
-    {
+    {        
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_IDENTIFIER)
         {
             next_token(data);
+            VALIDATE_TOKEN(data->token);
             token_type = data->token->type;
 
             if (token_type == T_LEFT_BRACKET)
             {
-                next_token(data);
+                next_token(data);                
 
                 if (params(data))
                 {
+                    VALIDATE_TOKEN(data->token);
                     token_type = data->token->type;
 
                     if (token_type == T_RIGHT_BRACKET)
                     {
-                        next_token(data);
+                        next_token(data);                                        
 
                         if (ret_func_types(data) && stats(data))
-                        {
+                        {                
+                            VALIDATE_TOKEN(data->token);
                             token_type = data->token->type;
                             keyword = data->token->attribute.keyword;
 
                             if (token_type == T_KEYWORD && keyword == K_END)
-                            {
-                                next_token(data);
+                            {                
+                                next_token(data);                                
                                 
                                 if (main_b(data))
                                 {
@@ -153,22 +252,26 @@ bool main_b (p_data_ptr_t data)
     else if (token_type == T_KEYWORD && keyword == K_GLOBAL)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_IDENTIFIER)
         {
             next_token(data);
+            VALIDATE_TOKEN(data->token);
             token_type = data->token->type;
 
             if (token_type == T_COLON)
             {
                 next_token(data);
+                VALIDATE_TOKEN(data->token);
                 token_type = data->token->type;
                 keyword = data->token->attribute.keyword;
 
                 if (token_type == T_KEYWORD && keyword == K_FUNCTION)
                 {
                     next_token(data);
+                    VALIDATE_TOKEN(data->token);
                     token_type = data->token->type;
 
                     if (token_type == T_LEFT_BRACKET)
@@ -177,15 +280,16 @@ bool main_b (p_data_ptr_t data)
 
                         if (arg_def_types(data))
                         {
+                            VALIDATE_TOKEN(data->token);
                             token_type = data->token->type;
 
                             if (token_type == T_RIGHT_BRACKET)
                             {
                                 next_token(data);
 
-                                if (ret_def_types(data) && main_b(data))
+                                if (ret_def_types(data))
                                 {
-                                    ret_val = true;
+                                    ret_val = main_b(data);
                                 }                                
                             }                            
                         }                        
@@ -198,6 +302,7 @@ bool main_b (p_data_ptr_t data)
     else if (token_type == T_IDENTIFIER)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_LEFT_BRACKET)
@@ -206,9 +311,10 @@ bool main_b (p_data_ptr_t data)
 
             if (args(data))
             {
+                VALIDATE_TOKEN(data->token);
                 token_type = data->token->type;
 
-                if (token_type = T_RIGHT_BRACKET)
+                if (token_type == T_RIGHT_BRACKET)
                 {
                     next_token(data);
 
@@ -244,22 +350,29 @@ bool main_b (p_data_ptr_t data)
 bool stats (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
-    keyword_t keyword = data->token->attribute.keyword;
+    token_type_t token_type;
+    keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
+    keyword = data->token->attribute.keyword;
 
     /* 6. <stats> -> local id : <type> <assign> <stats> */
     if (token_type == T_KEYWORD && keyword == K_LOCAL)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_IDENTIFIER)
         {
             next_token(data);
+            VALIDATE_TOKEN(data->token);
             token_type = data->token->type;
 
             if (token_type == T_COLON)
-            {
+            {                
                 next_token(data);
 
                 if (type(data) &&
@@ -276,8 +389,9 @@ bool stats (p_data_ptr_t data)
     {
         next_token(data);
 
-        if (exp(data))
+        if (expression(data))
         {
+            VALIDATE_TOKEN(data->token);
             token_type = data->token->type;
             keyword = data->token->attribute.keyword;
 
@@ -287,6 +401,7 @@ bool stats (p_data_ptr_t data)
 
                 if (stats(data))
                 {
+                    VALIDATE_TOKEN(data->token);
                     token_type = data->token->type;
                     keyword = data->token->attribute.keyword;
 
@@ -296,6 +411,7 @@ bool stats (p_data_ptr_t data)
 
                         if (stats(data))
                         {
+                            VALIDATE_TOKEN(data->token);
                             token_type = data->token->type;
                             keyword = data->token->attribute.keyword;
 
@@ -319,8 +435,9 @@ bool stats (p_data_ptr_t data)
     {
         next_token(data);
 
-        if (exp(data))
+        if (expression(data))
         {
+            VALIDATE_TOKEN(data->token);
             token_type = data->token->type;
             keyword = data->token->attribute.keyword;     
 
@@ -330,6 +447,7 @@ bool stats (p_data_ptr_t data)
 
                 if (stats(data))
                 {
+                    VALIDATE_TOKEN(data->token);
                     token_type = data->token->type;
                     keyword = data->token->attribute.keyword;    
 
@@ -349,9 +467,9 @@ bool stats (p_data_ptr_t data)
     {
         next_token(data);
 
-        if (ret_vals(data) && stats(data))
+        if (ret_vals(data))
         {
-            ret_val = true;
+            ret_val = stats(data);
         }        
     }    
     /* 10. <stats> -> id <id_func> <stats> */
@@ -359,9 +477,9 @@ bool stats (p_data_ptr_t data)
     {
         next_token(data);
 
-        if (id_func(data) && stats(data))
+        if (id_func(data))
         {
-            ret_val = true;
+            ret_val = stats(data);
         }        
     }    
     /* 11. <stats> -> epsilon */
@@ -388,6 +506,10 @@ bool id_func (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
       
     /* 13. <id_func> -> (<args>) */
     if (token_type == T_LEFT_BRACKET)
@@ -395,7 +517,8 @@ bool id_func (p_data_ptr_t data)
         next_token(data);
 
         if (args(data))
-        {                
+        {              
+            VALIDATE_TOKEN(data->token);  
             token_type = data->token->type;
 
             if (token_type == T_RIGHT_BRACKET)
@@ -408,6 +531,7 @@ bool id_func (p_data_ptr_t data)
     /* 12. <id_func> -> <n_ids> = <as_vals> */
     else if (n_ids(data))
     {
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_ASSIGN)
@@ -431,12 +555,17 @@ bool id_func (p_data_ptr_t data)
 bool params (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 14. <params> -> id : <type> <n_params> */
     if (token_type == T_IDENTIFIER)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_COLON)
@@ -466,7 +595,11 @@ bool params (p_data_ptr_t data)
 bool n_params (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 16. <n_params> -> , id : <type> <n_params> */
     if (token_type == T_COMMA)
@@ -497,7 +630,11 @@ bool n_params (p_data_ptr_t data)
 bool n_ids (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 18. <n_ids> -> , id <n_ids> */
     if (token_type == T_COMMA)
@@ -526,9 +663,9 @@ bool vals (p_data_ptr_t data)
     bool ret_val = false;
 
     /* 20. <vals> -> <exp> <n_vals> */
-    if (exp(data) && n_vals(data))
+    if (expression(data))
     {
-        ret_val = true;
+        ret_val = n_vals(data);
     }    
 
     return ret_val;
@@ -544,17 +681,21 @@ bool vals (p_data_ptr_t data)
 bool n_vals (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 21. <n_vals> -> , <exp> <n_vals> */    
     if (token_type == T_COMMA)
     {
         next_token(data);        
 
-        if (exp(data) && n_vals(data))
+        if (expression(data))
         {
-            ret_val = true;
+            ret_val = n_vals(data);
         }        
     }
     /* 22. <n_vals> -> epsilon */
@@ -589,12 +730,17 @@ bool n_vals (p_data_ptr_t data)
 bool as_vals (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_LEFT_BRACKET)
@@ -603,6 +749,7 @@ bool as_vals (p_data_ptr_t data)
 
             if (args(data))
             {                
+                VALIDATE_TOKEN(data->token);
                 token_type = data->token->type;
 
                 if (token_type == T_RIGHT_BRACKET)
@@ -632,8 +779,12 @@ bool as_vals (p_data_ptr_t data)
 bool ret_vals (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 26. <ret_vals> -> epsilon */
     if(token_type == T_KEYWORD)
@@ -671,12 +822,16 @@ bool ret_vals (p_data_ptr_t data)
 bool assign (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 27. <assign> -> = <assign_val> */
     if (token_type == T_ASSIGN)
-    {
+    {        
         next_token(data);
 
         ret_val = assign_val(data);
@@ -712,10 +867,14 @@ bool assign (p_data_ptr_t data)
 bool assign_val (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 29. <assign_val> -> <exp> */
-    if (exp(data))
+    if (expression(data))
     {
         ret_val = true;
     }    
@@ -723,6 +882,7 @@ bool assign_val (p_data_ptr_t data)
     else if (token_type == T_IDENTIFIER)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
         if (token_type == T_LEFT_BRACKET)
@@ -730,7 +890,8 @@ bool assign_val (p_data_ptr_t data)
             next_token(data);
 
             if (args(data))
-            {                
+            {           
+                VALIDATE_TOKEN(data->token);     
                 token_type = data->token->type;
 
                 if (token_type == T_RIGHT_BRACKET)
@@ -755,7 +916,11 @@ bool assign_val (p_data_ptr_t data)
 bool term (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 31. <term> -> id */
     if (token_type == T_IDENTIFIER)
@@ -782,7 +947,11 @@ bool term (p_data_ptr_t data)
 bool args (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 34. <args> -> epsilon */
     if (token_type == T_RIGHT_BRACKET)
@@ -808,7 +977,11 @@ bool args (p_data_ptr_t data)
 bool n_args (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 35. <n_args> -> , <term> <n_args> */ 
     if (token_type == T_COMMA)
@@ -839,10 +1012,14 @@ bool n_args (p_data_ptr_t data)
 bool arg_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
+
     /* 38. <arg_def_types> -> epsilon*/  
-    if (token_type = T_RIGHT_BRACKET)
+    if (token_type == T_RIGHT_BRACKET)
     {
         ret_val = true;
     }   
@@ -865,30 +1042,34 @@ bool arg_def_types (p_data_ptr_t data)
 bool ret_func_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 39. <ret_func_types> -> : <func_types> */
     if (token_type == T_COLON)
-    {
+    {                
         next_token(data);
         ret_val = func_types(data);
     }    
     /* 40. <ret_func_types> -> epsilon */
-    else if (token_type = T_KEYWORD)
-    {
+    else if (token_type == T_KEYWORD)
+    {            
         keyword = data->token->attribute.keyword;
     
         if (keyword == K_LOCAL ||
             keyword == K_IF ||
             keyword == K_WHILE ||
             keyword == K_RETURN)
-        {
+        {            
             ret_val = true;
         }
         
     }
-    else if (token_type = T_IDENTIFIER)
+    else if (token_type == T_IDENTIFIER)
     {
         ret_val = true;
     }        
@@ -906,8 +1087,12 @@ bool ret_func_types (p_data_ptr_t data)
 bool ret_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 41. <ret_def_types> -> : <func_def_types> */ 
     if (token_type == T_COLON)
@@ -962,8 +1147,12 @@ bool func_types (p_data_ptr_t data)
 bool n_func_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 44. <n_func_types> -> , <type>  <n_func_types> */ 
     if (token_type == T_COMMA)
@@ -1005,8 +1194,7 @@ bool n_func_types (p_data_ptr_t data)
  */
 bool func_def_types (p_data_ptr_t data)
 {
-    bool ret_val = false;
-    keyword_t keyword;
+    bool ret_val = false;    
                            
     if (type(data))
     {        
@@ -1026,8 +1214,12 @@ bool func_def_types (p_data_ptr_t data)
 bool n_func_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;    
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
     if (token_type == T_COMMA)
@@ -1070,8 +1262,12 @@ bool n_func_def_types (p_data_ptr_t data)
 bool type (p_data_ptr_t data)
 {
     bool ret_val = false;    
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
     keyword_t keyword;
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
 
     if (token_type == T_KEYWORD)
     {
@@ -1101,7 +1297,11 @@ bool type (p_data_ptr_t data)
 bool constant (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type = data->token->type;
+    token_type_t token_type;
+
+    VALIDATE_TOKEN(data->token);
+    
+    token_type = data->token->type;
 
     if (token_type == T_INT ||
         token_type == T_DECIMAL ||
@@ -1115,15 +1315,4 @@ bool constant (p_data_ptr_t data)
     }
     
     return ret_val;
-}
-
-void next_token(p_data_ptr_t data)
-{
-    delete_token(data->token);
-    data->token = get_next_token();
-}
-
-bool exp (p_data_ptr_t data)
-{
-    // TODO
 }
