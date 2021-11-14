@@ -26,7 +26,14 @@ typedef struct symData{
     bool defined;          /* func / var (initialized) */
     data_type_t data_type; /* data type */
     unsigned params_count; /* func params count*/
+    struct function_params *first_param;
 } symData_t;
+
+struct function_params{
+    data_type_t param_type;
+    char *param_name;
+    struct function_params *param_next;
+};
 
 typedef struct symTree{
     const char *key;           /* func / id name */
