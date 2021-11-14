@@ -18,7 +18,7 @@ void symTableInit(symTree_t **tree){
     (*tree) = NULL;
 }
 
-T_symData *symTableSearch(symTree_t *tree, char *key){
+symData_t *symTableSearch(symTree_t *tree, char *key){
     while(tree != NULL){
 
         if(tree->key == key){
@@ -35,7 +35,7 @@ T_symData *symTableSearch(symTree_t *tree, char *key){
     return false;
 }
 
-T_symData *symTableInsert(symTree_t **tree, char *key, symData_t data){
+symData_t *symTableInsert(symTree_t **tree, char *key, symData_t data){
     if(tree == NULL){
         return;
     }
