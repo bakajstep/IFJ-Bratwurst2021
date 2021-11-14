@@ -115,6 +115,8 @@ parser_error_t parser ()
     if (!data)
     {
         err = E_INTERNAL;
+        delete_data(data);
+
         return PARSE_ERR;
     }
     
@@ -123,6 +125,8 @@ parser_error_t parser ()
     if (!valid_token(data->token))
     {
         err = E_SYNTAX; 
+        delete_data(data);
+
         return PARSE_ERR;
     }
     
@@ -133,9 +137,13 @@ parser_error_t parser ()
             err = E_SYNTAX;
         }
         
+        delete_data(data);
+
         return PARSE_ERR;
     }
     
+    delete_data(data);
+
     return PARSE_NO_ERR;
 }
 
