@@ -14,21 +14,24 @@
 #include<stdlib.h>
 #include<stdbool.h>
 
-typedef struct{
-    TYPE_VAR;
-    TYPE_FUNC;
-} type_t;
+typedef enum e_data_type{
+    INT,
+    DOUBLE,
+    STR,
+    NIL
+} data_type_t
 
-typedef struct symData{
-    type_t type;
-    bool defined;
-    int prams;
+typedef struct symData{    
+    bool declared;         /* func / var */
+    bool defined;          /* func / var (initialized) */
+    data_type_t data_type; /* data type */
+    unsigned params_count; /* func params count*/
 } symData_t;
 
 typedef struct symTree{
-    char *key;
-    symTree_t data;
-    struct symTree *nextLeft;
+    const char *key;           /* func / id name */
+    symTree_t data;            /* data */
+    struct symTree *nextLeft;  
     struct symTree *nextRight;
 } symTree_t;
 
