@@ -1,9 +1,10 @@
 #include <stdbool.h>
+#include <string.h>
 
 #include "parser.h"
 #include "psa.h"
 
-#define P_TAB_SIZE 17
+#define P_TAB_SIZE 18
 
 static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 /*    *//* #   +   -   *   /   //  ..  <   >   <=  >=  ~=  ==  (   )   i   s   $*/
@@ -37,8 +38,6 @@ psa_error_t psa (p_data_ptr_t data)
     /* TODO smazat */
     return PSA_NO_ERR;    
 }
-
-// TODO - dodelat keyword a vyresit nejak EOL
 
 int getIndex(token_t token){
     switch (token->type) {
@@ -74,9 +73,28 @@ int getIndex(token_t token){
             return 14;
         case T_IDENTIFIER:
             return 15;
+        case T_COMMA:
+            return 17;
+        case T_DECIMAL:
+            return 15;
+        case T_INT:
+            return 15;
+        case T_STRING:
+            return 16;
+        case T_DECIMAL_W_EXP:
+            return 15;
         case T_KEYWORD:
-            printf("T_KEYWORD - %d\n",token->attribute.keyword);
-            break;
+            if(strcmp(token.data.s, "then") == 0 || strcmp(token.data.s, "do") == 0
+                || strcmp(token.data.s, "local") == 0 || strcmp(token.data.s, "if") == 0
+                || strcmp(token.data.s, "while") == 0 || strcmp(token.data.s, "return") == 0) {
+                return 17;//continue to case $
+            }
+            else if(strcmp(token.data.s, "nil") == 0){
+                return 15;
+            }
+            else{
+                break;
+            }
         default:
             return -1;
     }
