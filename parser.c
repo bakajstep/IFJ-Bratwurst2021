@@ -211,7 +211,10 @@ bool main_b (p_data_ptr_t data)
 
     /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
     if (token_type == T_KEYWORD && keyword == K_FUNCTION)
-    {        
+    {
+        /* TODO symtable */     
+        /* TODO semantic */
+        /* TODO linkedlist */             
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -259,6 +262,8 @@ bool main_b (p_data_ptr_t data)
     /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
     else if (token_type == T_KEYWORD && keyword == K_GLOBAL)
     {
+        /* TODO symtable */
+        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -309,6 +314,7 @@ bool main_b (p_data_ptr_t data)
     /* 4. <main_b> -> id (<args>) <main_b> */
     else if (token_type == T_IDENTIFIER)
     {
+        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -369,6 +375,8 @@ bool stats (p_data_ptr_t data)
     /* 6. <stats> -> local id : <type> <assign> <stats> */
     if (token_type == T_KEYWORD && keyword == K_LOCAL)
     {
+        /* TODO symtable */
+        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -395,6 +403,7 @@ bool stats (p_data_ptr_t data)
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
     else if (token_type == T_KEYWORD && keyword == K_IF)
     {
+        /* TODO linkedlist */             
         next_token(data);
 
         if (expression(data))
@@ -441,6 +450,7 @@ bool stats (p_data_ptr_t data)
     /* 8. <stats> -> while exp do <stats> end <stats> */
     else if (token_type == T_KEYWORD && keyword == K_WHILE)
     {
+        /* TODO linkedlist */             
         next_token(data);
 
         if (expression(data))
@@ -473,6 +483,7 @@ bool stats (p_data_ptr_t data)
     /* 9. <stats> -> return <ret_vals> <stats> */
     else if (token_type == T_KEYWORD && keyword == K_RETURN)
     {
+        /* TODO semantic */
         next_token(data);
 
         if (ret_vals(data))
@@ -483,6 +494,7 @@ bool stats (p_data_ptr_t data)
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
     {
+        /* TODO semantic */
         next_token(data);
 
         if (id_func(data))
@@ -521,7 +533,8 @@ bool id_func (p_data_ptr_t data)
       
     /* 13. <id_func> -> (<args>) */
     if (token_type == T_LEFT_BRACKET)
-    {
+    {        
+        /* TODO semantic */
         next_token(data);
 
         if (args(data))
@@ -539,6 +552,7 @@ bool id_func (p_data_ptr_t data)
     /* 12. <id_func> -> <n_ids> = <as_vals> */
     else if (n_ids(data))
     {
+        /* TODO semantic */
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
 
@@ -572,6 +586,7 @@ bool params (p_data_ptr_t data)
     /* 14. <params> -> id : <type> <n_params> */
     if (token_type == T_IDENTIFIER)
     {
+        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -612,6 +627,7 @@ bool n_params (p_data_ptr_t data)
     /* 16. <n_params> -> , id : <type> <n_params> */
     if (token_type == T_COMMA)
     {
+        /* TODO semantic */
         next_token(data);
 
         if (type(data))
@@ -647,6 +663,7 @@ bool n_ids (p_data_ptr_t data)
     /* 18. <n_ids> -> , id <n_ids> */
     if (token_type == T_COMMA)
     {
+        /* TODO semantic */
         next_token(data);
 
         ret_val = n_ids(data);
@@ -668,6 +685,7 @@ bool n_ids (p_data_ptr_t data)
  */
 bool vals (p_data_ptr_t data)
 {
+    /* TODO symtable */             
     bool ret_val = false;
 
     /* 20. <vals> -> exp <n_vals> */
@@ -747,6 +765,7 @@ bool as_vals (p_data_ptr_t data)
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
+        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -884,6 +903,7 @@ bool assign_val (p_data_ptr_t data)
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
     {
+        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
         token_type = data->token->type;
@@ -933,6 +953,7 @@ bool term (p_data_ptr_t data)
     /* 31. <term> -> id */
     if (token_type == T_IDENTIFIER)
     {
+        /* TODO semantic */
         ret_val = true;
         next_token(data);
     }
@@ -1202,6 +1223,7 @@ bool n_func_types (p_data_ptr_t data)
  */
 bool func_def_types (p_data_ptr_t data)
 {
+    /* TODO symtable */             
     bool ret_val = false;    
                            
     if (type(data))
@@ -1285,6 +1307,8 @@ bool type (p_data_ptr_t data)
             keyword == K_NUMBER ||
             keyword == K_STRING)
         {
+            /* TODO symtable */                 
+            /* TODO semantic - kontrola u fce*/            
             ret_val = true;
             next_token(data);
         }        
@@ -1318,6 +1342,8 @@ bool constant (p_data_ptr_t data)
         (token_type == T_KEYWORD && 
          data->token->attribute.keyword == K_NIL))
     {
+        /* TODO pocitani argumentu pro semantickou */             
+        /* TODO semantic - kontrola dat typu u fce*/
         ret_val = true;
         next_token(data);
     }
