@@ -35,3 +35,47 @@ psa_error_t psa (p_data_ptr_t data)
     /* TODO smazat */
     return PSA_NO_ERR;    
 }
+
+// TODO - dodelat keyword a vyresit nejak EOL
+
+int getIndex(token_t token){
+    switch (token->type) {
+        case T_MUL:
+            return 3;
+        case T_DIV:
+            return 4;
+        case T_INT_DIV:
+            return 5;
+        case T_PLUS:
+            return 1;
+        case T_MINUS:
+            return 2;
+        case T_CHAR_CNT:
+            return 0;
+        case T_CONCAT:
+            return 6;
+        case T_LESS_THAN:
+            return 7;
+        case T_LESS_EQ:
+            return 9;
+        case T_GTR_THAN:
+            return 8;
+        case T_GTR_EQ:
+            return 10;
+        case T_NOT_EQ:
+            return 11;
+        case T_EQ:
+            return 12;
+        case T_LEFT_BRACKET:
+            return 13;
+        case T_RIGHT_BRACKET:
+            return 14;
+        case T_IDENTIFIER:
+            return 15;
+        case T_KEYWORD:
+            printf("T_KEYWORD - %d\n",token->attribute.keyword);
+            break;
+        default:
+            return -1;
+    }
+}
