@@ -4,6 +4,7 @@
  * Brief:   Symbol table implemented by binary tree
  *
  * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
+ * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
  *
  * Date:    12-11-2021
  */
@@ -54,7 +55,7 @@ symData_t *symTableInsert(symTree_t **tree, char *key, symData_t data){
         }
     }
 
-    (*tree) = (bst_node_t *)malloc(sizeof(bst_node_t));
+    (*tree) = (symTree_t *)malloc(sizeof(symTree_t));
     if((*tree) == NULL) return;
     (*tree)->key = key;
     (*tree)->value = value;
