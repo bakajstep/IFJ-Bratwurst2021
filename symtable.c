@@ -34,29 +34,14 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
     function_params_t newParam = (function_params_t) malloc(sizeof(function_params_t));
     newParam->param_name = param_name;
     newParam->param_type = type;
-    if(data->first_param == NULL){
-        data->first_param = newParam;
-        data->first_param->param_next = NULL;
-    }else{
-        function_params_t* current;
-        current = data->first_param;
-        while(current != NULL){
-            *current = current->param_next;
-        }
-        current = newParam;
-    }
-}
 
-void paramInsert(symData_t* data, data_type_t type, char* param_name){
-    function_params_t newParam = (function_params_t) malloc(sizeof(function_params_t));
-    newParam->param_name = param_name;
-    newParam->param_type = type;
     if(data->first_param == NULL){
         data->first_param = newParam;
         data->first_param->param_next = NULL;
     }else{
         function_params_t* current;
         current = data->first_param;
+
         while(current != NULL){
             *current = current->param_next;
         }
@@ -64,15 +49,18 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
         current->param_next = NULL;
     }
 }
-void paramInsert(symData_t* data, data_type_t type){
+
+void returnInsert(symData_t* data, data_type_t type){
     function_returns_t newReturn = (function_returns_t) malloc(sizeof(function_returns_t));
     newReturn->return_type = type;
+
     if(data->first_ret == NULL){
         data->first_ret = newReturn;
         data->first_ret->ret_next = NULL;
     }else{
         function_returns_t* current;
         current = data->first_ret;
+
         while(current != NULL){
             *current = current->ret_next;
         }

@@ -1,7 +1,7 @@
 /**
  * Project: Compiler for IFJ21 language
  *
- * Brief:   Symbol table implemented by binary tree iterative
+ * Brief:   Symbol table implemented by binary tree
  *
  * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
  * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
