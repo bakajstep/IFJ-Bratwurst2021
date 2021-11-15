@@ -4,6 +4,7 @@
  * Brief:   Symbol table implemented by binary tree iterative
  *
  * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
+ * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
  *
  * Date:    12-11-2021
  */
@@ -43,9 +44,9 @@ typedef struct symData{
 
 typedef struct symTree{
     const char *key;                /* func / id name */
-    symTree_t data;                 /* data */
-    struct symTree *nextLeft;  
-    struct symTree *nextRight;
+    symData_t data;                 /* data */
+    struct symTree* nextLeft;
+    struct symTree* nextRight;
 } symTree_t;
 
 void symTableInit(symTree_t **tree);
