@@ -19,9 +19,8 @@ typedef bool psa_error_t;
 typedef enum
 {
     OPERAND,		// E -> i
-    STRING,         // E -> s
-    LBR_NT_RBR,		// E -> (E)
     NT_HASHTAG,     // E -> #E
+    LBR_NT_RBR,		// E -> (E)
     NT_CONCAT_NT,   // E -> E .. E
     NT_PLUS_NT,		// E -> E + E
     NT_MINUS_NT,	// E -> E - E
@@ -31,9 +30,9 @@ typedef enum
     NT_EQ_NT,		// E -> E = E
     NT_NEQ_NT,		// E -> E ~= E
     NT_LEQ_NT,		// E -> E <= E
-    NT_MEQ_NT,		// E -> E >= E
+    NT_GEQ_NT,		// E -> E >= E
     NT_LTN_NT,		// E -> E < E
-    NT_MTN_NT,		// E -> E > E
+    NT_GTN_NT,		// E -> E > E
     NOT_A_RULE		// rule doesn't exist
 } psa_rules_enum;
 
