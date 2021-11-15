@@ -11,6 +11,7 @@ typedef bool parser_error_t;
 
 typedef struct p_data {
     token_t* token;
+    symTree_t** glb_sym_tab;
 } *p_data_ptr_t;
 
 parser_error_t parser ();

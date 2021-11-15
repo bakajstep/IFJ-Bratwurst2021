@@ -6,6 +6,7 @@
 #include "scanner.h"
 #include "error.h"
 #include "psa.h"
+#include "symtable.h"
 
 #define PROLOG "ifj21"
 #define VALIDATE_TOKEN(token)    \
@@ -157,9 +158,9 @@ parser_error_t parser ()
  */
 bool prog (p_data_ptr_t data)
 {
-    bool ret_val = false;
+    bool ret_val = false;    
     token_type_t token_type;
-    keyword_t keyword;    
+    keyword_t keyword;        
 
     VALIDATE_TOKEN(data->token);
 
@@ -178,12 +179,14 @@ bool prog (p_data_ptr_t data)
         {            
             next_token(data);            
 
+            /* INIT Global symbol table */
+            symTableInit(data->glb_sym_tab);
+
             if (main_b(data))
             {                                
                 ret_val = true;
             }            
-        }
-                                
+        }                                
     }    
 
     return ret_val;
@@ -212,7 +215,8 @@ bool main_b (p_data_ptr_t data)
     /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
     if (token_type == T_KEYWORD && keyword == K_FUNCTION)
     {
-        /* TODO symtable */     
+        /* TODO symtable */             
+        
         /* TODO semantic */
         /* TODO linkedlist */             
         next_token(data);
@@ -221,6 +225,8 @@ bool main_b (p_data_ptr_t data)
 
         if (token_type == T_IDENTIFIER)
         {
+            
+
             next_token(data);
             VALIDATE_TOKEN(data->token);
             token_type = data->token->type;
