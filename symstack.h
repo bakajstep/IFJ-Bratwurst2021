@@ -66,6 +66,15 @@ bool symbol_stack_pop(sym_stack* stack);
 sym_stack_item* symbol_stack_top_terminal(sym_stack* stack);
 
 /**
+ * Function inserts symbol after top terminal.
+ *
+ * @param stack Pointer to stack.
+ * @param symbol Symbol to be pushed.
+ * @return True if successfull else false.
+ */
+bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol);
+
+/**
  * Function returns top symbol.
  *
  * @param stack Pointer to stack.

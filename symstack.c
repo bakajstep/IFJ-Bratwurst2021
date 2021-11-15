@@ -42,6 +42,38 @@ sym_stack_item* symbol_stack_top_terminal(sym_stack* stack) {
     return NULL;
 }
 
+bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol){
+
+    sym_stack_item* prev;
+    sym_stack_item* iterator = stack->top;
+
+    while (iterator){
+        if (tmp->symbol < STOP){
+            sym_stack_item *new_item = (sym_stack_item *) malloc(sizeof(sym_stack_item));
+            if (!new_item){
+                return false;
+            }
+
+            new_item->symbol = symbol;
+
+            if (prev == NULL)
+            {
+                new_item->next = stack->top;
+                stack->top = new_item;
+            }
+            else
+            {
+                new_item->next = prev->next;
+                prev->next = new_item;
+            }
+            return true;
+        }
+        prev = tmp;
+        iterator = iterator->next;
+    }
+    return false;
+}
+
 bool symbol_stack_pop(sym_stack* stack){
     if (stack->top != NULL)
     {
