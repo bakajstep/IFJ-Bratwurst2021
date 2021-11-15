@@ -225,14 +225,14 @@ static prec_table_symbol_enum get_symbol_from_token(token_t *token)
 
 psa_error_t psa (p_data_ptr_t data)
 {
-    /* TODO smazat */
+
     sym_stack stack;
     sym_stack_init(&stack);
     symbol_stack_push(&stack,DOLLAR);
 
     do{
         //token na zásobníku a vstupní token
-        sym_stack_item* a = symbol_stack_top(&stack);
+        sym_stack_item* a = symbol_stack_top_terminal(&stack);
 
         //indexy tokenů v tabulce
         int ind_a = a->symbol;
@@ -247,15 +247,131 @@ psa_error_t psa (p_data_ptr_t data)
                 next_token(data);
                 break;
             case '<':
-                symbol_stack_push(&stack,STOP);
-                symbol_stack_push(&stack,ind_b);
+                //insert after top terminal
+                if(!symbol_stack_insert_after_top_terminal(&stack,STOP)){
+                    return PSA_ERR;
+                }
+                if(!symbol_stack_push(&stack,ind_b))
+                    return PSA_ERR;
                 next_token(data);
                 break;
             case '>':
                 //zjistím kolik mám symbolů na stack do <
+                sym_stack_item symbol1;
+                sym_stack_item symbol2;
+                sym_stack_item symbol3;
+                int num=0;
+                if(symbol_stack_top(&stack)->symbol != STOP){
+                    symbol1 = *(symbol_stack_top(&stack));
+                    symbol_stack_pop(&stack);
+                    num++;
+                    if(symbol_stack_top(&stack)->symbol != STOP){
+                        symbol2 = *(symbol_stack_top(&stack));
+                        symbol_stack_pop(&stack);
+                        num++;
+                        if(symbol_stack_top(&stack)->symbol != STOP){
+                            symbol3 = *(symbol_stack_top(&stack));
+                            symbol_stack_pop(&stack);
+                            num++;
+                            if(symbol_stack_top(&stack)->symbol != STOP)
+                                return PSA_ERR;
+                        }
+                    }
+                }
+                if(symbol_stack_top(&stack)->symbol == STOP){
+                    symbol_stack_pop(&stack);
+                }
                 //zjistím jestli jse pro tohle nějaký pravidlo
+
+                psa_rules_enum rule = test_rule(num,&symbol1,&symbol2,&symbol3);
+
                 //podle pravidla zpustím redukci
+
+                switch (rule) {
+                    case OPERAND:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_HASHTAG:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case LBR_NT_RBR:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_CONCAT_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_PLUS_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_MINUS_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_MUL_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_DIV_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_IDIV_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_EQ_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_NEQ_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_LEQ_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_GEQ_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_LTN_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NT_GTN_NT:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        break;
+                    case NOT_A_RULE:
+                        if(!symbol_stack_push(&stack,NON_TERM)){
+                            return PSA_ERR;
+                        }
+                        return PSA_ERR;
+                        break;
+                }
                 break;
+
             default:
                 return PSA_ERR;
                 break;
@@ -263,7 +379,8 @@ psa_error_t psa (p_data_ptr_t data)
 
     }while(b != DOLLAR && a != DOLLAR);
 
-    /* TODO smazat */
-    return PSA_NO_ERR;
+    if(symbol_stack_top(&stack)->symbol == NON_TERM)
+        return PSA_NO_ERR;
+    return  PSA_ERR;
 }
 
