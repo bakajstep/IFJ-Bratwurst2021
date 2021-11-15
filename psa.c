@@ -3,6 +3,8 @@
 
 #include "parser.h"
 #include "psa.h"
+#include "symstack.h"
+
 
 #define P_TAB_SIZE 18
 
