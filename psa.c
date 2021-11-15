@@ -228,35 +228,40 @@ psa_error_t psa (p_data_ptr_t data)
     /* TODO smazat */
     sym_stack stack;
     sym_stack_init(&stack);
+    symbol_stack_push(&stack,DOLLAR);
+
     do{
         //token na zásobníku a vstupní token
-        token_t* a;//pop ze zásobníku
-        token_t* b = data->token;
+        sym_stack_item* a = symbol_stack_top(&stack);
 
         //indexy tokenů v tabulce
-        int ind_a = getIndex(*a);
-        int ind_b = getIndex(*b);
+        int ind_a = a->symbol;
+        int ind_b = get_symbol_from_token(data->token);
 
         //data z tabulky
         char tbl_data = prec_table(ind_a, ind_b);
 
         switch (tbl_data) {
             case '=':
-
+                symbol_stack_push(&stack,ind_b);
+                next_token(data);
                 break;
             case '<':
-
+                symbol_stack_push(&stack,STOP);
+                symbol_stack_push(&stack,ind_b);
+                next_token(data);
                 break;
             case '>':
-
+                //zjistím kolik mám symbolů na stack do <
+                //zjistím jestli jse pro tohle nějaký pravidlo
+                //podle pravidla zpustím redukci
                 break;
             default:
                 return PSA_ERR;
                 break;
         }
 
-    }while(/*podmínka*/)
-
+    }while(b != DOLLAR && a != DOLLAR);
 
     /* TODO smazat */
     return PSA_NO_ERR;
