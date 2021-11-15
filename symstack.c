@@ -29,6 +29,19 @@ bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol){
     return true;
 }
 
+sym_stack_item* symbol_stack_top_terminal(sym_stack* stack) {
+
+    sym_stack_item* iterator = stack->top;
+
+    while (iterator){
+        if (tmp->symbol < STOP){
+            return tmp;
+        }
+        iterator = iterator->next;
+    }
+    return NULL;
+}
+
 bool symbol_stack_pop(sym_stack* stack){
     if (stack->top != NULL)
     {

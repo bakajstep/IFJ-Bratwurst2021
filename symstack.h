@@ -58,6 +58,14 @@ bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol);
 bool symbol_stack_pop(sym_stack* stack);
 
 /**
+ * Function returns top termial.
+ *
+ * @param stack Pointer to stack.
+ * @return Returns pointer to top terminal.
+ */
+sym_stack_item* symbol_stack_top_terminal(sym_stack* stack);
+
+/**
  * Function returns top symbol.
  *
  * @param stack Pointer to stack.
