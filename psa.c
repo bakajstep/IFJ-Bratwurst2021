@@ -31,15 +31,7 @@ static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 
 };
 
-psa_error_t psa (p_data_ptr_t data)
-{
-    /* TODO smazat */
-    data = data;
 
-
-    /* TODO smazat */
-    return PSA_NO_ERR;    
-}
 
 int getIndex(token_t token){
     switch (token->type) {
@@ -100,4 +92,43 @@ int getIndex(token_t token){
         default:
             return -1;
     }
+}
+
+psa_error_t psa (p_data_ptr_t data)
+{
+    /* TODO smazat */
+    sym_stack stack;
+    sym_stack_init(&stack);
+    do{
+        //token na zásobníku a vstupní token
+        token_t* a;//pop ze zásobníku
+        token_t* b = data->token;
+
+        //indexy tokenů v tabulce
+        int ind_a = getIndex(*a);
+        int ind_b = getIndex(*b);
+
+        //data z tabulky
+        char tbl_data = prec_table(ind_a, ind_b);
+
+        switch (tbl_data) {
+            case '=':
+
+                break;
+            case '<':
+
+                break;
+            case '>':
+
+                break;
+            default:
+                return PSA_ERR;
+                break;
+        }
+
+    }while(/*podmínka*/)
+
+
+    /* TODO smazat */
+    return PSA_NO_ERR;
 }
