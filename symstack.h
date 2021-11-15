@@ -1,6 +1,13 @@
-//
-// Created by Stepan Bakaj on 15.11.2021.
-//
+/**
+ * Project: Compiler for IFJ21 language
+ *
+ * Brief:   Symbol stack
+ *
+ * Author:  Stepan Bakaj     <xbakaj00@stud.fit.vutbr.cz>
+ *
+ * Date:    15-11-2021
+ */
+
 
 #ifndef IFJ_BRATWURST2021_SYMSTACK_H
 #define IFJ_BRATWURST2021_SYMSTACK_H

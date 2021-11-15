@@ -132,3 +132,54 @@ psa_error_t psa (p_data_ptr_t data)
     /* TODO smazat */
     return PSA_NO_ERR;
 }
+
+/**
+ * Function converts token type to symbol.
+ *
+ * @param token Pointer to token.
+ * @return Returns dollar if symbol is not supported or converted symbol if symbol is supported.
+ */
+static prec_table_symbol_enum get_symbol_from_token(token_t *token)
+{
+    switch (token->type)
+    {
+        case T_PLUS:
+            return PLUS;
+        case T_MINUS:
+            return MINUS;
+        case T_MUL:
+            return MUL;
+        case T_DIV:
+            return DIV;
+        case T_INT_DIV:
+            return IDIV;
+        case T_ASSIGN:
+            return EQ;
+        case T_NOT_EQ:
+            return NOT_EQ;
+        case T_LESS_EQ:
+            return LESS_EQ;
+        case T_LESS_THAN:
+            return LESS_THAN;
+        case T_GTR_EQ:
+            return GTR_EQ;
+        case T_GTR_THAN:
+            return GTR_THAN;
+        case T_LEFT_BRACKET:
+            return LEFT_BRACKET;
+        case T_RIGHT_BRACKET:
+            return RIGHT_BRACKET;
+        case T_IDENTIFIER:
+            return IDENTIFIER;
+        case T_INT:
+            return INT_NUMBER;
+        case T_DECIMAL:
+            return DOUBLE_NUMBER;
+        case T_DECIMAL_W_EXP:
+            return DOUBLE_NUMBER;
+        case T_STRING:
+            return STR;
+        default:
+            return DOLLAR;
+    }
+}

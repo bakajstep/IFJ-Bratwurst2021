@@ -49,11 +49,11 @@ typedef enum
     DIV,			// /
     INT_DIV,	    // //
     CONCAT,         // ..
-    LTN,			// <
-    MTN,			// >
-    LEQ,			// <=
-    MEQ,			// >=
-    NEQ,			// ~=
+    LESS_THAN,		// <
+    GTR_THAN,		// >
+    LESS_EQ,		// <=
+    GTR_EQ,			// >=
+    NOT_EQ,			// ~=
     EQ,				// ==
     LEFT_BRACKET,	// (
     RIGHT_BRACKET,	// )
