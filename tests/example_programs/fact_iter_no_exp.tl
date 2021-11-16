@@ -2,7 +2,8 @@
 require "ifj21"
 
 function main() -- uzivatelska funkce bez parametru
-	local a : integer
-	local b : string local c : number		
+	local c : integer local a : number
+	local b : string
 end
+
 main() -- prikaz hlavniho tela programu
