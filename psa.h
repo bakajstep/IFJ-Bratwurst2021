@@ -5,12 +5,12 @@
 
 #include "parser.h"
 
-psa_error_t psa (p_data_ptr_t data);
-
-#define PSA_NO_ERR false
-#define PSA_ERR true
-
 typedef bool psa_error_t;
+
+psa_error_t psa (p_data_ptr_t data);
+#define PSA_NO_ERR false
+
+#define PSA_ERR true
 
 
 /**

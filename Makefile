@@ -10,7 +10,7 @@ STR=string
 ERR=error
 PRS=parser
 PSA=psa
-SYMSTK=symtstack
+SYMSTK=symstack
 
 PROG1=fact_iter
 PROG2=fact_rec

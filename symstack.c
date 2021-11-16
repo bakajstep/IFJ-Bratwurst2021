@@ -34,8 +34,8 @@ sym_stack_item* symbol_stack_top_terminal(sym_stack* stack) {
     sym_stack_item* iterator = stack->top;
 
     while (iterator){
-        if (tmp->symbol < STOP){
-            return tmp;
+        if (iterator->symbol < STOP){
+            return iterator;
         }
         iterator = iterator->next;
     }
@@ -48,7 +48,7 @@ bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_e
     sym_stack_item* iterator = stack->top;
 
     while (iterator){
-        if (tmp->symbol < STOP){
+        if (iterator->symbol < STOP){
             sym_stack_item *new_item = (sym_stack_item *) malloc(sizeof(sym_stack_item));
             if (!new_item){
                 return false;
@@ -68,7 +68,7 @@ bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_e
             }
             return true;
         }
-        prev = tmp;
+        prev = iterator;
         iterator = iterator->next;
     }
     return false;

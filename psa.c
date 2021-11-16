@@ -33,7 +33,7 @@ static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 
 
 
-int getIndex(token_t token){
+int getIndex(token_t* token){
     switch (token->type) {
         case T_MUL:
             return 3;
@@ -78,12 +78,12 @@ int getIndex(token_t token){
         case T_DECIMAL_W_EXP:
             return 15;
         case T_KEYWORD:
-            if(strcmp(token.data.s, "then") == 0 || strcmp(token.data.s, "do") == 0
-                || strcmp(token.data.s, "local") == 0 || strcmp(token.data.s, "if") == 0
-                || strcmp(token.data.s, "while") == 0 || strcmp(token.data.s, "return") == 0) {
+            if(token->attribute.keyword == K_THEN || token->attribute.keyword == K_DO
+                || token->attribute.keyword == K_LOCAL || token->attribute.keyword == K_IF
+                || token->attribute.keyword == K_WHILE || token->attribute.keyword == K_RETURN) {
                 return 17;//continue to case $
             }
-            else if(strcmp(token.data.s, "nil") == 0){
+            else if(token->attribute.keyword == K_NIL){
                 return 15;
             }
             else{
@@ -92,6 +92,7 @@ int getIndex(token_t token){
         default:
             return -1;
     }
+    return -1;
 }
 
 /**
@@ -117,6 +118,8 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
             // rule E -> #E
             if (op1->symbol == HASHTAG && op2->symbol == NON_TERM)
                 return NT_HASHTAG;
+
+            return NOT_A_RULE;
         case 3:
             // rule E -> (E)
             if (op1->symbol == LEFT_BRACKET && op2->symbol == NON_TERM && op3->symbol == RIGHT_BRACKET)
@@ -142,7 +145,7 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
                     case DIV:
                         return NT_DIV_NT;
                     // rule E -> E // E
-                    case IDIV:
+                    case INT_DIV:
                         return NT_IDIV_NT;
                     // rule E -> E = E
                     case EQ:
@@ -178,7 +181,7 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
  * @param token Pointer to token.
  * @return Returns dollar if symbol is not supported or converted symbol if symbol is supported.
  */
-static prec_table_symbol_enum get_symbol_from_token(token_t *token)
+static psa_table_symbol_enum get_symbol_from_token(token_t *token)
 {
     switch (token->type)
     {
@@ -230,23 +233,27 @@ psa_error_t psa (p_data_ptr_t data)
     sym_stack_init(&stack);
     symbol_stack_push(&stack,DOLLAR);
 
+    int ind_a;
+    int ind_b;
+    sym_stack_item* a;
+
     do{
         //token na zásobníku a vstupní token
-        sym_stack_item* a = symbol_stack_top_terminal(&stack);
+        a = symbol_stack_top_terminal(&stack);
 
         //indexy tokenů v tabulce
-        int ind_a = a->symbol;
-        int ind_b = get_symbol_from_token(data->token);
+        ind_a = a->symbol;
+        ind_b = get_symbol_from_token(data->token);
 
         //data z tabulky
-        char tbl_data = prec_table(ind_a, ind_b);
+        char tbl_data = prec_table[ind_a][ind_b];
 
         switch (tbl_data) {
-            case '=':
+            case '=': ;
                 symbol_stack_push(&stack,ind_b);
                 next_token(data);
                 break;
-            case '<':
+            case '<': ;
                 //insert after top terminal
                 if(!symbol_stack_insert_after_top_terminal(&stack,STOP)){
                     return PSA_ERR;
@@ -255,7 +262,7 @@ psa_error_t psa (p_data_ptr_t data)
                     return PSA_ERR;
                 next_token(data);
                 break;
-            case '>':
+            case '>': ;
                 //zjistím kolik mám symbolů na stack do <
                 sym_stack_item symbol1;
                 sym_stack_item symbol2;
@@ -377,7 +384,7 @@ psa_error_t psa (p_data_ptr_t data)
                 break;
         }
 
-    }while(b != DOLLAR && a != DOLLAR);
+    }while(ind_b != DOLLAR && a->symbol != DOLLAR);
 
     if(symbol_stack_top(&stack)->symbol == NON_TERM)
         return PSA_NO_ERR;
