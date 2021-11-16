@@ -281,22 +281,25 @@ psa_error_t psa (p_data_ptr_t data)
 
     int ind_a;
     int ind_b;
+    psa_table_symbol_enum b;
     sym_stack_item* a;
     bool end_while = false;
     do{
         //token na zásobníku a vstupní token
         a = symbol_stack_top_terminal(&stack);
-
+        
         //indexy tokenů v tabulce
-        ind_a = a->symbol;
-        ind_b = get_symbol_from_token(data->token);
+        ind_a = get_index_enum(a->symbol);
+
+        ind_b = get_index_token(data->token);
+        b= get_symbol_from_token(data->token);
 
         //data z tabulky
         char tbl_data = prec_table[ind_a][ind_b];
 
         switch (tbl_data) {
             case '=': ;
-                symbol_stack_push(&stack,ind_b);
+                symbol_stack_push(&stack, get_symbol_from_token(data->token));
                 next_token(data);
                 break;
             case '<': ;
@@ -304,7 +307,7 @@ psa_error_t psa (p_data_ptr_t data)
                 if(!symbol_stack_insert_after_top_terminal(&stack,STOP)){
                     return PSA_ERR;
                 }
-                if(!symbol_stack_push(&stack,ind_b))
+                if(!symbol_stack_push(&stack, get_symbol_from_token(data->token)))
                     return PSA_ERR;
                 next_token(data);
                 break;
@@ -426,7 +429,7 @@ psa_error_t psa (p_data_ptr_t data)
                 break;
 
             default:
-                if(ind_b == DOLLAR && a->symbol == DOLLAR){
+                if(b == DOLLAR && a->symbol == DOLLAR){
                     end_while = true;
                 }else{
                     return PSA_ERR;
