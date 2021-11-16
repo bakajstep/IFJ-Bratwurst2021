@@ -33,7 +33,7 @@ static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 
 
 
-int getIndex(token_t* token){
+int get_index_token(token_t* token){
     switch (token->type) {
         case T_MUL:
             return 3;
@@ -89,6 +89,52 @@ int getIndex(token_t* token){
             else{
                 break;
             }
+        default:
+            return -1;
+    }
+    return -1;
+}
+
+int get_index_enum(psa_table_symbol_enum e){
+    switch (e) {
+        case MUL:
+            return 3;
+        case DIV:
+            return 4;
+        case INT_DIV:
+            return 5;
+        case PLUS:
+            return 1;
+        case MINUS:
+            return 2;
+        case CHAR_CNT:
+            return 0;
+        case CONCAT:
+            return 6;
+        case LESS_THAN:
+            return 7;
+        case LESS_EQ:
+            return 9;
+        case GTR_THAN:
+            return 8;
+        case GTR_EQ:
+            return 10;
+        case NOT_EQ:
+            return 11;
+        case EQ:
+            return 12;
+        case LEFT_BRACKET:
+            return 13;
+        case RIGHT_BRACKET:
+            return 14;
+        case IDENTIFIER:
+            return 15;
+        case INT_NUMBER:
+            return 15;
+        case STR:
+            return 16;
+        case DOUBLE_NUMBER:
+            return 15;
         default:
             return -1;
     }
