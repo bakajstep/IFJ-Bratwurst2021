@@ -236,7 +236,7 @@ psa_error_t psa (p_data_ptr_t data)
     int ind_a;
     int ind_b;
     sym_stack_item* a;
-
+    bool end_while = false;
     do{
         //token na zásobníku a vstupní token
         a = symbol_stack_top_terminal(&stack);
@@ -380,11 +380,14 @@ psa_error_t psa (p_data_ptr_t data)
                 break;
 
             default:
-                return PSA_ERR;
-                break;
+                if(ind_b == DOLLAR && a->symbol == DOLLAR){
+                    end_while = true;
+                }else{
+                    return PSA_ERR;
+                }
         }
 
-    }while(ind_b != DOLLAR && a->symbol != DOLLAR);
+    }while(!end_while);
 
     if(symbol_stack_top(&stack)->symbol == NON_TERM)
         return PSA_NO_ERR;
