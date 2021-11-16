@@ -22,6 +22,7 @@ PROG7=fact_iter_err_4
 PROG8=fact_iter_err_5
 PROG9=str_func_err_1
 PROG10=str_func_err_2
+PROG11=fact_iter_no_exp
 
 CURTEST=_test_cur_
 REFTEST=_test_ref_
@@ -111,6 +112,11 @@ $(STX)-test:
 	@echo "\nTest case 'str_func_err_2' output differences:"
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG10).output $(STXPATH)$(STX)$(CURTEST)$(PROG10).output || exit 0
 
+	@echo "\n------------------------------------ 'str_func_no_exp' -------------------------------------\n"
+	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG11).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG11).output	
+	@echo "\nTest case 'str_func_err_2' output differences:"
+	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG11).output $(STXPATH)$(STX)$(CURTEST)$(PROG11).output || exit 0
+
 $(STX)-clean:
 	cd $(STXPATH) && rm -f \
 	$(STX)$(CURTEST)$(PROG1).output \
@@ -123,4 +129,5 @@ $(STX)-clean:
 	$(STX)$(CURTEST)$(PROG8).output \
 	$(STX)$(CURTEST)$(PROG9).output \
 	$(STX)$(CURTEST)$(PROG10).output \
+	$(STX)$(CURTEST)$(PROG11).output \
 	$(STX)-test
