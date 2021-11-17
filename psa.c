@@ -107,7 +107,7 @@ int get_index_enum(psa_table_symbol_enum e){
             return 1;
         case MINUS:
             return 2;
-        case CHAR_CNT:
+        case HASHTAG:
             return 0;
         case CONCAT:
             return 6;
@@ -426,14 +426,14 @@ psa_error_t psa (p_data_ptr_t data)
                         return PSA_ERR;
                         break;
                 }
-                break;
-
-            default:
                 if(b == DOLLAR && a->symbol == DOLLAR){
                     end_while = true;
-                }else{
-                    return PSA_ERR;
                 }
+                break;
+                
+            default:
+                return PSA_ERR;
+                
         }
 
     }while(!end_while);
