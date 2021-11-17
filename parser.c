@@ -7,6 +7,9 @@
 #include "error.h"
 #include "psa.h"
 
+/*TODO smazat*/
+#include <stdio.h>
+
 #define PROLOG "ifj21"
 #define VALIDATE_TOKEN(token)    \
         if (!valid_token(token)) \
@@ -74,6 +77,87 @@ bool n_func_def_types (p_data_ptr_t data);
 bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
 
+/* TODO smazat */
+void print(p_data_ptr_t data)
+{
+    token_t* token = data->token;
+
+    switch (token->type) {
+            case T_MUL:
+                printf("T_MUL\n");
+                break;
+            case T_DIV:
+                printf("T_DIV\n");
+                break;
+            case T_INT_DIV:
+                printf("T_INT_DIV\n");
+                break;
+            case T_PLUS:
+                printf("T_PLUS\n");
+                break;
+            case T_MINUS:
+                printf("T_MINUS\n");
+                break;
+            case T_CHAR_CNT:
+                printf("T_CHAR_CNT\n");
+                break;
+            case T_CONCAT:
+                printf("T_CONCAT\n");
+                break;
+            case T_LESS_THAN:
+                printf("T_LESS_THAN\n");
+                break;
+            case T_LESS_EQ:
+                printf("T_LESS_EQ\n");
+                break;
+            case T_GTR_THAN:
+                printf("T_GTR_THAN\n");
+                break;
+            case T_GTR_EQ:
+                printf("T_GTR_EQ\n");
+                break;
+            case T_NOT_EQ:
+                printf("T_NOT_EQ\n");
+                break;
+            case T_ASSIGN:
+                printf("T_ASSIGN\n");
+                break;
+            case T_EQ:
+                printf("T_EQ\n");
+                break;
+            case T_COLON:
+                printf("T_COLON\n");
+                break;
+            case T_LEFT_BRACKET:
+                printf("T_LEFT_BRACKET\n");
+                break;
+            case T_RIGHT_BRACKET:
+                printf("T_RIGHT_BRACKET\n");
+                break;
+            case T_COMMA:
+                printf("T_COMMA\n");
+                break;
+            case T_INT:
+                printf("T_INT - %d\n",token->attribute.integer);
+                break;
+            case T_DECIMAL:
+                printf("T_DECIMAL - %f\n",token->attribute.decimal);
+                break;
+            case T_DECIMAL_W_EXP:
+                printf("T_DECIMAL_W_EXP - %f\n",token->attribute.decimal);
+                break;
+            case T_IDENTIFIER:
+                printf("T_IDENTIFIER - %s\n",token->attribute.string);
+                break;
+            case T_KEYWORD:
+                printf("T_KEYWORD - %d\n",token->attribute.keyword);
+                break;
+            case T_STRING:
+                printf("T_STRING - %s\n",token->attribute.string);
+                break;
+        }
+}
+
 /***************** DATA FUNCTIONS ******************/
 
 p_data_ptr_t create_data ()
@@ -95,6 +179,9 @@ void next_token(p_data_ptr_t data)
 {
     delete_token(data->token);
     data->token = get_next_token();
+
+    /* TODO smazat */
+    print(data);
 }
 
 bool valid_token (token_t* token)
@@ -478,6 +565,8 @@ bool stats (p_data_ptr_t data)
 
                     if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
                     {
+                        next_token(data);
+                        
                         if (stats(data))
                         {
                             ret_val = true;
@@ -581,7 +670,7 @@ bool id_func (p_data_ptr_t data)
  * 15. <params> -> epsilon
  */
 bool params (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;
 
@@ -600,6 +689,8 @@ bool params (p_data_ptr_t data)
 
         if (token_type == T_COLON)
         {
+            next_token(data);
+            
             if (type(data))
             {                
                 ret_val = n_params(data);
