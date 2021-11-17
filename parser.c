@@ -852,28 +852,34 @@ bool as_vals (p_data_ptr_t data)
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);
-        token_type = data->token->type;
-
-        if (token_type == T_LEFT_BRACKET)
+        if (vals(data))
         {
-            next_token(data);
+            ret_val = true;
+        }
+        else
+        {
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;                
+            
+            if (token_type == T_LEFT_BRACKET)
+            {
+                next_token(data);
 
-            if (args(data))
-            {                
-                VALIDATE_TOKEN(data->token);
-                TEST_EOF(data->token);
-                token_type = data->token->type;
+                if (args(data))
+                {                
+                    VALIDATE_TOKEN(data->token);
+                    TEST_EOF(data->token);
+                    token_type = data->token->type;
 
-                if (token_type == T_RIGHT_BRACKET)
-                {
-                    ret_val = true;
-                    next_token(data);
-                }                
-            }            
-        }        
+                    if (token_type == T_RIGHT_BRACKET)
+                    {
+                        ret_val = true;
+                        next_token(data);
+                    }                
+                }            
+            }                        
+        }                                
     }            
     /* 23. <as_vals> -> <vals> */
     else if (vals(data))
