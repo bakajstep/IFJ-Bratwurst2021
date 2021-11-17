@@ -244,7 +244,7 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
             return DIV;
         case T_INT_DIV:
             return INT_DIV;
-        case T_ASSIGN:
+        case T_EQ:
             return EQ;
         case T_NOT_EQ:
             return NOT_EQ;
@@ -270,6 +270,12 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
             return DOUBLE_NUMBER;
         case T_STRING:
             return STR;
+        case T_KEYWORD:
+            if(token->attribute.keyword == K_NIL){
+                return IDENTIFIER;
+            }else{
+                return DOLLAR;
+            }
         default:
             return DOLLAR;
     }
@@ -284,7 +290,6 @@ psa_error_t psa (p_data_ptr_t data)
 
     int ind_a;
     int ind_b;
-    psa_table_symbol_enum b;
     sym_stack_item* a;
     bool end_while = false;
     do{
@@ -301,11 +306,10 @@ psa_error_t psa (p_data_ptr_t data)
             ind_b = 17;
         }        
 
-        b= get_symbol_from_token(data->token);
 
         //data z tabulky
         char tbl_data = prec_table[ind_a][ind_b];
-        printf("\n ind_a:%d ind_b:%d \n", ind_a, ind_b);
+        //printf("\n ind_a:%d ind_b:%d \n", ind_a, ind_b);
 
         switch (tbl_data) {
             case '=': ;
@@ -317,6 +321,7 @@ psa_error_t psa (p_data_ptr_t data)
                 if(!symbol_stack_insert_after_top_terminal(&stack,STOP)){                                     
                     return PSA_ERR;
                 }
+                //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
                 if(!symbol_stack_push(&stack, get_symbol_from_token(data->token)))                
                 {                    
                     return PSA_ERR;
@@ -445,13 +450,13 @@ psa_error_t psa (p_data_ptr_t data)
                         return PSA_ERR;
                         break;
                 }
-                printf("\nb=%d stack_term=%d\n", b, symbol_stack_top_terminal(&stack)->symbol);
-                if(b == DOLLAR && symbol_stack_top_terminal(&stack)->symbol == DOLLAR){                    
+                //printf("\nind_b=%d stack_term=%d\n", ind_b, symbol_stack_top_terminal(&stack)->symbol);
+                if(ind_b == 17 && symbol_stack_top_terminal(&stack)->symbol == DOLLAR){                    
                     end_while = true;
                 }
                 break;
                 
-            default:                      
+            default:
                 return PSA_ERR;                
         }
 
@@ -462,7 +467,6 @@ psa_error_t psa (p_data_ptr_t data)
         printf("\nexit psa\n");
         return PSA_NO_ERR;    
     }
-        
     return  PSA_ERR;
 }
 
