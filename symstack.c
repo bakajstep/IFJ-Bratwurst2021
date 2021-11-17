@@ -44,7 +44,7 @@ sym_stack_item* symbol_stack_top_terminal(sym_stack* stack) {
 
 bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol){
 
-    sym_stack_item* prev;
+    sym_stack_item* prev = NULL;
     sym_stack_item* iterator = stack->top;
 
     while (iterator){
