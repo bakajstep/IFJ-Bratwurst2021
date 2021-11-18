@@ -1,7 +1,7 @@
 /**
  * Project: Compiler for IFJ21 language
  *
- * Brief:   Symbol table implemented by binary tree iterative
+ * Brief:   Symbol table implemented by binary tree
  *
  * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
  * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
@@ -29,7 +29,7 @@ typedef struct function_params {
 } function_params_t;
 
 typedef struct function_returns {
-    data_type_t param_type;    
+    data_type_t return_type;
     struct function_returns_t* ret_next;
 } function_returns_t;
 
@@ -43,15 +43,18 @@ typedef struct symData{
 } symData_t;
 
 typedef struct symTree{
-    const char *key;                /* func / id name */
-    symData_t data;                 /* data */
+    const char* key;                /* func / id name */
+    symData_t* data;                 /* data */
     struct symTree* nextLeft;
     struct symTree* nextRight;
 } symTree_t;
 
 void symTableInit(symTree_t **tree);
-symData_t* symTableSearch(symTree_t **tree, char key);
-symData_t* symTableInsert(symTree_t **tree, char key, symData_t data);
+void symDataInit(symData_t* data);
+void paramInsert(symData_t* data, data_type_t type, char* param_name);
+void returnInsert(symData_t* data, data_type_t type);
+symData_t* symTableSearch(symTree_t **tree, char* key);
+symData_t* symTableInsert(symTree_t **tree, char* key, symData_t* data);
 void symTableDispose(symTree_t **tree);
 
 

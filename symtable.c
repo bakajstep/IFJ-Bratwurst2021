@@ -10,6 +10,7 @@
  */
 
 #include "symtable.h"
+#include<stdlib.h>
 
 void symTableInit(symTree_t **tree){
 
@@ -19,54 +20,121 @@ void symTableInit(symTree_t **tree){
     (*tree) = NULL;
 }
 
-symData_t *symTableSearch(symTree_t *tree, char *key){
-    while(tree != NULL){
-
-        if(tree->key == key){
-            *value = tree->value;
-            return true;
-        }
-
-        if(tree->key > key){
-            tree = tree->left;
-        } else if(tree->key < key){
-            tree = tree->right;
-        }
-    }
-    return false;
+void symDataInit(symData_t* data){
+    data = (symData_t)malloc(sizeof(symData_t));
+    data->declared = true;
+    data->defined = false;
+    data->data_type = NIL;
+    data->params_count = 0;
+    data->first_param = NULL;
+    data->first_ret = NULL;
 }
 
-symData_t *symTableInsert(symTree_t **tree, char *key, symData_t data){
-    if(tree == NULL){
+void paramInsert(symData_t* data, data_type_t type, char* param_name){
+    function_params_t newParam = (function_params_t) malloc(sizeof(function_params_t));
+    newParam->param_name = param_name;
+    newParam->param_type = type;
+
+    if(data->first_param == NULL){
+        data->first_param = newParam;
+        data->first_param->param_next = NULL;
+    }else{
+        function_params_t* current;
+        current = data->first_param;
+
+        while(current != NULL){
+            *current = current->param_next;
+        }
+        current = newParam;
+        current->param_next = NULL;
+    }
+}
+
+void returnInsert(symData_t* data, data_type_t type){
+    function_returns_t newReturn = (function_returns_t) malloc(sizeof(function_returns_t));
+    newReturn->return_type = type;
+
+    if(data->first_ret == NULL){
+        data->first_ret = newReturn;
+        data->first_ret->ret_next = NULL;
+    }else{
+        function_returns_t* current;
+        current = data->first_ret;
+
+        while(current != NULL){
+            *current = current->ret_next;
+        }
+        current = newReturn;
+        current->ret_next = NULL;
+    }
+}
+
+symData *symTableSearch(symTree_t* tree, char* key){
+    while(tree != NULL){
+
+        if(strcmp(tree->key, key) == 0){
+            return tree->data;
+        }
+
+        if(strcmp(tree->key, key) > 0){
+            tree = tree->nextLeft;
+        } else if(strcmp(tree->key, key) < 0){
+            tree = tree->nextRight;
+        }
+    }
+    return NULL;
+}
+
+symData_t *symTableInsert(symTree_t **tree, char* key, symData_t* data){
+    if(*tree == NULL){
         return;
     }
 
     while((*tree) != NULL){
 
-        if((*tree)->key == key){
-            (*tree)->value = value;
+        if(strcmp((*tree)->key, key) == 0){
+            (*tree)->data = data;
             return;
         }
 
-        if(((*tree)->key) > key){
-            tree = &((*tree)->left);
-        } else if(((*tree)->key) < key){
-            tree = &((*tree)->right);
+        if(strcmp((*tree)->key, key) > 0){
+            tree = &((*tree)->nextLeft);
+        } else if(strcmp((*tree)->key, key) < 0){
+            tree = &((*tree)->nextRight);
         }
     }
 
     (*tree) = (symTree_t *)malloc(sizeof(symTree_t));
     if((*tree) == NULL) return;
     (*tree)->key = key;
-    (*tree)->value = value;
-    (*tree)->left = NULL;
-    (*tree)->right = NULL;
+    (*tree)->data = data;
+    (*tree)->nextLeft = NULL;
+    (*tree)->nextRight = NULL;
+}
+
+void paramDispose(function_params_t* param){
+    if(param != NULL){
+        if(param->param_next != NULL) paramDispose(param->param_next);
+        free(param);
+        param = NULL;
+    }
+}
+
+void returnDispose(function_returns_t* returns){
+    if(returns != NULL){
+        if(returns->ret_next != NULL) returnDispose(returns->ret_next);
+        free(returns);
+        returns = NULL;
+    }
 }
 
 void symTableDispose(symTree_t **tree){
     if((*tree) != NULL){
-        if((*tree)->left != NULL) symTableDispose(&((*tree)->left));
-        if((*tree)->right != NULL) symTableDispose(&((*tree)->right));
+        if((*tree)->nextLeft != NULL) symTableDispose(&((*tree)->nextLeft));
+        if((*tree)->nextRight != NULL) symTableDispose(&((*tree)->nextRight));
+        paramDispose(&(*tree)->data->first_param);
+        returnDispose(&(*tree)->data->first_ret);
+        free((*tree)->data);
         free((*tree));
         (*tree) = NULL;
     }
