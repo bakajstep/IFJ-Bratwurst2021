@@ -6,7 +6,9 @@
 #include "scanner.h"
 #include "error.h"
 #include "psa.h"
-#include "symtable.h"
+
+/*TODO smazat*/
+#include <stdio.h>
 
 #define PROLOG "ifj21"
 #define VALIDATE_TOKEN(token)    \
@@ -14,6 +16,12 @@
         {                        \
             return false;        \
         }
+
+#define TEST_EOF(token)                      \
+        if(token == NULL && err == E_NO_ERR) \
+        {                                    \
+            return false;                    \
+        }                                    \
         
 /*
     NON-TERMINALS
@@ -51,7 +59,9 @@ bool params (p_data_ptr_t data);
 bool n_params (p_data_ptr_t data);
 bool n_ids (p_data_ptr_t data);
 bool vals (p_data_ptr_t data);
+bool r_vals (p_data_ptr_t data);
 bool n_vals (p_data_ptr_t data);
+bool r_n_vals (p_data_ptr_t data);
 bool as_vals (p_data_ptr_t data);
 bool ret_vals (p_data_ptr_t data);
 bool assign (p_data_ptr_t data);
@@ -68,6 +78,92 @@ bool func_def_types (p_data_ptr_t data);
 bool n_func_def_types (p_data_ptr_t data);
 bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
+
+/* TODO smazat */
+void print(p_data_ptr_t data)
+{
+    if (data->token == NULL)
+    {
+        return;
+    }
+    
+    token_t* token = data->token;
+
+    switch (token->type) {
+            case T_MUL:
+                printf("T_MUL\n");
+                break;
+            case T_DIV:
+                printf("T_DIV\n");
+                break;
+            case T_INT_DIV:
+                printf("T_INT_DIV\n");
+                break;
+            case T_PLUS:
+                printf("T_PLUS\n");
+                break;
+            case T_MINUS:
+                printf("T_MINUS\n");
+                break;
+            case T_CHAR_CNT:
+                printf("T_CHAR_CNT\n");
+                break;
+            case T_CONCAT:
+                printf("T_CONCAT\n");
+                break;
+            case T_LESS_THAN:
+                printf("T_LESS_THAN\n");
+                break;
+            case T_LESS_EQ:
+                printf("T_LESS_EQ\n");
+                break;
+            case T_GTR_THAN:
+                printf("T_GTR_THAN\n");
+                break;
+            case T_GTR_EQ:
+                printf("T_GTR_EQ\n");
+                break;
+            case T_NOT_EQ:
+                printf("T_NOT_EQ\n");
+                break;
+            case T_ASSIGN:
+                printf("T_ASSIGN\n");
+                break;
+            case T_EQ:
+                printf("T_EQ\n");
+                break;
+            case T_COLON:
+                printf("T_COLON\n");
+                break;
+            case T_LEFT_BRACKET:
+                printf("T_LEFT_BRACKET\n");
+                break;
+            case T_RIGHT_BRACKET:
+                printf("T_RIGHT_BRACKET\n");
+                break;
+            case T_COMMA:
+                printf("T_COMMA\n");
+                break;
+            case T_INT:
+                printf("T_INT - %d\n",token->attribute.integer);
+                break;
+            case T_DECIMAL:
+                printf("T_DECIMAL - %f\n",token->attribute.decimal);
+                break;
+            case T_DECIMAL_W_EXP:
+                printf("T_DECIMAL_W_EXP - %f\n",token->attribute.decimal);
+                break;
+            case T_IDENTIFIER:
+                printf("T_IDENTIFIER - %s\n",token->attribute.string);
+                break;
+            case T_KEYWORD:
+                printf("T_KEYWORD - %d\n",token->attribute.keyword);
+                break;
+            case T_STRING:
+                printf("T_STRING - %s\n",token->attribute.string);
+                break;
+        }
+}
 
 /***************** DATA FUNCTIONS ******************/
 
@@ -90,6 +186,9 @@ void next_token(p_data_ptr_t data)
 {
     delete_token(data->token);
     data->token = get_next_token();
+
+    /* TODO smazat */
+    //print(data);
 }
 
 bool valid_token (token_t* token)
@@ -121,7 +220,10 @@ parser_error_t parser ()
         return PARSE_ERR;
     }
     
-    next_token(data);
+    data->token = get_next_token();
+
+    /* TODO smazat */
+    //print(data);
     
     if (!valid_token(data->token))
     {
@@ -158,19 +260,19 @@ parser_error_t parser ()
  */
 bool prog (p_data_ptr_t data)
 {
-    bool ret_val = false;    
-    token_type_t token_type;
-    keyword_t keyword;        
+    bool ret_val = false;
+    token_type_t token_type;       
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-    keyword = data->token->attribute.keyword;    
+    token_type = data->token->type;    
 
-    if (token_type == T_KEYWORD && keyword == K_REQUIRE)
+    if (token_type == T_KEYWORD && data->token->attribute.keyword == K_REQUIRE)
     {        
         next_token(data);        
         VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
 
         token_type = data->token->type;
 
@@ -179,14 +281,12 @@ bool prog (p_data_ptr_t data)
         {            
             next_token(data);            
 
-            /* INIT Global symbol table */
-            symTableInit(data->glb_sym_tab);
-
             if (main_b(data))
             {                                
                 ret_val = true;
             }            
-        }                                
+        }
+                                
     }    
 
     return ret_val;
@@ -204,154 +304,155 @@ bool prog (p_data_ptr_t data)
 bool main_b (p_data_ptr_t data)
 {    
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
 
-    token_type = data->token->type;
-    keyword = data->token->attribute.keyword;    
-
-    /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
-    if (token_type == T_KEYWORD && keyword == K_FUNCTION)
+    /* 5. <main_b> -> epsilon */
+    if (data->token == NULL)
     {
-        /* TODO symtable */             
-        
-        /* TODO semantic */
-        /* TODO linkedlist */             
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        token_type = data->token->type;
+        /* EOF */
+        ret_val = true;
+    }  
+    else
+    {
+        token_type = data->token->type;        
 
-        if (token_type == T_IDENTIFIER)
-        {
-            
-
+        /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
+        if (token_type == T_KEYWORD && data->token->attribute.keyword == K_FUNCTION)
+        {                    
             next_token(data);
             VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
+
+            if (token_type == T_IDENTIFIER)
+            {                
+                next_token(data);
+                VALIDATE_TOKEN(data->token);
+                TEST_EOF(data->token);
+                token_type = data->token->type;
+
+                if (token_type == T_LEFT_BRACKET)
+                {
+                    next_token(data);                
+
+                    if (params(data))
+                    {                        
+                        VALIDATE_TOKEN(data->token);
+                        TEST_EOF(data->token);
+                        token_type = data->token->type;
+
+                        if (token_type == T_RIGHT_BRACKET)
+                        {                            
+                            next_token(data);                                        
+
+                            if (ret_func_types(data) && stats(data))
+                            {                                                
+                                VALIDATE_TOKEN(data->token);
+                                TEST_EOF(data->token);
+                                token_type = data->token->type;                                
+
+                                if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
+                                {                
+                                    next_token(data);                                
+                                    
+                                    if (main_b(data))
+                                    {
+                                        ret_val = true;
+                                    }                                
+                                }                            
+                            }                        
+                        }                    
+                    }                
+                }            
+            }        
+        }        
+        /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
+        else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_GLOBAL)
+        {
+            next_token(data);
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
+
+            if (token_type == T_IDENTIFIER)
+            {
+                next_token(data);
+                VALIDATE_TOKEN(data->token);
+                TEST_EOF(data->token);
+                token_type = data->token->type;
+
+                if (token_type == T_COLON)
+                {
+                    next_token(data);
+                    VALIDATE_TOKEN(data->token);
+                    TEST_EOF(data->token);
+                    token_type = data->token->type;                    
+
+                    if (token_type == T_KEYWORD && data->token->attribute.keyword == K_FUNCTION)
+                    {
+                        next_token(data);
+                        VALIDATE_TOKEN(data->token);
+                        TEST_EOF(data->token);
+                        token_type = data->token->type;
+
+                        if (token_type == T_LEFT_BRACKET)
+                        {
+                            next_token(data);
+
+                            if (arg_def_types(data))
+                            {
+                                VALIDATE_TOKEN(data->token);
+                                TEST_EOF(data->token);
+                                token_type = data->token->type;
+
+                                if (token_type == T_RIGHT_BRACKET)
+                                {
+                                    next_token(data);
+
+                                    if (ret_def_types(data))
+                                    {
+                                        ret_val = main_b(data);
+                                    }                                
+                                }                            
+                            }                        
+                        }                    
+                    }                
+                }            
+            }        
+        }    
+        /* 4. <main_b> -> id (<args>) <main_b> */
+        else if (token_type == T_IDENTIFIER)
+        {
+            next_token(data);
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
             token_type = data->token->type;
 
             if (token_type == T_LEFT_BRACKET)
             {
-                next_token(data);                
+                next_token(data);
 
-                if (params(data))
+                if (args(data))
                 {
                     VALIDATE_TOKEN(data->token);
+                    TEST_EOF(data->token);
                     token_type = data->token->type;
 
                     if (token_type == T_RIGHT_BRACKET)
                     {
-                        next_token(data);                                        
-
-                        if (ret_func_types(data) && stats(data))
-                        {                
-                            VALIDATE_TOKEN(data->token);
-                            token_type = data->token->type;
-                            keyword = data->token->attribute.keyword;
-
-                            if (token_type == T_KEYWORD && keyword == K_END)
-                            {                
-                                next_token(data);                                
-                                
-                                if (main_b(data))
-                                {
-                                    ret_val = true;
-                                }                                
-                            }                            
-                        }                        
-                    }                    
-                }                
-            }            
-        }        
-    }        
-    /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
-    else if (token_type == T_KEYWORD && keyword == K_GLOBAL)
-    {
-        /* TODO symtable */
-        /* TODO semantic */
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        token_type = data->token->type;
-
-        if (token_type == T_IDENTIFIER)
-        {
-            next_token(data);
-            VALIDATE_TOKEN(data->token);
-            token_type = data->token->type;
-
-            if (token_type == T_COLON)
-            {
-                next_token(data);
-                VALIDATE_TOKEN(data->token);
-                token_type = data->token->type;
-                keyword = data->token->attribute.keyword;
-
-                if (token_type == T_KEYWORD && keyword == K_FUNCTION)
-                {
-                    next_token(data);
-                    VALIDATE_TOKEN(data->token);
-                    token_type = data->token->type;
-
-                    if (token_type == T_LEFT_BRACKET)
-                    {
                         next_token(data);
 
-                        if (arg_def_types(data))
+                        if (main_b(data))
                         {
-                            VALIDATE_TOKEN(data->token);
-                            token_type = data->token->type;
-
-                            if (token_type == T_RIGHT_BRACKET)
-                            {
-                                next_token(data);
-
-                                if (ret_def_types(data))
-                                {
-                                    ret_val = main_b(data);
-                                }                                
-                            }                            
-                        }                        
-                    }                    
-                }                
-            }            
-        }        
-    }    
-    /* 4. <main_b> -> id (<args>) <main_b> */
-    else if (token_type == T_IDENTIFIER)
-    {
-        /* TODO semantic */
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        token_type = data->token->type;
-
-        if (token_type == T_LEFT_BRACKET)
-        {
-            next_token(data);
-
-            if (args(data))
-            {
-                VALIDATE_TOKEN(data->token);
-                token_type = data->token->type;
-
-                if (token_type == T_RIGHT_BRACKET)
-                {
-                    next_token(data);
-
-                    if (main_b(data))
-                    {
-                        ret_val = true;
-                    }                    
-                }                
-            }            
-        }        
-    }    
-    /* 5. <main_b> -> epsilon */
-    else if (data->token == NULL && err == E_NO_ERR)
-    {
-        /* EOF */
-        ret_val = true;
-    }    
+                            ret_val = true;
+                        }                    
+                    }                
+                }            
+            }        
+        }
+    }          
 
     return ret_val;
 }
@@ -370,75 +471,73 @@ bool main_b (p_data_ptr_t data)
 bool stats (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-    keyword = data->token->attribute.keyword;
+    token_type = data->token->type;    
 
     /* 6. <stats> -> local id : <type> <assign> <stats> */
-    if (token_type == T_KEYWORD && keyword == K_LOCAL)
-    {
-        /* TODO symtable */
-        /* TODO semantic */
+    if (token_type == T_KEYWORD && data->token->attribute.keyword == K_LOCAL)
+    {                        
         next_token(data);
         VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
         token_type = data->token->type;
 
         if (token_type == T_IDENTIFIER)
-        {
+        {            
             next_token(data);
             VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
             token_type = data->token->type;
 
             if (token_type == T_COLON)
-            {                
+            {                                   
                 next_token(data);
 
                 if (type(data) &&
                     assign(data) &&
                     stats(data))
-                {
+                {                                                            
                     ret_val = true;                              
                 }                
             }            
         }        
     }    
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
-    else if (token_type == T_KEYWORD && keyword == K_IF)
+    else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_IF)
     {
-        /* TODO linkedlist */             
         next_token(data);
-
+        
         if (expression(data))
         {
             VALIDATE_TOKEN(data->token);
-            token_type = data->token->type;
-            keyword = data->token->attribute.keyword;
+            TEST_EOF(data->token);
+            token_type = data->token->type;            
 
-            if (token_type == T_KEYWORD && keyword == K_THEN)
+            if (token_type == T_KEYWORD && data->token->attribute.keyword == K_THEN)
             {
                 next_token(data);
 
                 if (stats(data))
                 {
                     VALIDATE_TOKEN(data->token);
-                    token_type = data->token->type;
-                    keyword = data->token->attribute.keyword;
+                    TEST_EOF(data->token);
+                    token_type = data->token->type;                    
 
-                    if (token_type == T_KEYWORD && keyword == K_ELSE)
+                    if (token_type == T_KEYWORD && data->token->attribute.keyword == K_ELSE)
                     {
                         next_token(data);
 
                         if (stats(data))
                         {
                             VALIDATE_TOKEN(data->token);
-                            token_type = data->token->type;
-                            keyword = data->token->attribute.keyword;
+                            TEST_EOF(data->token);
+                            token_type = data->token->type;                            
 
-                            if (token_type == T_KEYWORD && keyword == K_END)
+                            if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
                             {
                                 next_token(data);
 
@@ -454,29 +553,30 @@ bool stats (p_data_ptr_t data)
         }        
     }    
     /* 8. <stats> -> while exp do <stats> end <stats> */
-    else if (token_type == T_KEYWORD && keyword == K_WHILE)
+    else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_WHILE)
     {
-        /* TODO linkedlist */             
         next_token(data);
 
         if (expression(data))
         {
             VALIDATE_TOKEN(data->token);
-            token_type = data->token->type;
-            keyword = data->token->attribute.keyword;     
+            TEST_EOF(data->token);
+            token_type = data->token->type;              
 
-            if (token_type == T_KEYWORD && keyword == K_DO)
+            if (token_type == T_KEYWORD && data->token->attribute.keyword == K_DO)
             {
                 next_token(data);
 
                 if (stats(data))
                 {
                     VALIDATE_TOKEN(data->token);
-                    token_type = data->token->type;
-                    keyword = data->token->attribute.keyword;    
+                    TEST_EOF(data->token);
+                    token_type = data->token->type;                       
 
-                    if (token_type == T_KEYWORD && keyword == K_END)
+                    if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
                     {
+                        next_token(data);
+                        
                         if (stats(data))
                         {
                             ret_val = true;
@@ -487,9 +587,8 @@ bool stats (p_data_ptr_t data)
         }        
     }    
     /* 9. <stats> -> return <ret_vals> <stats> */
-    else if (token_type == T_KEYWORD && keyword == K_RETURN)
+    else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_RETURN)
     {
-        /* TODO semantic */
         next_token(data);
 
         if (ret_vals(data))
@@ -500,7 +599,6 @@ bool stats (p_data_ptr_t data)
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
     {
-        /* TODO semantic */
         next_token(data);
 
         if (id_func(data))
@@ -511,8 +609,8 @@ bool stats (p_data_ptr_t data)
     /* 11. <stats> -> epsilon */
     else if (token_type == T_KEYWORD)
     {
-        if (keyword == K_END ||
-            keyword == K_ELSE)
+        if (data->token->attribute.keyword == K_END ||
+            data->token->attribute.keyword == K_ELSE)
         {
             ret_val = true;
         }                
@@ -534,18 +632,19 @@ bool id_func (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
       
     /* 13. <id_func> -> (<args>) */
     if (token_type == T_LEFT_BRACKET)
     {        
-        /* TODO semantic */
         next_token(data);
 
         if (args(data))
         {              
-            VALIDATE_TOKEN(data->token);  
+            VALIDATE_TOKEN(data->token); 
+            TEST_EOF(data->token); 
             token_type = data->token->type;
 
             if (token_type == T_RIGHT_BRACKET)
@@ -558,8 +657,8 @@ bool id_func (p_data_ptr_t data)
     /* 12. <id_func> -> <n_ids> = <as_vals> */
     else if (n_ids(data))
     {
-        /* TODO semantic */
         VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
         token_type = data->token->type;
 
         if (token_type == T_ASSIGN)
@@ -581,24 +680,27 @@ bool id_func (p_data_ptr_t data)
  * 15. <params> -> epsilon
  */
 bool params (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
     /* 14. <params> -> id : <type> <n_params> */
     if (token_type == T_IDENTIFIER)
     {
-        /* TODO semantic */
         next_token(data);
         VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
         token_type = data->token->type;
 
         if (token_type == T_COLON)
         {
+            next_token(data);
+            
             if (type(data))
             {                
                 ret_val = n_params(data);
@@ -627,13 +729,13 @@ bool n_params (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
     /* 16. <n_params> -> , id : <type> <n_params> */
     if (token_type == T_COMMA)
     {
-        /* TODO semantic */
         next_token(data);
 
         if (type(data))
@@ -663,13 +765,13 @@ bool n_ids (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
     /* 18. <n_ids> -> , id <n_ids> */
     if (token_type == T_COMMA)
     {
-        /* TODO semantic */
         next_token(data);
 
         ret_val = n_ids(data);
@@ -691,14 +793,38 @@ bool n_ids (p_data_ptr_t data)
  */
 bool vals (p_data_ptr_t data)
 {
-    /* TODO symtable */             
     bool ret_val = false;
 
     /* 20. <vals> -> exp <n_vals> */
     if (expression(data))
     {
         ret_val = n_vals(data);
+    }        
+
+    return ret_val;
+}
+
+bool r_vals (p_data_ptr_t data)
+{
+    bool ret_val = false;
+
+    /* 20. <vals> -> exp <n_vals> */
+    if (expression(data))
+    {
+        ret_val = r_n_vals(data);
     }    
+    else
+    {
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
+        if (data->token->type == T_ASSIGN)
+        {
+            next_token(data);
+
+            ret_val = as_vals(data);
+        }        
+    }
 
     return ret_val;
 }
@@ -713,42 +839,81 @@ bool vals (p_data_ptr_t data)
 bool n_vals (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-
-    /* 21. <n_vals> -> , exp <n_vals> */    
-    if (token_type == T_COMMA)
-    {
-        next_token(data);        
-
-        if (expression(data))
-        {
-            ret_val = n_vals(data);
-        }        
-    }
     /* 22. <n_vals> -> epsilon */
-    else if (token_type == T_KEYWORD)
-    {
-        keyword = data->token->attribute.keyword;
-
-        if (keyword == K_LOCAL ||
-            keyword == K_IF ||
-            keyword == K_WHILE ||
-            keyword == K_RETURN)
-        {
-            ret_val = true;
-        }
-        
-    }        
-    else if (token_type == T_IDENTIFIER)
+    if (stats(data))
     {
         ret_val = true;
-    }    
+    }
+    else
+    {        
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
 
+        token_type = data->token->type;
+
+        /* 21. <n_vals> -> , exp <n_vals> */    
+        if (token_type == T_COMMA)
+        {
+            next_token(data);        
+
+            if (expression(data))
+            {
+                ret_val = n_vals(data);
+            }                   
+        }           
+    }
+    
+    return ret_val;
+}
+
+bool r_n_vals (p_data_ptr_t data)
+{
+    bool ret_val = false;
+    token_type_t token_type;    
+
+    VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
+
+    /* 22. <n_vals> -> epsilon */
+    if (stats(data))
+    {
+        ret_val = true;
+    }
+    else
+    {        
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+        token_type = data->token->type;
+
+        /* 21. <n_vals> -> , exp <n_vals> */    
+        if (token_type == T_COMMA)
+        {
+            next_token(data);        
+
+            if (expression(data))
+            {
+                ret_val = r_n_vals(data);
+            }      
+            else
+            {
+                VALIDATE_TOKEN(data->token);
+                TEST_EOF(data->token);
+
+                if (data->token->type == T_ASSIGN)
+                {
+                    next_token(data);
+                    
+                    ret_val = as_vals(data);
+                }        
+            }  
+        }           
+    }
+    
     return ret_val;
 }
 
@@ -765,33 +930,40 @@ bool as_vals (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
-
+    TEST_EOF(data->token);
     token_type = data->token->type;
 
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
-        /* TODO semantic */
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        token_type = data->token->type;
-
-        if (token_type == T_LEFT_BRACKET)
+        if (vals(data))
         {
-            next_token(data);
+            ret_val = true;
+        }
+        else
+        {
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;                
+            
+            if (token_type == T_LEFT_BRACKET)
+            {
+                next_token(data);
 
-            if (args(data))
-            {                
-                VALIDATE_TOKEN(data->token);
-                token_type = data->token->type;
+                if (args(data))
+                {                
+                    VALIDATE_TOKEN(data->token);
+                    TEST_EOF(data->token);
+                    token_type = data->token->type;
 
-                if (token_type == T_RIGHT_BRACKET)
-                {
-                    ret_val = true;
-                    next_token(data);
-                }                
-            }            
-        }        
+                    if (token_type == T_RIGHT_BRACKET)
+                    {
+                        ret_val = true;
+                        next_token(data);
+                    }                
+                }            
+            }                        
+        }                                
     }            
     /* 23. <as_vals> -> <vals> */
     else if (vals(data))
@@ -811,36 +983,21 @@ bool as_vals (p_data_ptr_t data)
  */
 bool ret_vals (p_data_ptr_t data)
 {
-    bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    bool ret_val = false;            
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-
-    /* 26. <ret_vals> -> epsilon */
-    if(token_type == T_KEYWORD)
-    {
-        keyword = data->token->attribute.keyword;
-
-        if (keyword == K_LOCAL ||
-            keyword == K_IF ||
-            keyword == K_WHILE ||
-            keyword == K_RETURN)
-        {
-            ret_val = true;            
-        }        
-    }    
-    else if (token_type == T_IDENTIFIER)
-    {
-        ret_val = true;        
-    }   
     /* 25. <ret_vals> -> <vals> */ 
-    else if (vals(data))
+    if (r_vals(data))
     {
         ret_val = true;
     }
+    /* 26. <ret_vals> -> epsilon */
+    else if (stats(data))
+    {
+        ret_val = true;
+    }              
 
     return ret_val;
 }
@@ -855,37 +1012,31 @@ bool ret_vals (p_data_ptr_t data)
 bool assign (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-
-    /* 27. <assign> -> = <assign_val> */
-    if (token_type == T_ASSIGN)
-    {        
-        next_token(data);
-
-        ret_val = assign_val(data);
-    }
     /* 28. <assign> -> epsilon */
-    else if (token_type == T_KEYWORD)
-    {
-        keyword = data->token->attribute.keyword;
-
-        if (keyword == K_LOCAL ||
-            keyword == K_IF ||
-            keyword == K_WHILE ||
-            keyword == K_RETURN)
-        {
-            ret_val = true;            
-        }                
+    if (stats(data))
+    {                    
+        ret_val = true;
     }
-    else if (token_type == T_IDENTIFIER)
-    {
-        ret_val = true;        
-    }            
+    else
+    {              
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);     
+
+        token_type = data->token->type;
+
+        /* 27. <assign> -> = <assign_val> */
+        if (token_type == T_ASSIGN)
+        {
+            next_token(data);
+
+            ret_val = assign_val(data);
+        }                   
+    }    
 
     return ret_val;
 }
@@ -903,34 +1054,41 @@ bool assign_val (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
-
+    TEST_EOF(data->token);
     token_type = data->token->type;
 
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
-    {
-        /* TODO semantic */
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        token_type = data->token->type;
-
-        if (token_type == T_LEFT_BRACKET)
+    {    
+        if (expression(data))
         {
-            next_token(data);
+            ret_val = true;
+        }
+        else
+        {
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
 
-            if (args(data))
-            {           
-                VALIDATE_TOKEN(data->token);     
-                token_type = data->token->type;
+            if (token_type == T_LEFT_BRACKET)
+            {
+                next_token(data);
 
-                if (token_type == T_RIGHT_BRACKET)
-                {
-                    ret_val = true;
-                    next_token(data);
-                }                
-            }            
-        }        
-    }
+                if (args(data))
+                {           
+                    VALIDATE_TOKEN(data->token); 
+                    TEST_EOF(data->token);    
+                    token_type = data->token->type;
+
+                    if (token_type == T_RIGHT_BRACKET)
+                    {
+                        ret_val = true;
+                        next_token(data);
+                    }                
+                }            
+            }
+        }                        
+    }    
     /* 29. <assign_val> -> exp */
     else if (expression(data))
     {
@@ -953,13 +1111,13 @@ bool term (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
     /* 31. <term> -> id */
     if (token_type == T_IDENTIFIER)
     {
-        /* TODO semantic */
         ret_val = true;
         next_token(data);
     }
@@ -985,6 +1143,7 @@ bool args (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
@@ -995,7 +1154,7 @@ bool args (p_data_ptr_t data)
     }                
     /* 33. <args> -> <term> <n_args> */    
     else if (term(data))
-    {        
+    {            
         ret_val = n_args(data);
     }    
 
@@ -1015,6 +1174,7 @@ bool n_args (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
@@ -1050,6 +1210,7 @@ bool arg_def_types (p_data_ptr_t data)
     token_type_t token_type;
     
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
@@ -1077,37 +1238,30 @@ bool arg_def_types (p_data_ptr_t data)
 bool ret_func_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-
-    /* 39. <ret_func_types> -> : <func_types> */
-    if (token_type == T_COLON)
-    {                
-        next_token(data);
-        ret_val = func_types(data);
-    }    
     /* 40. <ret_func_types> -> epsilon */
-    else if (token_type == T_KEYWORD)
-    {            
-        keyword = data->token->attribute.keyword;
-    
-        if (keyword == K_LOCAL ||
-            keyword == K_IF ||
-            keyword == K_WHILE ||
-            keyword == K_RETURN)
-        {            
-            ret_val = true;
-        }
-        
-    }
-    else if (token_type == T_IDENTIFIER)
+    if (stats(data))
     {
         ret_val = true;
-    }        
+    }
+    else
+    {
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
+        token_type = data->token->type;
+
+        /* 39. <ret_func_types> -> : <func_types> */
+        if (token_type == T_COLON)
+        {                
+            next_token(data);
+            ret_val = func_types(data);
+        }                    
+    }    
     
     return ret_val;
 }
@@ -1122,34 +1276,26 @@ bool ret_func_types (p_data_ptr_t data)
 bool ret_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
-    VALIDATE_TOKEN(data->token);
+    VALIDATE_TOKEN(data->token);    
 
-    token_type = data->token->type;
-
-    /* 41. <ret_def_types> -> : <func_def_types> */ 
-    if (token_type == T_COLON)
-    {
-        next_token(data);
-        ret_val = func_def_types(data);
-    }    
     /* 42. <ret_def_types> -> epsilon */   
-    else if (token_type == T_KEYWORD)
+    if (main_b(data))
     {
-        keyword = data->token->attribute.keyword;
+       ret_val = true;
+    }
+    else
+    {        
+        token_type = data->token->type;
 
-        if (keyword == K_FUNCTION ||
-            keyword == K_GLOBAL)
+        /* 41. <ret_def_types> -> : <func_def_types> */ 
+        if (token_type == T_COLON)
         {
-            ret_val = true;
+            next_token(data);
+            ret_val = func_def_types(data);
         }        
-    }
-    else if (token_type == T_IDENTIFIER)
-    {
-        ret_val = true;
-    }
+    }    
         
     return ret_val;
 }
@@ -1182,41 +1328,34 @@ bool func_types (p_data_ptr_t data)
 bool n_func_types (p_data_ptr_t data)
 {
     bool ret_val = false;
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
-    token_type = data->token->type;
-
-    /* 44. <n_func_types> -> , <type>  <n_func_types> */ 
-    if (token_type == T_COMMA)
-    {
-        next_token(data);        
-        
-        if (type(data))
-        {            
-            ret_val = n_func_types(data);
-        } 
-    }    
     /* 45. <n_func_types> -> epsilon */  
-    else if (token_type == T_KEYWORD)
-    {        
-        keyword = data->token->attribute.keyword;
-
-        if (keyword == K_LOCAL ||
-            keyword == K_IF ||
-            keyword == K_WHILE ||
-            keyword == K_RETURN)
-        {
-            ret_val = true;
-        }
-        
-    }
-    else if (token_type == T_IDENTIFIER)
+    if (stats(data))
     {
         ret_val = true;
     }
+    else
+    {
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
+        token_type = data->token->type;
+
+        /* 44. <n_func_types> -> , <type>  <n_func_types> */ 
+        if (token_type == T_COMMA)
+        {
+            next_token(data);        
+            
+            if (type(data))
+            {            
+                ret_val = n_func_types(data);
+            } 
+        }            
+    }    
     
     return ret_val;
 }
@@ -1229,7 +1368,6 @@ bool n_func_types (p_data_ptr_t data)
  */
 bool func_def_types (p_data_ptr_t data)
 {
-    /* TODO symtable */             
     bool ret_val = false;    
                            
     if (type(data))
@@ -1250,39 +1388,30 @@ bool func_def_types (p_data_ptr_t data)
 bool n_func_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;    
-    token_type_t token_type;
-    keyword_t keyword;
+    token_type_t token_type;    
 
     VALIDATE_TOKEN(data->token);
 
-    token_type = data->token->type;
-
-    /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
-    if (token_type == T_COMMA)
-    {
-        next_token(data);        
-        
-        if (type(data))
-        {            
-            ret_val = n_func_def_types(data);
-        }                 
-    }    
     /* 48. <n_func_def_types> -> epsilon */
-    else if (token_type == T_KEYWORD)
+    if (main_b(data))
     {
-        keyword = data->token->attribute.keyword;
+        ret_val = true;
+    }
+    else
+    {        
+        token_type = data->token->type;
 
-        if (keyword == K_FUNCTION ||
-            keyword == K_GLOBAL)
+        /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
+        if (token_type == T_COMMA)
         {
-            ret_val = true;            
-        }        
-    }
-    else if (token_type == T_IDENTIFIER ||
-             token_type == T_RIGHT_BRACKET)
-    {
-        ret_val = true;        
-    }
+            next_token(data);        
+            
+            if (type(data))
+            {            
+                ret_val = n_func_def_types(data);
+            }                 
+        }            
+    }    
 
     return ret_val;        
 }
@@ -1302,19 +1431,18 @@ bool type (p_data_ptr_t data)
     keyword_t keyword;
 
     VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
 
     token_type = data->token->type;
 
     if (token_type == T_KEYWORD)
-    {
+    {        
         keyword = data->token->attribute.keyword;
 
         if (keyword == K_INTEGER ||
             keyword == K_NUMBER ||
             keyword == K_STRING)
-        {
-            /* TODO symtable */                 
-            /* TODO semantic - kontrola u fce*/            
+        {                                      
             ret_val = true;
             next_token(data);
         }        
@@ -1338,7 +1466,8 @@ bool constant (p_data_ptr_t data)
     token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
-    
+    TEST_EOF(data->token);
+
     token_type = data->token->type;
 
     if (token_type == T_INT ||
@@ -1348,8 +1477,6 @@ bool constant (p_data_ptr_t data)
         (token_type == T_KEYWORD && 
          data->token->attribute.keyword == K_NIL))
     {
-        /* TODO pocitani argumentu pro semantickou */             
-        /* TODO semantic - kontrola dat typu u fce*/
         ret_val = true;
         next_token(data);
     }

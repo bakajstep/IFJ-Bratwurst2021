@@ -1,0 +1,7 @@
+iter	1 - line 13 chybí porovnání
+	2 - line 14 chybí konečná závorka
+	3 - line 18 chybí přiřazení
+	4 - line 21 chybí end
+	5 - line 1 chyba komentáře (nevím jeslti nebude chyba už v scanneru)
+str	1 - line 6 cyhbí konkatenace
+	2 - line 18 chybí else
