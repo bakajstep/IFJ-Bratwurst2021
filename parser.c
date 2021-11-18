@@ -59,7 +59,9 @@ bool params (p_data_ptr_t data);
 bool n_params (p_data_ptr_t data);
 bool n_ids (p_data_ptr_t data);
 bool vals (p_data_ptr_t data);
+bool r_vals (p_data_ptr_t data);
 bool n_vals (p_data_ptr_t data);
+bool r_n_vals (p_data_ptr_t data);
 bool as_vals (p_data_ptr_t data);
 bool ret_vals (p_data_ptr_t data);
 bool assign (p_data_ptr_t data);
@@ -80,6 +82,11 @@ bool constant (p_data_ptr_t data);
 /* TODO smazat */
 void print(p_data_ptr_t data)
 {
+    if (data->token == NULL)
+    {
+        return;
+    }
+    
     token_t* token = data->token;
 
     switch (token->type) {
@@ -181,7 +188,7 @@ void next_token(p_data_ptr_t data)
     data->token = get_next_token();
 
     /* TODO smazat */
-    print(data);
+    //print(data);
 }
 
 bool valid_token (token_t* token)
@@ -213,7 +220,10 @@ parser_error_t parser ()
         return PARSE_ERR;
     }
     
-    next_token(data);
+    data->token = get_next_token();
+
+    /* TODO smazat */
+    //print(data);
     
     if (!valid_token(data->token))
     {
@@ -484,13 +494,13 @@ bool stats (p_data_ptr_t data)
             token_type = data->token->type;
 
             if (token_type == T_COLON)
-            {                               
+            {                                   
                 next_token(data);
 
                 if (type(data) &&
                     assign(data) &&
                     stats(data))
-                {                                    
+                {                                                            
                     ret_val = true;                              
                 }                
             }            
@@ -628,7 +638,7 @@ bool id_func (p_data_ptr_t data)
       
     /* 13. <id_func> -> (<args>) */
     if (token_type == T_LEFT_BRACKET)
-    {
+    {        
         next_token(data);
 
         if (args(data))
@@ -789,7 +799,32 @@ bool vals (p_data_ptr_t data)
     if (expression(data))
     {
         ret_val = n_vals(data);
+    }        
+
+    return ret_val;
+}
+
+bool r_vals (p_data_ptr_t data)
+{
+    bool ret_val = false;
+
+    /* 20. <vals> -> exp <n_vals> */
+    if (expression(data))
+    {
+        ret_val = r_n_vals(data);
     }    
+    else
+    {
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
+        if (data->token->type == T_ASSIGN)
+        {
+            next_token(data);
+
+            ret_val = as_vals(data);
+        }        
+    }
 
     return ret_val;
 }
@@ -816,6 +851,9 @@ bool n_vals (p_data_ptr_t data)
     }
     else
     {        
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
         token_type = data->token->type;
 
         /* 21. <n_vals> -> , exp <n_vals> */    
@@ -826,7 +864,53 @@ bool n_vals (p_data_ptr_t data)
             if (expression(data))
             {
                 ret_val = n_vals(data);
-            }        
+            }                   
+        }           
+    }
+    
+    return ret_val;
+}
+
+bool r_n_vals (p_data_ptr_t data)
+{
+    bool ret_val = false;
+    token_type_t token_type;    
+
+    VALIDATE_TOKEN(data->token);
+    TEST_EOF(data->token);
+
+    /* 22. <n_vals> -> epsilon */
+    if (stats(data))
+    {
+        ret_val = true;
+    }
+    else
+    {        
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+        token_type = data->token->type;
+
+        /* 21. <n_vals> -> , exp <n_vals> */    
+        if (token_type == T_COMMA)
+        {
+            next_token(data);        
+
+            if (expression(data))
+            {
+                ret_val = r_n_vals(data);
+            }      
+            else
+            {
+                VALIDATE_TOKEN(data->token);
+                TEST_EOF(data->token);
+
+                if (data->token->type == T_ASSIGN)
+                {
+                    next_token(data);
+                    
+                    ret_val = as_vals(data);
+                }        
+            }  
         }           
     }
     
@@ -904,19 +988,16 @@ bool ret_vals (p_data_ptr_t data)
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
 
-    /* 26. <ret_vals> -> epsilon */
-    if (stats(data))
+    /* 25. <ret_vals> -> <vals> */ 
+    if (r_vals(data))
     {
         ret_val = true;
     }
-    else
-    {                 
-        /* 25. <ret_vals> -> <vals> */ 
-        if (vals(data))
-        {
-            ret_val = true;
-        }
-    }    
+    /* 26. <ret_vals> -> epsilon */
+    else if (stats(data))
+    {
+        ret_val = true;
+    }              
 
     return ret_val;
 }
@@ -938,11 +1019,14 @@ bool assign (p_data_ptr_t data)
 
     /* 28. <assign> -> epsilon */
     if (stats(data))
-    {           
+    {                    
         ret_val = true;
     }
     else
-    {        
+    {              
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);     
+
         token_type = data->token->type;
 
         /* 27. <assign> -> = <assign_val> */
@@ -975,29 +1059,35 @@ bool assign_val (p_data_ptr_t data)
 
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
-    {        
-        next_token(data);
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);
-        token_type = data->token->type;
-
-        if (token_type == T_LEFT_BRACKET)
+    {    
+        if (expression(data))
         {
-            next_token(data);
+            ret_val = true;
+        }
+        else
+        {
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
 
-            if (args(data))
-            {           
-                VALIDATE_TOKEN(data->token); 
-                TEST_EOF(data->token);    
-                token_type = data->token->type;
+            if (token_type == T_LEFT_BRACKET)
+            {
+                next_token(data);
 
-                if (token_type == T_RIGHT_BRACKET)
-                {
-                    ret_val = true;
-                    next_token(data);
-                }                
-            }            
-        }        
+                if (args(data))
+                {           
+                    VALIDATE_TOKEN(data->token); 
+                    TEST_EOF(data->token);    
+                    token_type = data->token->type;
+
+                    if (token_type == T_RIGHT_BRACKET)
+                    {
+                        ret_val = true;
+                        next_token(data);
+                    }                
+                }            
+            }
+        }                        
     }    
     /* 29. <assign_val> -> exp */
     else if (expression(data))
@@ -1064,7 +1154,7 @@ bool args (p_data_ptr_t data)
     }                
     /* 33. <args> -> <term> <n_args> */    
     else if (term(data))
-    {        
+    {            
         ret_val = n_args(data);
     }    
 
@@ -1160,6 +1250,9 @@ bool ret_func_types (p_data_ptr_t data)
     }
     else
     {
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
         token_type = data->token->type;
 
         /* 39. <ret_func_types> -> : <func_types> */
@@ -1247,6 +1340,9 @@ bool n_func_types (p_data_ptr_t data)
     }
     else
     {
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+
         token_type = data->token->type;
 
         /* 44. <n_func_types> -> , <type>  <n_func_types> */ 
@@ -1346,7 +1442,7 @@ bool type (p_data_ptr_t data)
         if (keyword == K_INTEGER ||
             keyword == K_NUMBER ||
             keyword == K_STRING)
-        {                        
+        {                                      
             ret_val = true;
             next_token(data);
         }        

@@ -64,7 +64,7 @@ $(STX)-test:
 	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(STX)_test.c $(SYMSTK).c $(SYMSTK).h
 	
 	@echo "\n------------------------------------ 'fact_iter' ------------------------------------\n"
-	./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG1).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG1).output
+	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG1).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG1).output
 	@echo "\nTest case 'fact_iter' output differences:"
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG1).output $(STXPATH)$(STX)$(CURTEST)$(PROG1).output || exit 0
 

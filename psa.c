@@ -81,7 +81,8 @@ int get_index_token(token_t* token){
         case T_KEYWORD:
             if(token->attribute.keyword == K_THEN || token->attribute.keyword == K_DO
                 || token->attribute.keyword == K_LOCAL || token->attribute.keyword == K_IF
-                || token->attribute.keyword == K_WHILE || token->attribute.keyword == K_RETURN) {
+                || token->attribute.keyword == K_WHILE || token->attribute.keyword == K_RETURN
+                || token->attribute.keyword == K_END || token->attribute.keyword == K_ELSE) {
                 return 17;//continue to case $
             }
             else if(token->attribute.keyword == K_NIL){
@@ -283,7 +284,7 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
 
 psa_error_t psa (p_data_ptr_t data)
 {
-    printf("\nenter psa\n");
+    //printf("\nenter psa\n");
     sym_stack stack;
     sym_stack_init(&stack);
     symbol_stack_push(&stack,DOLLAR);
@@ -466,7 +467,7 @@ psa_error_t psa (p_data_ptr_t data)
 
     if(symbol_stack_top(&stack)->symbol == NON_TERM)
     {
-        printf("\nexit psa\n");
+        //printf("\nexit psa\n");
         return PSA_NO_ERR;    
     }
     return  PSA_ERR;
