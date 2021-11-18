@@ -8,7 +8,7 @@ function factorial(n : integer) : integer
 	else
 		local tmp : integer = factorial(n1)
 		return
-        a = 1
+        a,b,c = 1,2,3
 	end
 end
 
