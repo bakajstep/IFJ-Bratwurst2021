@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "scanner.h"
+#include "symtable.h"
 
 #define PARSE_NO_ERR false
 #define PARSE_ERR true
@@ -15,5 +16,6 @@ typedef struct p_data {
 } *p_data_ptr_t;
 
 parser_error_t parser ();
+void next_token(p_data_ptr_t data);
 
 #endif //IFJ_BRATWURST2021_PARSER_H

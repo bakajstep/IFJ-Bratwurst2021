@@ -10,7 +10,7 @@
  */
 
 #include "symtable.h"
-#include<stdlib.h>
+#include <stdlib.h>
 
 void symTableInit(symTree_t **tree){
 
@@ -21,7 +21,7 @@ void symTableInit(symTree_t **tree){
 }
 
 void symDataInit(symData_t* data){
-    data = (symData_t)malloc(sizeof(symData_t));
+    data = (symData_t*) malloc(sizeof(symData_t));
     data->declared = true;
     data->defined = false;
     data->data_type = NIL;
@@ -31,7 +31,7 @@ void symDataInit(symData_t* data){
 }
 
 void paramInsert(symData_t* data, data_type_t type, char* param_name){
-    function_params_t newParam = (function_params_t) malloc(sizeof(function_params_t));
+    function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
     newParam->param_name = param_name;
     newParam->param_type = type;
 
@@ -51,7 +51,7 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
 }
 
 void returnInsert(symData_t* data, data_type_t type){
-    function_returns_t newReturn = (function_returns_t) malloc(sizeof(function_returns_t));
+    function_returns_t* newReturn = (function_returns_t*) malloc(sizeof(function_returns_t));
     newReturn->return_type = type;
 
     if(data->first_ret == NULL){
@@ -69,7 +69,7 @@ void returnInsert(symData_t* data, data_type_t type){
     }
 }
 
-symData *symTableSearch(symTree_t* tree, char* key){
+symData_t* symTableSearch(symTree_t* tree, char* key){
     while(tree != NULL){
 
         if(strcmp(tree->key, key) == 0){

@@ -53,7 +53,7 @@ void symTableInit(symTree_t **tree);
 void symDataInit(symData_t* data);
 void paramInsert(symData_t* data, data_type_t type, char* param_name);
 void returnInsert(symData_t* data, data_type_t type);
-symData_t* symTableSearch(symTree_t **tree, char* key);
+symData_t* symTableSearch(symTree_t *tree, char* key);
 symData_t* symTableInsert(symTree_t **tree, char* key, symData_t* data);
 void symTableDispose(symTree_t **tree);
 
