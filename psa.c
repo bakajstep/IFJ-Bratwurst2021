@@ -302,7 +302,9 @@ psa_error_t psa (p_data_ptr_t data)
 
         ind_b = get_index_token(data->token);        
 
-        
+        if(data->token->type == T_ASSIGN){
+            return PSA_NO_ERR;
+        }
         
         if ((ind_b == 15 )&& (ind_a == 15 || ind_a == 16 || symbol_stack_top(&stack)->symbol == NON_TERM))
         {
