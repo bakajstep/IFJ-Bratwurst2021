@@ -10,14 +10,14 @@
 
 #include "sym_linked_list.h"
 
-void DLL_Init( DLList* list ) {
+void LL_Init( LList* list ) {
     list->lastElement = NULL;
     list->activeElement = NULL;
 }
 
-void DLL_Dispose( DLList* list ) {
+void LL_Dispose( LList* list ) {
 
-    struct DLLElement *current = NULL;
+    struct LLElement *current = NULL;
     current = list->lastElement;
 
     if(list->lastElement == NULL){
@@ -31,8 +31,8 @@ void DLL_Dispose( DLList* list ) {
     list->activeElement = NULL;
 }
 
-void DLL_InsertLast( DLList* list, symTree_t* root) {
-    struct DLLElement newElement;
+void LL_InsertLast( LList* list, symTree_t* root) {
+    struct LLElement newElement;
     newElement->root = root;
     newElement->nextElement = NULL;
 
@@ -44,8 +44,8 @@ void DLL_InsertLast( DLList* list, symTree_t* root) {
     }
 }
 
-void DLL_DeleteLast( DLList* list ){
-    struct DLLElement *delElement = NULL;
+void LL_DeleteLast( LList* list ){
+    struct LLElement *delElement = NULL;
     if(list->lastElement == NULL){
         return;
     }
@@ -60,8 +60,8 @@ void DLL_DeleteLast( DLList* list ){
         delElement = NULL;
     }
 }
-void DLL_DeleteAfter( DLList* list){
-    struct DLLElement *delElement = NULL;
+void LL_DeleteAfter( LList* list){
+    struct LLElement *delElement = NULL;
     if(list->activeElement == NULL || list->activeElement->nextElement == NULL){
         return;
     }
@@ -70,11 +70,11 @@ void DLL_DeleteAfter( DLList* list){
     delElement = NULL;
 }
 
-void DLL_InsertAfter( DLList* list, symTree_t* root){
+void LL_InsertAfter( LList* list, symTree_t* root){
     if(list->activeElement == NULL){
         return;
     }
-    struct DLLElement *newElement = NULL;
+    struct LLElement *newElement = NULL;
     newElement->root = root;
     if(list->activeElement == list->lastElement) {
         list->lastElement = newElement;
@@ -85,22 +85,22 @@ void DLL_InsertAfter( DLList* list, symTree_t* root){
     }
 }
 
-void DLL_GetValue( DLList* list, symTree_t* root ){
+void LL_GetValue( LList* list, symTree_t* root ){
     if(list->activeElement == NULL){
         return;
     }
     *root = list->activeElement->root;
 }
 
-void DLL_Next( DLList* list){
+void LL_Next( LList* list){
     if(list->activeElement == NULL){
         return;
     }
     list->activeElement = list->activeElement->nextElement;
 }
 
-int DLL_IsActive( DLList* ){
-    int DLL_IsActive( DLList *list ) {
+int LL_IsActive( LList* list){
+    int LL_IsActive( LList *list ) {
         return list->activeElement != NULL;
     }
 }

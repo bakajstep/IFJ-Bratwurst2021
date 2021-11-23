@@ -13,36 +13,36 @@
 
 #include<symtable.h>
 
-typedef struct DLLElement {
+typedef struct LLElement {
     symTree_t* root;
-    struct DLLElement* nextElement;
-} *DLLElementPtr;
+    struct LLElement* nextElement;
+} *LLElementPtr;
 
 typedef struct {
-    DLLElementPtr activeElement;
-    DLLElementPtr lastElement;
-} DLList;
+    LLElementPtr activeElement;
+    LLElementPtr lastElement;
+} LList;
 
-void DLL_Init( DLList * );
+void LL_Init( LList * );
 
-void DLL_Dispose( DLList * );
+void LL_Dispose( LList * );
 
-void DLL_InsertLast( DLList *, symTree_t * );
+void LL_InsertLast( LList *, symTree_t * );
 
-void DLL_Last( DLList * );
+void LL_Last( LList * );
 
-symTree_t * DLL_GetLast( DLList *);
+symTree_t * LL_GetLast( LList *);
 
-void DLL_DeleteLast( DLList * );
+void LL_DeleteLast( LList * );
 
-void DLL_DeleteAfter( DLList * );
+void LL_DeleteAfter( LList * );
 
-void DLL_InsertAfter( DLList *, symTree_t * );
+void LL_InsertAfter( LList *, symTree_t * );
 
-void DLL_GetValue( DLList *, symTree_t * );
+void LL_GetValue( LList *, symTree_t * );
 
-void DLL_Next( DLList * );
+void LL_Next( LList * );
 
-int DLL_IsActive( DLList * );
+int LL_IsActive( LList * );
 
 #endif
