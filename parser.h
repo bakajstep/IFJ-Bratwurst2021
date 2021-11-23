@@ -15,6 +15,7 @@ typedef struct p_data {
     token_t* token;
     DLList* tbl_list;
     data_type_t type;
+    data_type_t psa_data_type; // psa data type
 } *p_data_ptr_t;
 
 parser_error_t parser ();
