@@ -204,17 +204,17 @@ bool expression (p_data_ptr_t data)
     return psa(data);
 }
 
-void create_tbl_list (DLList* tbl_list)
+void create_tbl_list (LList* tbl_list)
 {
-    DLL_Init(tbl_list);
+    LL_Init(tbl_list);
 }
 
-void create_sym_table (DLList* tbl_list)
+void create_sym_table (LList* tbl_list)
 {
     symTree_t** tree;
 
     symTableInit(tree);
-    DLL_InsertLast(tbl_list, tree);    
+    LL_InsertLast(tbl_list, tree);
 }
 
 void create_symbol (symTree_t** tree, char* key)
@@ -222,6 +222,51 @@ void create_symbol (symTree_t** tree, char* key)
     symData_t* data;
     symDataInit(data);
     symTableInsert(tree, key, data);
+}
+
+void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t data_type)
+{
+    /* Get global symbol table */
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+
+    /* Get row for this function in global symbol table */
+    symData_t* tbl = symTableSearch(glb_tbl, func_name);
+
+    /* Insert Parameter */
+    paramInsert(tbl, data_type, id);
+    
+    /* Inc parameter count */
+    (tbl->params_count)++;
+}
+
+void insert_parameter_type (LList *tbl_list, char* func_name, data_type_t data_type)
+{
+    /* Get global symbol table */
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+
+    /* Get row for this function in global symbol table */
+    symData_t* tbl = symTableSearch(glb_tbl, func_name);
+
+    /* Insert Parameter */
+    paramTypeInsert(tbl, data_type);
+    
+    /* Inc parameter type count */
+    (tbl->params_type_count)++;
+}
+
+void insert_return (LList *tbl_list, char* func_name, data_type_t data_type)
+{
+    /* Get global symbol table */
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+
+    /* Get row for this function in global symbol table */
+    symData_t* tbl = symTableSearch(glb_tbl, func_name);
+
+    /* Insert Parameter */
+    returnInsert(tbl, data_type);
+    
+    /* Inc parameter count */
+    (tbl->returns_count)++;
 }
 
 /******************* PARSER MAIN *******************/
@@ -364,8 +409,10 @@ bool main_b (p_data_ptr_t data)
             {   
                 /* -------------- SEMANTIC --------------*/
 
+                /* TODO pokud funkce jiz byla deklarovana */
+
                 // Add symbol to table
-                (*tree) = DLL_GetLast(data->tbl_list);
+                (*tree) = LL_GetFirst(data->tbl_list);
                 create_symbol(tree, data->token->attribute.string);
 
                 // Set function as defined
@@ -373,6 +420,9 @@ bool main_b (p_data_ptr_t data)
 
                 // Create symbol table for function
                 create_sym_table(data->tbl_list);
+
+                // Save function name to data->func_name
+                strcpy(data->func_name, data->token->attribute.string);
                 
                 /* ----------- END OF SEMANTIC ----------*/
 
@@ -406,7 +456,7 @@ bool main_b (p_data_ptr_t data)
                                     /* -------------- SEMANTIC --------------*/
                                     
                                     // Deleting the table representing function block from the linked list
-                                    DLL_DeleteLast(data->tbl_list);
+                                    LL_DeleteLast(data->tbl_list);
 
                                     /* ----------- END OF SEMANTIC ----------*/
 
@@ -433,6 +483,22 @@ bool main_b (p_data_ptr_t data)
 
             if (token_type == T_IDENTIFIER)
             {
+                /* -------------- SEMANTIC --------------*/
+
+                /* TODO pokud funkce jiz byla deklarovana */
+
+                // Add symbol to table
+                (*tree) = LL_GetFirst(data->tbl_list);
+                create_symbol(tree, data->token->attribute.string);
+
+                // Create symbol table for function
+                create_sym_table(data->tbl_list);
+
+                // Save function name to data->func_name
+                strcpy(data->func_name, data->token->attribute.string);
+                
+                /* ----------- END OF SEMANTIC ----------*/
+
                 next_token(data);
                 VALIDATE_TOKEN(data->token);
                 TEST_EOF(data->token);
@@ -527,6 +593,8 @@ bool stats (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;    
+    symTree_t** tree;
+    char* id;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -543,6 +611,14 @@ bool stats (p_data_ptr_t data)
 
         if (token_type == T_IDENTIFIER)
         {            
+            /* -------------- SEMANTIC --------------*/
+            strcpy(id, data->token->attribute.string);
+
+            (*tree) = LL_GetLast(data->tbl_list);
+            create_symbol(tree, id);
+                
+            /* ----------- END OF SEMANTIC ----------*/
+
             next_token(data);
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
@@ -552,18 +628,28 @@ bool stats (p_data_ptr_t data)
             {                                   
                 next_token(data);
 
-                if (type(data) &&
-                    assign(data) &&
-                    stats(data))
-                {                                                            
-                    ret_val = true;                              
-                }                
+                if (type(data))
+                {
+                    /* -------------- SEMANTIC --------------*/
+                    // Set identifier data type
+                    symTableSearch(*tree, id)->data_type = data->type;    
+                
+                    /* ----------- END OF SEMANTIC ----------*/
+
+                    if (assign(data))
+                    {
+                        if (stats(data))
+                        {
+                            ret_val = true;    
+                        }                        
+                    }                    
+                }                            
             }            
         }        
     }    
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_IF)
-    {
+    {        
         next_token(data);
         
         if (expression(data))
@@ -574,6 +660,13 @@ bool stats (p_data_ptr_t data)
 
             if (token_type == T_KEYWORD && data->token->attribute.keyword == K_THEN)
             {
+                /* -------------- SEMANTIC --------------*/                    
+        
+                // Create symbol table for if block
+                create_sym_table(data->tbl_list);   
+
+                /* ----------- END OF SEMANTIC ----------*/
+
                 next_token(data);
 
                 if (stats(data))
@@ -584,6 +677,16 @@ bool stats (p_data_ptr_t data)
 
                     if (token_type == T_KEYWORD && data->token->attribute.keyword == K_ELSE)
                     {
+                        /* -------------- SEMANTIC --------------*/
+                                    
+                        // Deleting the table representing if block
+                        LL_DeleteLast(data->tbl_list);
+
+                        // Create symbol table for else block
+                        create_sym_table(data->tbl_list);   
+
+                        /* ----------- END OF SEMANTIC ----------*/
+
                         next_token(data);
 
                         if (stats(data))
@@ -594,6 +697,13 @@ bool stats (p_data_ptr_t data)
 
                             if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
                             {
+                                /* -------------- SEMANTIC --------------*/
+                                    
+                                // Deleting the table representing else block
+                                LL_DeleteLast(data->tbl_list);                        
+
+                                /* ----------- END OF SEMANTIC ----------*/
+
                                 next_token(data);
 
                                 if (stats(data))
@@ -609,7 +719,7 @@ bool stats (p_data_ptr_t data)
     }    
     /* 8. <stats> -> while exp do <stats> end <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_WHILE)
-    {
+    {        
         next_token(data);
 
         if (expression(data))
@@ -620,6 +730,13 @@ bool stats (p_data_ptr_t data)
 
             if (token_type == T_KEYWORD && data->token->attribute.keyword == K_DO)
             {
+                /* -------------- SEMANTIC --------------*/                    
+        
+                // Create symbol table for while block
+                create_sym_table(data->tbl_list);   
+
+                /* ----------- END OF SEMANTIC ----------*/
+
                 next_token(data);
 
                 if (stats(data))
@@ -630,6 +747,13 @@ bool stats (p_data_ptr_t data)
 
                     if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
                     {
+                        /* -------------- SEMANTIC --------------*/
+                                    
+                        // Deleting the table representing while block
+                        LL_DeleteLast(data->tbl_list);                        
+
+                        /* ----------- END OF SEMANTIC ----------*/
+
                         next_token(data);
                         
                         if (stats(data))
@@ -764,9 +888,8 @@ bool params (p_data_ptr_t data)
             {   
                 /* -------------- SEMANTIC --------------*/
 
-                // Vlozeni noveho parametru funkce                
-                /* TODO */
-                paramInsert(TODO, data->type, id);
+                // Vlozeni noveho parametru funkce                                               
+                insert_parameter(data->tbl_list, data->func_name, id, data->type);
 
                 /* ----------- END OF SEMANTIC ----------*/            
 
@@ -1279,6 +1402,8 @@ bool arg_def_types (p_data_ptr_t data)
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
 
+    data->arg_ret = ARG_DEF_TYPE;
+
     token_type = data->token->type;
 
     /* 38. <arg_def_types> -> epsilon*/  
@@ -1360,10 +1485,13 @@ bool ret_def_types (p_data_ptr_t data)
         if (token_type == T_COLON)
         {
             next_token(data);
+
+            data->arg_ret = RET_DEF_TYPE;
+
             ret_val = func_def_types(data);
-        }        
-    }    
-        
+        }
+    }
+
     return ret_val;
 }
 
@@ -1379,6 +1507,14 @@ bool func_types (p_data_ptr_t data)
 
     if (type(data))
     {        
+        /* -------------- SEMANTIC --------------*/
+
+        // Vlozeni noveho parametru funkce                                                       
+        insert_return(data->tbl_list, data->func_name, data->type);
+
+        /* ----------- END OF SEMANTIC ----------*/            
+
+
         ret_val = n_func_types(data);
     }    
 
@@ -1419,6 +1555,14 @@ bool n_func_types (p_data_ptr_t data)
             
             if (type(data))
             {            
+
+            /* -------------- SEMANTIC --------------*/
+
+            // Vlozeni noveho parametru funkce                                                       
+            insert_return(data->tbl_list, data->func_name, data->type);
+
+            /* ----------- END OF SEMANTIC ----------*/ 
+
                 ret_val = n_func_types(data);
             } 
         }            
@@ -1439,6 +1583,21 @@ bool func_def_types (p_data_ptr_t data)
                            
     if (type(data))
     {        
+        /* -------------- SEMANTIC --------------*/
+        
+        if (data->arg_ret == ARG_DEF_TYPE)
+        {
+            // Vlozeni noveho parametru funkce                                               
+            insert_parameter_type(data->tbl_list, data->func_name, data->type);
+        }
+        else
+        {
+            // Vlozeni noveho parametru funkce                                                       
+            insert_return(data->tbl_list, data->func_name, data->type);
+        }
+
+        /* ----------- END OF SEMANTIC ----------*/
+
         ret_val = n_func_def_types(data);
     }            
 
@@ -1475,6 +1634,20 @@ bool n_func_def_types (p_data_ptr_t data)
             
             if (type(data))
             {            
+                /* -------------- SEMANTIC --------------*/        
+                if (data->arg_ret == ARG_DEF_TYPE)
+                {
+                    // Vlozeni noveho parametru funkce                                               
+                    insert_parameter_type(data->tbl_list, data->func_name, data->type);
+                }
+                else
+                {
+                    // Vlozeni noveho parametru funkce                                                       
+                    insert_return(data->tbl_list, data->func_name, data->type);
+                }
+
+                /* ----------- END OF SEMANTIC ----------*/
+
                 ret_val = n_func_def_types(data);
             }                 
         }            

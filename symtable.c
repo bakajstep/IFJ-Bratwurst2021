@@ -106,7 +106,7 @@ symData_t *symTableInsert(symTree_t **tree, char* key, symData_t* data){
 
     (*tree) = (symTree_t *)malloc(sizeof(symTree_t));
     if((*tree) == NULL) return;
-    (*tree)->key = key;
+    strcpy((*tree)->key, key);
     (*tree)->data = data;
     (*tree)->nextLeft = NULL;
     (*tree)->nextRight = NULL;

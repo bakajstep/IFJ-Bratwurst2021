@@ -11,9 +11,16 @@
 
 typedef bool parser_error_t;
 
+typedef enum e_arg_ret {
+    ARG_DEF_TYPE,
+    RET_DEF_TYPE
+} arg_ret_t;
+
 typedef struct p_data {
     token_t* token;
-    DLList* tbl_list;
+    LList* tbl_list;
+    char* func_name;
+    arg_ret_t arg_ret;
     data_type_t type;
     data_type_t psa_data_type; // psa data type
 } *p_data_ptr_t;
