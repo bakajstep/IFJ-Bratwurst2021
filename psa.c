@@ -4,6 +4,7 @@
 #include "parser.h"
 #include "psa.h"
 #include "symstack.h"
+#include "data_types.h" 
 /* TODO smazat */
 #include <stdio.h>
 
@@ -282,6 +283,70 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
     }
 }
 
+data_type_t get_type(p_data_ptr_t data){
+    switch(data->token->type){
+        case T_MUL:
+            return OPERAND;
+        case T_DIV:
+            return OPERAND;
+        case T_INT_DIV:
+            return OPERAND;
+        case T_PLUS:
+            return OPERAND;
+        case T_MINUS:
+            return OPERAND;
+        case T_CHAR_CNT:
+            return OPERAND;
+        case T_CONCAT:
+            return OPERAND;
+        case T_LESS_THAN:
+            return OPERAND;
+        case T_LESS_EQ:
+            return OPERAND;
+        case T_GTR_THAN:
+            return OPERAND;
+        case T_GTR_EQ:
+            return OPERAND;
+        case T_NOT_EQ:
+            return OPERAND;
+        case T_ASSIGN:
+            return OPERAND;
+        case T_EQ:
+            return OPERAND;
+        case T_COLON:
+            return ELSE;
+        case T_LEFT_BRACKET:
+            return OPERAND;
+        case T_RIGHT_BRACKET:
+            return OPERAND;
+        case T_COMMA:
+            return ELSE;
+        case T_INT:
+            return INT;
+        case T_DECIMAL:
+            return NUMBER;
+        case T_DECIMAL_W_EXP:
+            return NUMBER;
+        case T_CHAR_CNT:
+            return OPERAND;
+        case T_IDENTIFIER:
+            //TODO
+            //je potřeba z listu identifikátorů zjistit jestli je platně deklarovasnaý a jaký má typ
+            return OPERAND;
+        case T_KEYWORD:
+            if(data->token->attribute->keyword == K_NIL){
+                return NIL;
+            }else{
+                return ELSE;
+            }
+        case T_STRING:
+            return STR;
+    }
+}
+//TODO:
+//vytvořit funkci, která mi z tokenu vrátí data_type_t      -   zbývá IDENTIFIER
+//typ dat potom budu používat při pushování na stack
+//ze stacku budu dále pomocí typů kontrolovat sémantiku
 psa_error_t psa (p_data_ptr_t data)
 {
     //printf("\nenter psa\n");

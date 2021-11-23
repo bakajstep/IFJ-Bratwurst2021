@@ -5,7 +5,9 @@ typedef enum e_data_type{
     INT,
     NUMBER,
     STR,
-    NIL
+    NIL,
+    OPERAND,
+    ELSE
 } data_type_t;
 
 #endif //IFJ_BRATWURST2021_DATA_TYPES_H

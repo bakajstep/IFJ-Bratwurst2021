@@ -18,12 +18,13 @@ void sym_stack_init(sym_stack* stack){
     stack->top = NULL;
 }
 
-bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol){
+bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol, data_type_t data){
     sym_stack_item *new_item = (sym_stack_item *) malloc(sizeof(sym_stack_item));
     if (!new_item){
         return false;
     }
     new_item->symbol = symbol;
+    new_item->data = data;
     new_item->next = stack->top;
     stack->top = new_item;
     return true;
@@ -42,7 +43,7 @@ sym_stack_item* symbol_stack_top_terminal(sym_stack* stack) {
     return NULL;
 }
 
-bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol){
+bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol, data_type_t data){
 
     sym_stack_item* prev = NULL;
     sym_stack_item* iterator = stack->top;
@@ -55,6 +56,7 @@ bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_e
             }
 
             new_item->symbol = symbol;
+            new_item->data = data;
 
             if (prev == NULL)
             {
