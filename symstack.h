@@ -13,6 +13,7 @@
 #define IFJ_BRATWURST2021_SYMSTACK_H
 
 #include "psa.h"
+#include "data_types.h" 
 
 
 /**
@@ -21,7 +22,7 @@
 typedef struct stack_item
 {
     psa_table_symbol_enum symbol; /// Symbol of stack item.
-    //Data_type data;               /// Data type used for semantic analysis.
+    data_type_t data;             /// Data type used for semantic analysis.
     struct stack_item *next;      /// Pointer to next stack item.
 } sym_stack_item;
 

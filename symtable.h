@@ -12,15 +12,10 @@
 #ifndef IFJ_BRATWURST2021_SYMTABLE_H
 #define IFJ_BRATWURST2021_SYMTABLE_H
 
-#include<stdlib.h>
-#include<stdbool.h>
+#include <stdlib.h>
+#include <stdbool.h>
 
-typedef enum e_data_type{
-    INT,
-    NUMBER,
-    STR,
-    NIL
-} data_type_t;
+#include "data_types.h"
 
 typedef struct function_params {
     data_type_t param_type;
@@ -52,6 +47,7 @@ typedef struct symTree{
 void symTableInit(symTree_t **tree);
 void symDataInit(symData_t* data);
 void paramInsert(symData_t* data, data_type_t type, char* param_name);
+//void returnInsert(symData_t* data, data_type_t type);
 void returnInsert(symData_t* data, data_type_t type);
 symData_t* symTableSearch(symTree_t *tree, char* key);
 symData_t* symTableInsert(symTree_t **tree, char* key, symData_t* data);
