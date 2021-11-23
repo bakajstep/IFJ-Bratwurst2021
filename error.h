@@ -17,6 +17,7 @@ typedef enum error {
     E_NO_ERR   = 0,
     E_LEX      = 1,
     E_SYNTAX   = 2,
+    E_SEM_DEF  = 3,
     E_INTERNAL = 99    
 } error_t;
 

@@ -19,8 +19,8 @@ typedef enum e_arg_ret {
 typedef struct p_data {
     token_t* token;
     LList* tbl_list;
-    char* func_name;
-    arg_ret_t arg_ret;
+    char* func_name;    
+    arg_ret_t arg_ret;    
     data_type_t type;
     data_type_t psa_data_type; // psa data type
 } *p_data_ptr_t;

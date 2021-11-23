@@ -204,6 +204,7 @@ bool expression (p_data_ptr_t data)
     return psa(data);
 }
 
+/***** SYMBOL TABLE *****/
 void create_tbl_list (LList* tbl_list)
 {
     LL_Init(tbl_list);
@@ -267,6 +268,138 @@ void insert_return (LList *tbl_list, char* func_name, data_type_t data_type)
     
     /* Inc parameter count */
     (tbl->returns_count)++;
+}
+
+/***** SEMANTIC ANALYSIS *****/
+/*
+ * Check first definition of identifier or function in table
+ */
+bool check_first_definition (symTree_t* table, char* identifier)
+{
+    bool ret_val = false;
+
+    if (symTableSearch(table, identifier) == NULL)
+    {
+        ret_val = true;
+    }
+    
+    return ret_val;
+}
+
+/*
+ * Check conflict that identifier hasnt same name as function
+ */
+bool check_conflict_id_func (LList* tbl_list, char* identifier)
+{
+    bool ret_val = false;
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+
+    if (symTableSearch(glb_tbl, identifier) == NULL)
+    {
+        ret_val = true;
+    }
+    
+    return ret_val;
+}
+
+/*
+ * Check if function with the same name wasnt defined
+ */
+bool check_function_is_not_defined (LList* tbl_list, char* func_name)
+{
+    bool ret_val = false;
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+    symData_t* func_data = symTableSearch(glb_tbl, func_name);
+
+    if (func_data == NULL)
+    {
+        ret_val = true;
+    }
+    else
+    {
+        if (func_data->defined == false)
+        {
+            ret_val = true;
+        }        
+    }
+
+    return ret_val;    
+}
+
+bool check_no_multiple_function_declaration (LList* tbl_list, char* func_name)
+{
+    bool ret_val = false;
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+    symData_t* func_data = symTableSearch(glb_tbl, func_name);
+
+    if (func_data != NULL)
+    {
+        if (func_data->declared == false)
+        {
+            ret_val = true;
+        }
+    }
+    else
+    {
+        ret_val = true;
+    }    
+
+    return ret_val;
+}
+
+/*
+ * Check if function with this name is declared
+ */
+bool check_function_is_declared (LList* tbl_list, char* func_name)
+{
+    bool ret_val = false;
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+    symData_t* func_data = symTableSearch(glb_tbl, func_name);
+
+    if (func_data != NULL)
+    {
+        if (func_data->declared == true)
+        {
+            ret_val = true;
+        }        
+    }    
+
+    return ret_val;
+}
+
+/*
+ * Check that identifier is defined
+ */
+bool check_identifier_is_defined (LList* tbl_list, char* id)
+{
+    bool ret_val = false;
+    LLElementPtr elem = tbl_list->lastElement;
+    symTree_t* table_elem;
+
+    /*
+     * Go through tables in linked list
+     */
+    while (elem != NULL)
+    {
+        table_elem = symTableSearch(elem->root, id);
+
+        /*
+         * Check if identifier is in table
+         */
+        if (table_elem != NULL)
+        {            
+            if (table_elem->data->defined == true)
+            {
+                ret_val = true;                
+            }
+
+            break;            
+        }        
+
+        elem = elem->nextElement;        
+    }
+        
+    return ret_val;
 }
 
 /******************* PARSER MAIN *******************/
@@ -384,6 +517,7 @@ bool main_b (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;    
     symTree_t** tree;
+    char* func_name;
 
     VALIDATE_TOKEN(data->token);
 
@@ -409,20 +543,37 @@ bool main_b (p_data_ptr_t data)
             {   
                 /* -------------- SEMANTIC --------------*/
 
-                /* TODO pokud funkce jiz byla deklarovana */
+                /* TODO pokud funkce jiz byla deklarovana - tabulka symbolu*/
+
+                func_name = data->token->attribute.string;
+
+                /*
+                 * Check multiple definition of function
+                 */
+                if (!check_function_is_not_defined(data->tbl_list, func_name));
+                {
+                    err = E_SEM_DEF;
+                    return false;
+                }
+                
+                if (!check_no_multiple_function_declaration(data->tbl_list, func_name))
+                {
+                    err = E_SEM_DEF;
+                    return false;
+                }
 
                 // Add symbol to table
                 (*tree) = LL_GetFirst(data->tbl_list);
-                create_symbol(tree, data->token->attribute.string);
+                create_symbol(tree, func_name);
 
                 // Set function as defined
-                symTableSearch(*tree, data->token->attribute.string)->defined = true;
+                symTableSearch(*tree, func_name)->defined = true;
 
                 // Create symbol table for function
                 create_sym_table(data->tbl_list);
 
                 // Save function name to data->func_name
-                strcpy(data->func_name, data->token->attribute.string);
+                strcpy(data->func_name, func_name);
                 
                 /* ----------- END OF SEMANTIC ----------*/
 
@@ -546,6 +697,19 @@ bool main_b (p_data_ptr_t data)
         /* 4. <main_b> -> id (<args>) <main_b> */
         else if (token_type == T_IDENTIFIER)
         {
+            /* -------------- SEMANTIC --------------*/
+
+            /*
+             * Check if called function is declared
+             */
+            if (!check_function_is_declared(data->tbl_list, data->token->attribute.string))
+            {
+                err = E_SEM_DEF;
+                return false;
+            }
+
+            /* ----------- END OF SEMANTIC ----------*/
+
             next_token(data);
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
@@ -611,10 +775,23 @@ bool stats (p_data_ptr_t data)
 
         if (token_type == T_IDENTIFIER)
         {            
-            /* -------------- SEMANTIC --------------*/
+            /* -------------- SEMANTIC --------------*/                                    
             strcpy(id, data->token->attribute.string);
-
             (*tree) = LL_GetLast(data->tbl_list);
+
+            if (!check_first_definition(*tree, id))
+            {
+                err = E_SEM_DEF;
+                return false;
+            }
+
+            if (!check_conflict_id_func(data->tbl_list, id))
+            {
+                err = E_SEM_DEF;
+                return false;
+            }
+            
+            
             create_symbol(tree, id);
                 
             /* ----------- END OF SEMANTIC ----------*/
@@ -778,12 +955,14 @@ bool stats (p_data_ptr_t data)
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
     {
-        next_token(data);
+        strcpy(data->func_name, data->token->attribute.string);
+
+        next_token(data);  
 
         if (id_func(data))
         {
             ret_val = stats(data);
-        }        
+        }
     }    
     /* 11. <stats> -> epsilon */
     else if (token_type == T_KEYWORD)
@@ -817,7 +996,20 @@ bool id_func (p_data_ptr_t data)
       
     /* 13. <id_func> -> (<args>) */
     if (token_type == T_LEFT_BRACKET)
-    {        
+    {     
+        /* -------------- SEMANTIC --------------*/   
+
+        /*
+         * Check if called function is declared
+         */     
+        if (!check_function_is_declared(data->tbl_list, data->func_name))
+        {
+            err = E_SEM_DEF;
+            return false;
+        }
+        
+        /* ----------- END OF SEMANTIC ----------*/
+
         next_token(data);
 
         if (args(data))
@@ -963,9 +1155,17 @@ bool n_ids (p_data_ptr_t data)
     if (token_type == T_COMMA)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
 
-        ret_val = n_ids(data);
-    }    
+        token_type = data->token->type;
+
+        if (token_type == T_IDENTIFIER)
+        {            
+            next_token(data);
+            ret_val = n_ids(data);
+        }                
+    }
     /* 19. <n_ids> -> epsilon */
     else if (token_type == T_ASSIGN)
     {
@@ -1126,12 +1326,26 @@ bool as_vals (p_data_ptr_t data)
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
+        strcpy(data->func_name, data->token->attribute.string);
+
         if (vals(data))
         {
             ret_val = true;
         }
         else
         {
+            /* -------------- SEMANTIC --------------*/ 
+            /*
+             * Check if called function is declared
+             */       
+            if (!check_function_is_declared(data->tbl_list, data->func_name))
+            {
+                err = E_SEM_DEF;
+                return false;
+            }
+        
+            /* ----------- END OF SEMANTIC ----------*/
+
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;                
@@ -1250,12 +1464,26 @@ bool assign_val (p_data_ptr_t data)
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
     {    
+        strcpy(data->func_name, data->token->attribute.string);
+
         if (expression(data))
         {
             ret_val = true;
         }
         else
         {
+            /* -------------- SEMANTIC --------------*/ 
+            /*
+             * Check if called function is declared
+             */       
+            if (!check_function_is_declared(data->tbl_list, data->func_name))
+            {
+                err = E_SEM_DEF;
+                return false;
+            }
+        
+            /* ----------- END OF SEMANTIC ----------*/
+
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;
