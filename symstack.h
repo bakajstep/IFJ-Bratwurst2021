@@ -46,9 +46,10 @@ void sym_stack_init(sym_stack *stack);
  *
  * @param stack Pointer to stack.
  * @param symbol Symbol to be pushed.
+ * @param data Data types.
  * @return True if successfull else false.
  */
-bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol);
+bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol, data_type_t data);
 
 /**
  * Function pops top symbol from stack.
@@ -71,9 +72,10 @@ sym_stack_item* symbol_stack_top_terminal(sym_stack* stack);
  *
  * @param stack Pointer to stack.
  * @param symbol Symbol to be pushed.
+ * @param data Data types.
  * @return True if successfull else false.
  */
-bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol);
+bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_enum symbol, data_type_t data);
 
 /**
  * Function returns top symbol.
