@@ -31,7 +31,7 @@ void DLL_InsertLast( DLList *, symTree_t * );
 
 void DLL_Last( DLList * );
 
-void DLL_GetLast( DLList *, symTree_t * );
+symTree_t * DLL_GetLast( DLList *);
 
 void DLL_DeleteLast( DLList * );
 

@@ -6,9 +6,11 @@
 #include "scanner.h"
 #include "error.h"
 #include "psa.h"
+#include "symtable.h"
+#include "sym_linked_list.h"
 
 /*TODO smazat*/
-#include <stdio.h>
+//#include <stdio.h>
 
 #define PROLOG "ifj21"
 #define VALIDATE_TOKEN(token)    \
@@ -80,6 +82,7 @@ bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
 
 /* TODO smazat */
+/*
 void print(p_data_ptr_t data)
 {
     if (data->token == NULL)
@@ -164,7 +167,7 @@ void print(p_data_ptr_t data)
                 break;
         }
 }
-
+*/
 /***************** DATA FUNCTIONS ******************/
 
 p_data_ptr_t create_data ()
@@ -201,6 +204,26 @@ bool expression (p_data_ptr_t data)
     return psa(data);
 }
 
+void create_tbl_list (DLList* tbl_list)
+{
+    DLL_Init(tbl_list);
+}
+
+void create_sym_table (DLList* tbl_list)
+{
+    symTree_t** tree;
+
+    symTableInit(tree);
+    DLL_InsertLast(tbl_list, tree);    
+}
+
+void create_symbol (symTree_t** tree, char* key)
+{
+    symData_t* data;
+    symDataInit(data);
+    symTableInsert(tree, key, data);
+}
+
 /******************* PARSER MAIN *******************/
 /*
  * Parser main function
@@ -209,6 +232,7 @@ parser_error_t parser ()
 {
     err = E_NO_ERR;
     p_data_ptr_t data;
+    symTree_t** tree;
 
     data = create_data();
 
@@ -233,6 +257,15 @@ parser_error_t parser ()
         return PARSE_ERR;
     }
     
+    /* -------------- SEMANTIC --------------*/
+
+    // Create linked list with symbol tables
+    create_tbl_list(data->tbl_list);
+    // Create global symbol table
+    create_sym_table(data->tbl_list);
+
+    /* ----------- END OF SEMANTIC ----------*/
+
     if (!prog(data))
     {
         if (err == E_NO_ERR)
@@ -305,6 +338,7 @@ bool main_b (p_data_ptr_t data)
 {    
     bool ret_val = false;
     token_type_t token_type;    
+    symTree_t** tree;
 
     VALIDATE_TOKEN(data->token);
 
@@ -313,21 +347,35 @@ bool main_b (p_data_ptr_t data)
     {
         /* EOF */
         ret_val = true;
-    }  
+    }
     else
     {
         token_type = data->token->type;        
 
         /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
         if (token_type == T_KEYWORD && data->token->attribute.keyword == K_FUNCTION)
-        {                    
+        {           
             next_token(data);
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;
 
             if (token_type == T_IDENTIFIER)
-            {                
+            {   
+                /* -------------- SEMANTIC --------------*/
+
+                // Add symbol to table
+                (*tree) = DLL_GetLast(data->tbl_list);
+                create_symbol(tree, data->token->attribute.string);
+
+                // Set function as defined
+                symTableSearch(*tree, data->token->attribute.string)->defined = true;
+
+                // Create symbol table for function
+                create_sym_table(data->tbl_list);
+                
+                /* ----------- END OF SEMANTIC ----------*/
+
                 next_token(data);
                 VALIDATE_TOKEN(data->token);
                 TEST_EOF(data->token);
@@ -338,7 +386,7 @@ bool main_b (p_data_ptr_t data)
                     next_token(data);                
 
                     if (params(data))
-                    {                        
+                    {                       
                         VALIDATE_TOKEN(data->token);
                         TEST_EOF(data->token);
                         token_type = data->token->type;
@@ -354,7 +402,14 @@ bool main_b (p_data_ptr_t data)
                                 token_type = data->token->type;                                
 
                                 if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
-                                {                
+                                {
+                                    /* -------------- SEMANTIC --------------*/
+                                    
+                                    // Deleting the table representing function block from the linked list
+                                    DLL_DeleteLast(data->tbl_list);
+
+                                    /* ----------- END OF SEMANTIC ----------*/
+
                                     next_token(data);                                
                                     
                                     if (main_b(data))
@@ -681,8 +736,9 @@ bool id_func (p_data_ptr_t data)
  */
 bool params (p_data_ptr_t data)
 {    
-    bool ret_val = false;
+    bool ret_val = false;    
     token_type_t token_type;
+    char* id;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -692,6 +748,9 @@ bool params (p_data_ptr_t data)
     /* 14. <params> -> id : <type> <n_params> */
     if (token_type == T_IDENTIFIER)
     {
+        // Ulozeni jmena parametru
+        strcpy(id, data->token->attribute.string);
+
         next_token(data);
         VALIDATE_TOKEN(data->token);
         TEST_EOF(data->token);
@@ -702,7 +761,15 @@ bool params (p_data_ptr_t data)
             next_token(data);
             
             if (type(data))
-            {                
+            {   
+                /* -------------- SEMANTIC --------------*/
+
+                // Vlozeni noveho parametru funkce                
+                /* TODO */
+                paramInsert(TODO, data->type, id);
+
+                /* ----------- END OF SEMANTIC ----------*/            
+
                 ret_val = n_params(data);
             }            
         }        
@@ -1442,7 +1509,25 @@ bool type (p_data_ptr_t data)
         if (keyword == K_INTEGER ||
             keyword == K_NUMBER ||
             keyword == K_STRING)
-        {                                      
+        {                  
+            switch (keyword)
+            {
+            case K_INTEGER:
+                data->type = INT;
+                break;
+
+            case K_NUMBER:
+                data->type = NUMBER;
+                break;
+
+            case K_STRING:
+                data->type = STR;
+                break;
+
+            default:                
+                break;
+            }
+
             ret_val = true;
             next_token(data);
         }        

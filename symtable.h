@@ -17,7 +17,7 @@
 
 typedef enum e_data_type{
     INT,
-    DOUBLE,
+    NUMBER,
     STR,
     NIL
 } data_type_t;
