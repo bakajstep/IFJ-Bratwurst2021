@@ -14,18 +14,19 @@
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include "error.h"
 
 #include "data_types.h"
 
 typedef struct function_params {
     data_type_t param_type;
     char *param_name;
-    struct function_params_t* param_next;
+    struct function_params* param_next;
 } function_params_t;
 
 typedef struct function_returns {
     data_type_t return_type;
-    struct function_returns_t* ret_next;
+    struct function_returns* ret_next;
 } function_returns_t;
 
 typedef struct symData{    
@@ -50,7 +51,6 @@ typedef struct symTree{
 void symTableInit(symTree_t **tree);
 void symDataInit(symData_t* data);
 void paramInsert(symData_t* data, data_type_t type, char* param_name);
-/* TODO */
 void paramTypeInsert(symData_t* data, data_type_t type);
 void returnInsert(symData_t* data, data_type_t type);
 symData_t* symTableSearch(symTree_t *tree, char* key);

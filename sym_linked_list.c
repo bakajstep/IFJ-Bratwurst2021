@@ -60,6 +60,23 @@ void LL_DeleteLast( LList* list ){
         delElement = NULL;
     }
 }
+
+symTree_t * LL_GetFirst( LList* list){
+    if(list->lastElement == NULL){
+        return NULL;
+    }
+    struct LLElement current;
+    current = list->lastElement;
+    while(current->next != NULL){
+        current = current.nextElement;
+    }
+    return current->root;
+}
+
+symTree_t * LL_GetLast( LList* list){
+    return list->lastElement->root;
+}
+
 void LL_DeleteAfter( LList* list){
     struct LLElement *delElement = NULL;
     if(list->activeElement == NULL || list->activeElement->nextElement == NULL){
@@ -74,7 +91,7 @@ void LL_InsertAfter( LList* list, symTree_t* root){
     if(list->activeElement == NULL){
         return;
     }
-    struct LLElement *newElement = NULL;
+    struct LLElement *newElement;
     newElement->root = root;
     if(list->activeElement == list->lastElement) {
         list->lastElement = newElement;

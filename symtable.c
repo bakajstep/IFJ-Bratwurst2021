@@ -11,6 +11,7 @@
 
 #include "symtable.h"
 #include <stdlib.h>
+#include <string.h>
 
 void symTableInit(symTree_t **tree){
 
@@ -22,6 +23,11 @@ void symTableInit(symTree_t **tree){
 
 void symDataInit(symData_t* data){
     data = (symData_t*) malloc(sizeof(symData_t));
+
+    if(!data){
+        err = E_INTERNAL;
+        return;
+    }
     data->declared = true;
     data->defined = false;
     data->data_type = NIL;
@@ -32,7 +38,36 @@ void symDataInit(symData_t* data){
 
 void paramInsert(symData_t* data, data_type_t type, char* param_name){
     function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
+
+    if(!newParam){
+        err = E_INTERNAL;
+        return;
+    }
     newParam->param_name = param_name;
+    newParam->param_type = type;
+
+    if(data->first_param == NULL){
+        data->first_param = newParam;
+        data->first_param->param_next = NULL;
+    }else{
+        function_params_t* current;
+        current = data->first_param;
+
+        while(current != NULL){
+            *current = current->param_next;
+        }
+        current = newParam;
+        current->param_next = NULL;
+    }
+}
+
+void paramTypeInsert(symData_t* data, data_type_t type){
+    function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
+
+    if(!newParam){
+        err = E_INTERNAL;
+        return;
+    }
     newParam->param_type = type;
 
     if(data->first_param == NULL){
@@ -52,6 +87,11 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
 
 void returnInsert(symData_t* data, data_type_t type){
     function_returns_t* newReturn = (function_returns_t*) malloc(sizeof(function_returns_t));
+
+    if(!newReturn){
+        err = E_INTERNAL;
+        return;
+    }
     newReturn->return_type = type;
 
     if(data->first_ret == NULL){
@@ -105,6 +145,10 @@ symData_t *symTableInsert(symTree_t **tree, char* key, symData_t* data){
     }
 
     (*tree) = (symTree_t *)malloc(sizeof(symTree_t));
+    if(!(*tree)){
+        err = E_INTERNAL;
+        return;
+    }
     if((*tree) == NULL) return;
     strcpy((*tree)->key, key);
     (*tree)->data = data;
@@ -132,8 +176,8 @@ void symTableDispose(symTree_t **tree){
     if((*tree) != NULL){
         if((*tree)->nextLeft != NULL) symTableDispose(&((*tree)->nextLeft));
         if((*tree)->nextRight != NULL) symTableDispose(&((*tree)->nextRight));
-        paramDispose(&(*tree)->data->first_param);
-        returnDispose(&(*tree)->data->first_ret);
+        paramDispose((*tree)->data->first_param);
+        returnDispose((*tree)->data->first_ret);
         free((*tree)->data);
         free((*tree));
         (*tree) = NULL;

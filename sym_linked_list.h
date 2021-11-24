@@ -29,7 +29,7 @@ void LL_Dispose( LList * );
 
 void LL_InsertLast( LList *, symTree_t * );
 
-void LL_Last( LList * );
+symTree_t * LL_GetFirst( LList *);
 
 symTree_t * LL_GetLast( LList *);
 
