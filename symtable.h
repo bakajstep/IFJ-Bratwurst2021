@@ -42,7 +42,7 @@ typedef struct symData{
 } symData_t;
 
 typedef struct symTree{
-    const char* key;                /* func / id name */
+    char* key;                /* func / id name */
     symData_t* data;                 /* data */
     struct symTree* nextLeft;
     struct symTree* nextRight;
