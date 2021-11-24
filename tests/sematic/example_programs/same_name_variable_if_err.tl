@@ -7,3 +7,5 @@ function main()
         local b : integer = 3
     end
 end
+
+main()

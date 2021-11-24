@@ -8,3 +8,5 @@ function main()
         local b : integer = 2
     end
 end
+
+main()

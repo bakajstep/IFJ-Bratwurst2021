@@ -12,3 +12,5 @@ function main()
     local b : integer = 2
     local a : integer = factorial(b)
 end
+
+main()

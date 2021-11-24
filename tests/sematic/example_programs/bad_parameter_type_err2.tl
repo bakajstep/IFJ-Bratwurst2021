@@ -1,7 +1,7 @@
 require "ifj21"
 
 function main()
-    local readn : number = 2
+    local b : integer = ord(4, 5);
 end
 
 main()
