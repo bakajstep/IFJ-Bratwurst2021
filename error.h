@@ -14,11 +14,13 @@
 #include <stdint.h>
 
 typedef enum error {
-    E_NO_ERR   = 0,
-    E_LEX      = 1,
-    E_SYNTAX   = 2,
-    E_SEM_DEF  = 3,
-    E_INTERNAL = 99    
+    E_NO_ERR     = 0,
+    E_LEX        = 1,
+    E_SYNTAX     = 2,
+    E_SEM_DEF    = 3,
+    E_SEM_ASSIGN = 4,
+    E_SEM_PARAM  = 5,
+    E_INTERNAL   = 99
 } error_t;
 
 extern error_t err;
