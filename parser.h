@@ -20,9 +20,13 @@ typedef struct p_data {
     token_t* token;
     LList* tbl_list;
     char* func_name;    
+
     arg_ret_t arg_ret;    
     data_type_t type;
     data_type_t psa_data_type; // psa data type
+
+    symData_t* function_declaration_data;
+    function_params_t* param;
 } *p_data_ptr_t;
 
 parser_error_t parser ();
