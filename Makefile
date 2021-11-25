@@ -3,6 +3,7 @@ PROG=$(PRJ)-test
 
 LEX=lex
 STX=syntax
+SEM=semantic
 
 MAIN=main
 SCAN=scanner
@@ -24,6 +25,47 @@ PROG9=str_func_err_1
 PROG10=str_func_err_2
 PROG11=fact_iter_no_exp
 PROG12=fact_rec_no_err
+PROG13=bad_parameter_type_err1
+PROG14=bad_parameter_type_err2
+PROG15=bad_parameter_type_err3
+PROG16=bad_return_type_err1
+PROG17=bad_return_type_err2
+PROG18=bad_type_variable_err
+PROG19=call_too_few_parameter_err1
+PROG20=call_too_few_parameter_err2
+PROG21=call_too_many_parameter_err1
+PROG22=call_too_many_parameter_err2
+PROG23=define_too_few_parameter_err
+PROG24=define_too_many_parameter_err1
+PROG25=define_too_many_parameter_err2
+PROG26=define_too_many_returns_err
+PROG27=function_call_before_declaration_err1
+PROG28=function_call_before_declaration_err2
+PROG29=function_make_local_variable_err
+PROG30=more_returns_than_variables_err
+PROG31=no_return_nill_noerr
+PROG32=not_defined_function_err
+PROG33=same_name_function_err1
+PROG34=same_name_function_err2
+PROG35=same_name_variable-function_err1
+PROG36=same_name_variable-function_err2
+PROG37=same_name_variable-function_err3
+PROG38=same_name_variable-function_err4
+PROG39=same_name_variable-function_err5
+PROG40=same_name_variable-function_err6
+PROG41=same_name_variable-function_err7
+PROG42=same_name_variable-function_err8
+PROG43=same_name_variable-function_err9
+PROG44=same_name_variable_if_err
+PROG45=same_name_variable_main_err
+PROG46=same_name_variable_main_if_noerr
+PROG47=same_name_variable_main_while_noerr
+PROG48=same_name_variable_while_err
+PROG49=undeclared_variable_err1
+PROG50=undeclared_variable_err2
+PROG51=undeclared_variable_err3
+PROG52=undeclared_variable_nill_noerr
+PROG53=using_undefined_variable_err
 
 CURTEST=_test_cur_
 REFTEST=_test_ref_
@@ -32,13 +74,14 @@ TESTSDIR=tests
 EXPLDIR=example_programs
 LEXPATH=$(TESTSDIR)/$(LEX)/
 STXPATH=$(TESTSDIR)/$(STX)/
+SEMPATH=$(TESTSDIR)/$(SEM)/
 EXPLPATH=$(TESTSDIR)/$(EXPLDIR)/
 
 CC=gcc
 # TODO smazat
 CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
 
-.PHONY: $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean
+.PHONY: $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean
 
 $(LEX)-test:
 	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(LEX)_test.c
@@ -139,3 +182,21 @@ $(STX)-clean:
 	$(STX)$(CURTEST)$(PROG11).output \
 	$(STX)$(CURTEST)$(PROG12).output \
 	$(STX)-test
+
+$(SEM)-test:
+	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h
+
+	@echo "\n------------------------------------ 'bad_parameter_type_err1' ------------------------------------\n"
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
+	@echo "\nTest case 'bad_parameter_type_err1' output differences:"
+	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG13).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output || exit 0
+
+	@echo "\n------------------------------------ 'bad_parameter_type_err2' ------------------------------------\n"
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG14).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output
+	@echo "\nTest case 'bad_parameter_type_err2' output differences:"
+	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG14).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output || exit 0
+
+$(SEM)-clean:
+	cd $(SEMPATH) && rm -f \
+    $(SEM)$(CURTEST)$(PROG13).output \
+    $(SEM)$(CURTEST)$(PROG14).output \
