@@ -332,9 +332,12 @@ data_type_t get_type(p_data_ptr_t data){
             //TODO
             //je potřeba z listu identifikátorů zjistit jestli je platně deklarovasnaý a jaký má typ
             //idk ještě jak vracet když to bude špatně
-            return OP;
+            if(!check_identifier_is_defined(data->tbl_list,data->token->attribute.string)){
+                return DERR;
+            }
+            return identifier_type(data->tbl_list,data->token->attribute.string);
         case T_KEYWORD:
-            if(data->token->attribute->keyword == K_NIL){ //TODO ERR
+            if(data->token->attribute.keyword == K_NIL){ //TODO ERR
                 return NIL;
             }else{
                 return ELSE;
@@ -348,8 +351,8 @@ data_type_t get_type(p_data_ptr_t data){
 
 static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_item* op2, sym_stack_item* op3, data_type_t* final_type){
 
-    bool op1_to_number = false;
-    bool op3_to_number = false;
+    //bool op1_to_number = false;
+    //bool op3_to_number = false;
 
     switch (rule) {
         //TODO - asi nepotrebuju
@@ -395,11 +398,11 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
 
             //pretypovani
             if (op1->data == INT){
-                op1_to_number = true;
+                //op1_to_number = true;
                 *final_type = NUMBER;
             }
             if (op3->data == INT){
-                op3_to_number = true;
+                //op3_to_number = true;
                 *final_type = NUMBER;
             }
             break;
@@ -411,7 +414,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
-
+/*
             //pretypovani
             if (op1->data == INT){
                 op1_to_number = true;
@@ -419,7 +422,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op3->data == INT){
                 op3_to_number = true;
             }
-
+*/
             break;
         case NT_IDIV_NT: ;
             *final_type = INT;
@@ -455,7 +458,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op1->data == NUMBER && op3->data == NUMBER){
                 break;
             }
-
+/*
             //pretypovani
             if (op1->data == INT){
                 op1_to_number = true;
@@ -463,7 +466,8 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op3->data == INT){
                 op3_to_number = true;
             }
-
+*/          
+            break;
         case NT_LEQ_NT: ;
         case NT_GEQ_NT: ;
         case NT_LTN_NT: ;
@@ -483,14 +487,14 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op1->data == NUMBER && op3->data == NUMBER){
                 break;
             }
-
+/*
             //pretypovani
             if (op1->data == INT){
                 op1_to_number = true;
             }
             if (op3->data == INT){
                 op3_to_number = true;
-            }
+            }*/
             break;
         default: ;
 
@@ -542,7 +546,10 @@ psa_error_t psa (p_data_ptr_t data)
 
         switch (tbl_data) {
             case '=': ;
-                //TODO sem musím ještě mrsknout ošetření jestli type je některý z žádoucích, nebo budu mít err kvůli tomu že to nebude např. inicializovaný
+                if(get_type(data) == DERR){
+                    err = E_SEM_DEF;
+                    return PSA_ERR;
+                }
                 if(!symbol_stack_push(&stack, get_symbol_from_token(data->token),get_type(data))){
                     err = E_INTERNAL;
                     return PSA_ERR;
@@ -556,7 +563,10 @@ psa_error_t psa (p_data_ptr_t data)
                     return PSA_ERR;
                 }
                 //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
-                //TODO tady taky
+                if(get_type(data) == DERR){
+                    err = E_SEM_DEF;
+                    return PSA_ERR;
+                }
                 if(!symbol_stack_push(&stack, get_symbol_from_token(data->token), get_type(data)))
                 {                    
                     err = E_INTERNAL;
