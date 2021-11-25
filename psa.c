@@ -781,6 +781,7 @@ psa_error_t psa (p_data_ptr_t data)
     if(symbol_stack_top(&stack)->symbol == NON_TERM)
     {
         //printf("\nexit psa\n");
+        symbol_stack_free(&stack);
         return PSA_NO_ERR;    
     }
     return  PSA_ERR;
