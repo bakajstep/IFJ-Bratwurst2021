@@ -661,18 +661,72 @@ void insert_built_in_functions (LList* tbl_list)
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
 
     // TODO
+    // function reads (): string
+    symData_t* data;
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    returnInsert(data, STR);
+    symTableInsert(&glb_tbl, "reads", data);
 
-    // function reads (): string   
     // function readi (): integer
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "readi", data);
+
     // function readn (): number
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    returnInsert(data, NUMBER);
+    symTableInsert(&glb_tbl, "readn", data);
 
     // function write (term_1, term_2, ..., term_n)
 
     // function tointeger (f : number) : integer
 
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 1;
+    paramInsert(data, NUMBER, "f");
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "tointeger", data);
+
     // function substr (s : string, i : number, j : number) : string
+
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 3;
+    paramInsert(data, STR, "s");
+    paramInsert(data, NUMBER, "i");
+    paramInsert(data, NUMBER, "j");
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "substr", data);
+
     // function ord (s : string, i : integer) : integer
+
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 2;
+    paramInsert(data, STR, "s");
+    paramInsert(data, INT, "i");
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "ord", data);
+
     // function chr (i : integer) : string
+
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 1;
+    paramInsert(data, INT, "i");
+    returnInsert(data, STR);
+    symTableInsert(&glb_tbl, "chr", data);
 }
 
 /******************* PARSER MAIN *******************/

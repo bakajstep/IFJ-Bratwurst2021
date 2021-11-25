@@ -125,7 +125,7 @@ symData_t* symTableSearch(symTree_t* tree, char* key){
     return NULL;
 }
 
-symData_t *symTableInsert(symTree_t **tree, char* key, symData_t* data){
+void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     if(*tree == NULL){
         return;
     }
@@ -133,7 +133,7 @@ symData_t *symTableInsert(symTree_t **tree, char* key, symData_t* data){
     while((*tree) != NULL){
 
         if(strcmp((*tree)->key, key) == 0){
-            (*tree)->data = data;
+            err = E_INTERNAL;
             return;
         }
 
@@ -151,7 +151,7 @@ symData_t *symTableInsert(symTree_t **tree, char* key, symData_t* data){
     }
     if((*tree) == NULL) return;
     strcpy((*tree)->key, key);
-    (*tree)->data = data;
+    *(*tree)->data = *data;
     (*tree)->nextLeft = NULL;
     (*tree)->nextRight = NULL;
 }
