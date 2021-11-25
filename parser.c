@@ -212,7 +212,7 @@ void create_tbl_list (LList* tbl_list)
 
 void create_sym_table (LList* tbl_list)
 {
-    symTree_t** tree;
+    symTree_t** tree = NULL;
 
     symTableInit(tree);
     LL_InsertLast(tbl_list, *tree);
@@ -220,7 +220,7 @@ void create_sym_table (LList* tbl_list)
 
 void create_symbol (symTree_t** tree, char* key)
 {
-    symData_t* data;
+    symData_t* data = NULL;
     symDataInit(data);
 
     if (err == E_NO_ERR)
@@ -790,8 +790,8 @@ bool main_b (p_data_ptr_t data)
 {    
     bool ret_val = false;
     token_type_t token_type;    
-    symTree_t** tree;
-    char* func_name;
+    symTree_t** tree = NULL;
+    char* func_name = NULL;
 
     VALIDATE_TOKEN(data->token);
 
@@ -1118,9 +1118,9 @@ bool stats (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;    
-    symTree_t** tree;
+    symTree_t** tree = NULL;
     data_type_t data_type;
-    char* id;
+    char* id = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -1454,7 +1454,7 @@ bool params (p_data_ptr_t data)
 {    
     bool ret_val = false;    
     token_type_t token_type;
-    char* id;
+    char* id = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -1578,7 +1578,7 @@ bool n_ids (p_data_ptr_t data)
                 return false;
             }
 
-            idInsert(data->ids_list, data->token->attribute.string);
+            idInsert(data->ids_list, symTableSearch(LL_GetLast(data->tbl_list), data->token->attribute.string)->data_type);
 
             if (err != E_NO_ERR)
             {
@@ -1630,7 +1630,7 @@ bool vals (p_data_ptr_t data)
                 }
             }
 
-            data->ids_list->next;
+            data->ids_list = data->ids_list->next;
         }                        
         else
         {
@@ -1759,7 +1759,7 @@ bool n_vals (p_data_ptr_t data)
                         }
                     }
 
-                    data->ids_list->next;
+                    data->ids_list = data->ids_list->next;
                 }                        
                 else
                 {
