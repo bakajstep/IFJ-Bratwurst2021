@@ -11,7 +11,7 @@
 #ifndef IFJ_BRATWURST2021_SYM_LINKED_LIST_H
 #define IFJ_BRATWURST2021_SYM_LINKED_LIST_H
 
-#include<symtable.h>
+#include"symtable.h"
 
 typedef struct LLElement {
     symTree_t* root;
