@@ -54,7 +54,7 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
         current = data->first_param;
 
         while(current != NULL){
-            *current = current->param_next;
+            current = current->param_next;
         }
         current = newParam;
         current->param_next = NULL;
@@ -78,7 +78,7 @@ void paramTypeInsert(symData_t* data, data_type_t type){
         current = data->first_param;
 
         while(current != NULL){
-            *current = current->param_next;
+            current = current->param_next;
         }
         current = newParam;
         current->param_next = NULL;
@@ -102,7 +102,7 @@ void returnInsert(symData_t* data, data_type_t type){
         current = data->first_ret;
 
         while(current != NULL){
-            *current = current->ret_next;
+            current = current->ret_next;
         }
         current = newReturn;
         current->ret_next = NULL;
