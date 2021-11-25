@@ -67,8 +67,8 @@ symTree_t * LL_GetFirst( LList* list){
     }
     struct LLElement* current;
     current = list->lastElement;
-    while(current->next != NULL){
-        current = current.nextElement;
+    while(current->nextElement != NULL){
+        current = current->nextElement;
     }
     return current->root;
 }
