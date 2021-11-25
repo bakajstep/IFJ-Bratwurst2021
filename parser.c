@@ -623,7 +623,7 @@ void idInsert(ids_list_t* ids_list, data_type_t type)
         current = ids_list;
 
         while(current != NULL){
-            *current = current->next;
+            current = current->next;
         }
         current = newId;
         current->next = NULL;
