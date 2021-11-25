@@ -206,13 +206,21 @@ bool expression (p_data_ptr_t data)
 
 /***** SYMBOL TABLE *****/
 void create_tbl_list (LList* tbl_list)
-{
-    LL_Init(tbl_list);
+{    
+
+    if (tbl_list == NULL)
+    {
+        err = E_INTERNAL;        
+    }
+    else
+    {
+        LL_Init(tbl_list);
+    }        
 }
 
 void create_sym_table (LList* tbl_list)
 {
-    symTree_t** tree = NULL;
+    symTree_t** tree = (symTree_t**) malloc(sizeof(symTree_t*));
 
     symTableInit(tree);
     LL_InsertLast(tbl_list, *tree);
@@ -656,6 +664,16 @@ void idInsert(ids_list_t* ids_list, data_type_t type)
     }
 }
 
+void create_tbl_list_mem (LList* tbl_list)
+{
+    tbl_list = (LList*) malloc(sizeof(LList));
+
+    if (tbl_list == NULL)
+    {
+        err = E_INTERNAL;
+    }    
+}
+
 void insert_built_in_functions (LList* tbl_list)
 {    
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
@@ -762,9 +780,22 @@ parser_error_t parser ()
     }
     
     /* -------------- SEMANTIC --------------*/
+    
+    create_tbl_list(data->tbl_list);
+
+    if (err != E_NO_ERR)
+    {
+        return PARSE_ERR;
+    }    
 
     // Create linked list with symbol tables
-    create_tbl_list(data->tbl_list);
+    create_tbl_list_mem(data->tbl_list);
+
+    if (err != E_NO_ERR)
+    {
+        return PARSE_ERR;
+    }    
+
     // Create global symbol table
     create_sym_table(data->tbl_list);
     // Insert built in functions
