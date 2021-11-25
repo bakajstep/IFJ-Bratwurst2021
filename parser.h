@@ -37,6 +37,7 @@ typedef struct p_data {
 
 parser_error_t parser ();
 bool check_identifier_is_defined (LList* tbl_list, char* id);
+data_type_t identifier_type (LList* tbl_list, char* id);
 void next_token(p_data_ptr_t data);
 
 #endif //IFJ_BRATWURST2021_PARSER_H
