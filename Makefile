@@ -188,202 +188,202 @@ $(SEM)-test:
 	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
 	@echo "\nTest case 'bad_parameter_type_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG13).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG14).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG14).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output
 	@echo "\nTest case 'bad_parameter_type_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG14).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err3' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG15).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG15).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output
 	@echo "\nTest case 'bad_parameter_type_err3' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG15).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_return_type_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG16).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG16).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output
 	@echo "\nTest case 'bad_return_type_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG16).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_return_type_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG17).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG17).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output
 	@echo "\nTest case 'bad_return_type_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG17).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_type_variable_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG18).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG18).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG18).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG18).output
 	@echo "\nTest case 'bad_type_variable_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG18).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG18).output || exit 0
 
 	@echo "\n------------------------------------ 'call_too_few_parameter_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG19).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG19).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output
 	@echo "\nTest case 'call_too_few_parameter_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG19).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output || exit 0
 
 	@echo "\n------------------------------------ 'call_too_few_parameter_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG20).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG20).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG20).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG20).output
 	@echo "\nTest case 'call_too_few_parameter_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG20).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG20).output || exit 0
 
 	@echo "\n------------------------------------ 'call_too_many_parameter_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG21).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG21).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG21).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG21).output
 	@echo "\nTest case 'call_too_few_parameter_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG21).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG21).output || exit 0
 
 	@echo "\n------------------------------------ 'call_too_many_parameter_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG22).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG22).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG22).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG22).output
 	@echo "\nTest case 'bad_type_variable_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG22).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG22).output || exit 0
 
 	@echo "\n------------------------------------ 'define_too_few_parameter_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG23).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG23).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG23).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG23).output
 	@echo "\nTest case 'define_too_few_parameter_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG23).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG23).output || exit 0
 
 	@echo "\n------------------------------------ 'define_too_many_parameter_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG24).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG24).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG24).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG24).output
 	@echo "\nTest case 'bad_type_variable_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG24).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG24).output || exit 0
 
 	@echo "\n------------------------------------ 'define_too_many_returns_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG25).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG25).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG25).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG25).output
 	@echo "\nTest case 'define_too_many_returns_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG25).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG25).output || exit 0
 
 	@echo "\n------------------------------------ 'function_call_before_declaration_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG26).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG26).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG26).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG26).output
 	@echo "\nTest case 'function_call_before_declaration_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG18).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG18).output || exit 0
 
 	@echo "\n------------------------------------ 'function_call_before_declaration_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG27).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG27).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG27).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG27).output
 	@echo "\nTest case 'function_call_before_declaration_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG27).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG27).output || exit 0
 
 	@echo "\n------------------------------------ 'function_make_local_variables_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG28).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG28).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG28).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG28).output
 	@echo "\nTest case 'function_make_local_variables_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG28).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG28).output || exit 0
 
 	@echo "\n------------------------------------ 'more_returns_than_variables_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG29).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG29).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output
 	@echo "\nTest case 'more_returns_than_variables_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG29).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output || exit 0
 
 	@echo "\n------------------------------------ 'no_return_nill_noerr' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG30).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG30).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG30).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG30).output
 	@echo "\nTest case 'no_return_nill_noerr' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG30).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG30).output || exit 0
 
 	@echo "\n------------------------------------ 'not_defined_function_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG31).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG31).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG31).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG31).output
 	@echo "\nTest case 'not_defined_function_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG31).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG31).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_function_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG32).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG32).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG32).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG32).output
 	@echo "\nTest case 'same_name_function_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG32).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG32).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_function_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG33).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG33).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG33).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG33).output
 	@echo "\nTest case 'same_name_function_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG33).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG33).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG34).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG34).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG34).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG34).output
 	@echo "\nTest case 'same_name_variable-function_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG34).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG34).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG35).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG35).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG35).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG35).output
 	@echo "\nTest case 'same_name_variable-function_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG35).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG35).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err3' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG36).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG36).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG36).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG36).output
 	@echo "\nTest case 'same_name_variable-function_err3' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG36).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG36).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err4' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG37).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG37).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG37).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG37).output
 	@echo "\nTest case 'same_name_variable-function_err4' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG37).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG37).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err5' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG38).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG38).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG38).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG38).output
 	@echo "\nTest case 'same_name_variable-function_err5' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG38).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG38).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err6' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG39).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG39).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG39).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG39).output
 	@echo "\nTest case 'same_name_variable-function_err6' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG39).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG39).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err7' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG40).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG40).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG40).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG40).output
 	@echo "\nTest case 'same_name_variable-function_err7' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG40).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG40).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err8' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG41).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG41).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG41).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG41).output
 	@echo "\nTest case 'same_name_variable-function_err8' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG41).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG41).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable-function_err9' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG42).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG42).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG42).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG42).output
 	@echo "\nTest case 'same_name_variable-function_err9' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG42).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG42).output || exit 0
 
 	@echo "\n------------------------------------ 'function_call_before_declaration_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG43).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG43).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG43).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG43).output
 	@echo "\nTest case 'function_call_before_declaration_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG43).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG43).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable_if_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG44).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG44).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG44).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG44).output
 	@echo "\nTest case 'same_name_variable_if_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG44).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG44).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable_main_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG45).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG45).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output
 	@echo "\nTest case 'same_name_variable_main_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG45).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable_main_if_noerr' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG46).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG46).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG46).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG46).output
 	@echo "\nTest case 'same_name_variable_main_if_noerr' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG46).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG46).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable_main_while_noerr' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG47).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG47).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG47).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG47).output
 	@echo "\nTest case 'same_name_variable_main_while_noerr' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG47).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG47).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable_while_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG48).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG48).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG48).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG48).output
 	@echo "\nTest case 'same_name_variable_while_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG48).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG48).output || exit 0
 
 	@echo "\n------------------------------------ 'undeclared_variable_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG49).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG49).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG49).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG49).output
 	@echo "\nTest case 'undeclared_variable_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG49).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG49).output || exit 0
 
 	@echo "\n------------------------------------ 'undeclared_variable_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG50).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG50).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG50).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG50).output
 	@echo "\nTest case 'undeclared_variable_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG50).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG50).output || exit 0
 
 	@echo "\n------------------------------------ 'undeclared_variable_err3' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG51).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG51).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG51).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG51).output
 	@echo "\nTest case 'undeclared_variable_err3' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG51).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG51).output || exit 0
 
 	@echo "\n------------------------------------ 'using_undefined_variable_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)$(PROG52).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG52).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG52).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG52).output
 	@echo "\nTest case 'using_undefined_variable_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG52).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG52).output || exit 0
 

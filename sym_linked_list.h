@@ -33,11 +33,9 @@ symTree_t * LL_GetFirst( LList *);
 
 symTree_t * LL_GetLast( LList *);
 
-void LL_DeleteLast( LList * );
-
-void LL_DeleteAfter( LList * );
-
 void LL_InsertAfter( LList *, symTree_t * );
+
+void LL_DeleteLast( LList* list );
 
 void LL_GetValue( LList *, symTree_t * );
 

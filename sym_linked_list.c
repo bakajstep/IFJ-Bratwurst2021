@@ -9,6 +9,7 @@
  */
 
 #include "sym_linked_list.h"
+#include "symtable.h"
 
 void LL_Init( LList* list ) {
     list->lastElement = NULL;
@@ -32,7 +33,7 @@ void LL_Dispose( LList* list ) {
 }
 
 void LL_InsertLast( LList* list, symTree_t* root) {
-    struct LLElement* newElement;
+    struct LLElement* newElement = NULL;
     newElement->root = root;
     newElement->nextElement = NULL;
 
@@ -45,7 +46,6 @@ void LL_InsertLast( LList* list, symTree_t* root) {
 }
 
 void LL_DeleteLast( LList* list ){
-    struct LLElement *delElement = NULL;
     if(list->lastElement == NULL){
         return;
     }
@@ -55,7 +55,9 @@ void LL_DeleteLast( LList* list ){
     if(list->lastElement->nextElement == NULL){
         list->lastElement = NULL;
     }else{
+        struct LLElement *delElement = NULL;
         delElement = list->lastElement;
+        symTableDispose(&delElement->root);
         list->lastElement = list->lastElement->nextElement;
         delElement = NULL;
     }
@@ -77,21 +79,11 @@ symTree_t * LL_GetLast( LList* list){
     return list->lastElement->root;
 }
 
-void LL_DeleteAfter( LList* list){
-    struct LLElement *delElement = NULL;
-    if(list->activeElement == NULL || list->activeElement->nextElement == NULL){
-        return;
-    }
-    delElement = list->activeElement->nextElement;
-    list->activeElement->nextElement = list->activeElement->nextElement->nextElement;
-    delElement = NULL;
-}
-
 void LL_InsertAfter( LList* list, symTree_t* root){
     if(list->activeElement == NULL){
         return;
     }
-    struct LLElement *newElement;
+    struct LLElement* newElement = NULL;
     newElement->root = root;
     if(list->activeElement == list->lastElement) {
         list->lastElement = newElement;
@@ -106,7 +98,7 @@ void LL_GetValue( LList* list, symTree_t* root ){
     if(list->activeElement == NULL){
         return;
     }
-    *root = list->activeElement->root;
+    *root = *list->activeElement->root;
 }
 
 void LL_Next( LList* list){
