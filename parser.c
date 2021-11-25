@@ -974,7 +974,7 @@ bool main_b (p_data_ptr_t data)
                     return false;
                 }                                
 
-                data->function_declaration_data == NULL;   
+                data->function_declaration_data = NULL;   
             }
                                      
             /* ----------- END OF SEMANTIC ----------*/
