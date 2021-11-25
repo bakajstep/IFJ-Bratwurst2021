@@ -16,6 +16,11 @@ typedef enum e_arg_ret {
     RET_DEF_TYPE
 } arg_ret_t;
 
+typedef struct ids_list {
+    data_type_t type;
+    struct ids_list* next;
+} ids_list_t;
+
 typedef struct p_data {
     token_t* token;
     LList* tbl_list;
@@ -27,8 +32,10 @@ typedef struct p_data {
 
     symData_t* function_declaration_data;
     function_params_t* param;
+    ids_list_t* ids_list;
 } *p_data_ptr_t;
 
+void idInsert(ids_list_t* ids_list, data_type_t type); /* TODO naimplementovat */
 parser_error_t parser ();
 void next_token(p_data_ptr_t data);
 
