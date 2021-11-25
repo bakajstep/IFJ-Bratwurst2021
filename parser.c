@@ -215,7 +215,7 @@ void create_sym_table (LList* tbl_list)
     symTree_t** tree;
 
     symTableInit(tree);
-    LL_InsertLast(tbl_list, tree);
+    LL_InsertLast(tbl_list, *tree);
 }
 
 void create_symbol (symTree_t** tree, char* key)
@@ -426,7 +426,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
 data_type_t identifier_type (LList* tbl_list, char* id)
 {    
     LLElementPtr elem = tbl_list->lastElement;
-    symTree_t* table_elem;
+    symData_t* table_elem;
     data_type_t id_data_type = NIL;
 
     /*
@@ -441,10 +441,10 @@ data_type_t identifier_type (LList* tbl_list, char* id)
          */
         if (table_elem != NULL)
         {            
-            id_data_type = table_elem->data->data_type;           
+            id_data_type = table_elem->data_type;           
 
             break;            
-        }        
+        }
 
         elem = elem->nextElement;        
     }
@@ -658,7 +658,7 @@ void idInsert(ids_list_t* ids_list, data_type_t type)
 
 void insert_built_in_functions (LList* tbl_list)
 {    
-    symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
+    //symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
 
     // TODO
 
@@ -682,8 +682,7 @@ void insert_built_in_functions (LList* tbl_list)
 parser_error_t parser ()
 {
     err = E_NO_ERR;
-    p_data_ptr_t data;
-    symTree_t** tree;
+    p_data_ptr_t data;    
 
     data = create_data();
 
@@ -860,7 +859,7 @@ bool main_b (p_data_ptr_t data)
                 }
                 else
                 {
-                    data->function_declaration_data == NULL;
+                    data->function_declaration_data = NULL;
                 }
 
                 // Add symbol to table                
@@ -1120,7 +1119,7 @@ bool stats (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;    
     symTree_t** tree;
-    symData_t* data_type;
+    data_type_t data_type;
     char* id;
 
     VALIDATE_TOKEN(data->token);
@@ -1354,9 +1353,9 @@ bool stats (p_data_ptr_t data)
         {
             err = E_SEM_DEF;
             return false;
-        }
+        }        
 
-        idInsert(data->ids_list, data->func_name);
+        idInsert(data->ids_list, symTableSearch(LL_GetLast(data->tbl_list), data->func_name)->data_type);
 
         if (err != E_NO_ERR)
         {
