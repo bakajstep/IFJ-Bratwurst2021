@@ -605,6 +605,31 @@ bool check_func_assign (p_data_ptr_t data)
     return ret_val;
 }
 
+void idInsert(ids_list_t* ids_list, data_type_t type)
+{
+    ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
+
+    if(!newId){
+        err = E_INTERNAL;
+        return;
+    }
+    newId->type = type;
+
+    if(ids_list == NULL){
+        ids_list = newId;
+        ids_list->next = NULL;
+    }else{
+        ids_list_t* current;
+        current = ids_list;
+
+        while(current != NULL){
+            *current = current->next;
+        }
+        current = newId;
+        current->next = NULL;
+    }
+}
+
 void insert_built_in_functions (LList* tbl_list)
 {    
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
@@ -1276,6 +1301,11 @@ bool stats (p_data_ptr_t data)
 
         idInsert(data->ids_list, data->func_name);
 
+        if (err != E_NO_ERR)
+        {
+            return false;
+        }        
+
         /* ----------- END OF SEMANTIC ----------*/
 
         next_token(data);  
@@ -1488,6 +1518,11 @@ bool n_ids (p_data_ptr_t data)
             }
 
             idInsert(data->ids_list, data->token->attribute.string);
+
+            if (err != E_NO_ERR)
+            {
+                return false;
+            }
 
             /* ----------- END OF SEMANTIC ----------*/
 
