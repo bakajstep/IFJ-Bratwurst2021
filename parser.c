@@ -10,7 +10,7 @@
 #include "sym_linked_list.h"
 
 /*TODO smazat*/
-//#include <stdio.h>
+#include <stdio.h>
 
 #define PROLOG "ifj21"
 #define VALIDATE_TOKEN(token)    \
@@ -82,7 +82,7 @@ bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
 
 /* TODO smazat */
-/*
+
 void print(p_data_ptr_t data)
 {
     if (data->token == NULL)
@@ -167,7 +167,7 @@ void print(p_data_ptr_t data)
                 break;
         }
 }
-*/
+
 /***************** DATA FUNCTIONS ******************/
 
 p_data_ptr_t create_data ()
@@ -191,7 +191,7 @@ void next_token(p_data_ptr_t data)
     data->token = get_next_token();
 
     /* TODO smazat */
-    //print(data);
+    print(data);
 }
 
 bool valid_token (token_t* token)
@@ -207,9 +207,8 @@ bool expression (p_data_ptr_t data)
 /***** SYMBOL TABLE *****/
 void create_tbl_list (LList* tbl_list)
 {    
-
     if (tbl_list == NULL)
-    {
+    {        
         err = E_INTERNAL;        
     }
     else
@@ -229,10 +228,11 @@ void create_sym_table (LList* tbl_list)
 void create_symbol (symTree_t** tree, char* key)
 {
     symData_t* data = NULL;
-    symDataInit(data);
+    symDataInit(&data);
 
     if (err == E_NO_ERR)
     {
+        printf("\nhere\n");
         symTableInsert(tree, key, data);
     }
 }
@@ -664,11 +664,11 @@ void idInsert(ids_list_t* ids_list, data_type_t type)
     }
 }
 
-void create_tbl_list_mem (LList* tbl_list)
+void create_tbl_list_mem (LList** tbl_list)
 {
-    tbl_list = (LList*) malloc(sizeof(LList));
+    *tbl_list = (LList*) malloc(sizeof(LList));
 
-    if (tbl_list == NULL)
+    if (*tbl_list == NULL)
     {
         err = E_INTERNAL;
     }    
@@ -681,21 +681,21 @@ void insert_built_in_functions (LList* tbl_list)
     // TODO
     // function reads (): string
     symData_t* data = NULL;
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, STR);
     symTableInsert(&glb_tbl, "reads", data);
 
     // function readi (): integer
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, INT);
     symTableInsert(&glb_tbl, "readi", data);
 
     // function readn (): number
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, NUMBER);
@@ -705,7 +705,7 @@ void insert_built_in_functions (LList* tbl_list)
 
     // function tointeger (f : number) : integer
 
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     data->params_count = 1;
@@ -715,7 +715,7 @@ void insert_built_in_functions (LList* tbl_list)
 
     // function substr (s : string, i : number, j : number) : string
 
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     data->params_count = 3;
@@ -727,7 +727,7 @@ void insert_built_in_functions (LList* tbl_list)
 
     // function ord (s : string, i : integer) : integer
 
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     data->params_count = 2;
@@ -738,7 +738,7 @@ void insert_built_in_functions (LList* tbl_list)
 
     // function chr (i : integer) : string
 
-    symDataInit(data);
+    symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     data->params_count = 1;
@@ -769,7 +769,7 @@ parser_error_t parser ()
     data->token = get_next_token();
 
     /* TODO smazat */
-    //print(data);
+    print(data);
     
     if (!valid_token(data->token))
     {
@@ -781,7 +781,7 @@ parser_error_t parser ()
     
     /* -------------- SEMANTIC --------------*/
     
-    create_tbl_list(data->tbl_list);
+    create_tbl_list_mem(&(data->tbl_list));
 
     if (err != E_NO_ERR)
     {
@@ -789,7 +789,7 @@ parser_error_t parser ()
     }    
 
     // Create linked list with symbol tables
-    create_tbl_list_mem(data->tbl_list);
+    create_tbl_list(data->tbl_list);
 
     if (err != E_NO_ERR)
     {
@@ -878,6 +878,18 @@ bool main_b (p_data_ptr_t data)
     symTree_t** tree = NULL;
     char* func_name = NULL;
 
+    /* Create tree */
+
+    tree = (symTree_t**) malloc(sizeof(symTree_t*));
+
+    if (tree == NULL)
+    {
+        err = E_INTERNAL;
+        return false;
+    }
+
+    /* End of create tree */
+
     VALIDATE_TOKEN(data->token);
 
     /* 5. <main_b> -> epsilon */
@@ -953,7 +965,7 @@ bool main_b (p_data_ptr_t data)
                 if (err != E_NO_ERR)
                 {
                     return false;
-                }
+                }                
 
                 // Set function as defined
                 symTableSearch(*tree, func_name)->defined = true;

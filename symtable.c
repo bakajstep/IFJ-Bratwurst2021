@@ -21,19 +21,19 @@ void symTableInit(symTree_t **tree){
     (*tree) = NULL;
 }
 
-void symDataInit(symData_t* data){
-    data = (symData_t*) malloc(sizeof(symData_t));
+void symDataInit(symData_t** data){
+    *data = (symData_t*) malloc(sizeof(symData_t));
 
-    if(!data){
+    if(!(*data)){
         err = E_INTERNAL;
         return;
     }
-    data->declared = true;
-    data->defined = false;
-    data->data_type = NIL;
-    data->params_count = 0;
-    data->first_param = NULL;
-    data->first_ret = NULL;
+    (*data)->declared = true;
+    (*data)->defined = false;
+    (*data)->data_type = NIL;
+    (*data)->params_count = 0;
+    (*data)->first_param = NULL;
+    (*data)->first_ret = NULL;
 }
 
 void paramInsert(symData_t* data, data_type_t type, char* param_name){

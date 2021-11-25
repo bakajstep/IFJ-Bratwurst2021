@@ -49,7 +49,7 @@ typedef struct symTree{
 } symTree_t;
 
 void symTableInit(symTree_t **tree);
-void symDataInit(symData_t* data);
+void symDataInit(symData_t** data);
 void paramInsert(symData_t* data, data_type_t type, char* param_name);
 void paramTypeInsert(symData_t* data, data_type_t type);
 void returnInsert(symData_t* data, data_type_t type);
