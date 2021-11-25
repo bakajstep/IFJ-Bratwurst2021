@@ -223,7 +223,7 @@ void create_symbol (symTree_t** tree, char* key)
     symData_t* data;
     symDataInit(data);
 
-    if (err = E_NO_ERR)
+    if (err == E_NO_ERR)
     {
         symTableInsert(tree, key, data);
     }
@@ -395,7 +395,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
 {
     bool ret_val = false;
     LLElementPtr elem = tbl_list->lastElement;
-    symTree_t* table_elem;
+    symData_t* table_elem;
 
     /*
      * Go through tables in linked list
@@ -409,7 +409,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
          */
         if (table_elem != NULL)
         {            
-            if (table_elem->data->defined == true)
+            if (table_elem->defined == true)
             {
                 ret_val = true;                
             }
@@ -583,7 +583,7 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
         /* INSERT PARAM TO FUNC TABLE */        
         
         // Add param to table
-        create_symbol(func_tbl, elem->param_name);
+        create_symbol(&func_tbl, elem->param_name);
 
         if (err != E_NO_ERR)
         {
@@ -837,7 +837,7 @@ bool main_b (p_data_ptr_t data)
                 /*
                  * Check multiple definition of function
                  */
-                if (!check_function_is_not_defined(data->tbl_list, func_name));
+                if (!check_function_is_not_defined(data->tbl_list, func_name))
                 {
                     err = E_SEM_DEF;
                     return false;
