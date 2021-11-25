@@ -93,4 +93,8 @@ sym_stack_item* symbol_stack_top(sym_stack* stack)
     return stack->top;
 }
 
+void symbol_stack_free(sym_stack* stack) {
+    while (symbol_stack_pop(stack));
+}
+
 
