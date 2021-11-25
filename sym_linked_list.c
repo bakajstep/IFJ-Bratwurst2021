@@ -32,7 +32,7 @@ void LL_Dispose( LList* list ) {
 }
 
 void LL_InsertLast( LList* list, symTree_t* root) {
-    struct LLElement newElement;
+    struct LLElement* newElement;
     newElement->root = root;
     newElement->nextElement = NULL;
 
@@ -65,7 +65,7 @@ symTree_t * LL_GetFirst( LList* list){
     if(list->lastElement == NULL){
         return NULL;
     }
-    struct LLElement current;
+    struct LLElement* current;
     current = list->lastElement;
     while(current->next != NULL){
         current = current.nextElement;
@@ -117,8 +117,6 @@ void LL_Next( LList* list){
 }
 
 int LL_IsActive( LList* list){
-    int LL_IsActive( LList *list ) {
-        return list->activeElement != NULL;
-    }
+    return (list->activeElement != NULL) ? 0 : -1;
 }
 
