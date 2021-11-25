@@ -20,6 +20,7 @@ typedef enum error {
     E_SEM_DEF    = 3,
     E_SEM_ASSIGN = 4,
     E_SEM_PARAM  = 5,
+    E_SEM_INCOMPATIBLE  = 6,
     E_INTERNAL   = 99
 } error_t;
 

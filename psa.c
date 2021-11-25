@@ -343,6 +343,160 @@ data_type_t get_type(p_data_ptr_t data){
             return STR;
     }
 }
+
+static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_item* op2, sym_stack_item* op3, data_type_t* final_type){
+
+    bool op1_to_number = false;
+    bool op2_to_number = false;
+
+    switch (rule) {
+        //TODO - asi nepotrebuju
+        case OPERAND:
+
+            break;
+        case LBR_NT_RBR:
+
+            break;
+
+        // podsud
+        case NT_HASHTAG:
+            if (op2->data != STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+            *final_type = INT;
+            break;
+        case NT_CONCAT_NT:
+            if (op1->data != STR || op3->data != STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+            *final_type = STR;
+            break;
+        case NT_PLUS_NT:
+        case NT_MINUS_NT:
+        case NT_MUL_NT:
+            //chyba
+            if (op1->data == STR || op3->data == STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+
+            if (op1->data == INT && op3->data == INT){
+                *final_type = INT;
+                break;
+            }
+            if (op1->data == NUMBER && op3->data == NUMBER){
+                *final_type = NUMBER;
+                break;
+            }
+
+            //pretypovani
+            if (op1->data == INT){
+                op1_to_number = true;
+                *final_type = NUMBER;
+            }
+            if (op3->data == INT){
+                op3_to_number = true;
+                *final_type = NUMBER;
+            }
+            break;
+        case NT_DIV_NT:
+            *final_type = NUMBER;
+
+            //chyba
+            if (op1->data == STR || op3->data == STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+
+            //pretypovani
+            if (op1->data == INT){
+                op1_to_number = true;
+            }
+            if (op3->data == INT){
+                op3_to_number = true;
+            }
+
+            break;
+        case NT_IDIV_NT:
+            *final_type = INT;
+
+            //chyba
+            if (op1->data == STR || op3->data == STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+
+            break;
+        case NT_EQ_NT:
+        case NT_NEQ_NT:
+            *final_type = ELSE;
+
+            // chyby
+            if (op1->data == STR && ( op3->data == INT || op3->data == NUMBER )){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+            if (( op1->data == INT || op1->data == NUMBER ) && op3->data == STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+
+
+            if (op1->data == STR && op3->data == STR){
+                break;
+            }
+            if (op1->data == INT && op3->data == INT){
+                break;
+            }
+            if (op1->data == NUMBER && op3->data == NUMBER){
+                break;
+            }
+
+            //pretypovani
+            if (op1->data == INT){
+                op1_to_number = true;
+            }
+            if (op3->data == INT){
+                op3_to_number = true;
+            }
+
+        case NT_LEQ_NT:
+        case NT_GEQ_NT:
+        case NT_LTN_NT:
+        case NT_GTN_NT:
+            *final_type = ELSE;
+
+            //chyba
+            if (op1->data == STR || op3->data == STR){
+                err = E_SEM_INCOMPATIBLE;
+                return false;
+            }
+
+
+            if (op1->data == INT && op3->data == INT){
+                break;
+            }
+            if (op1->data == NUMBER && op3->data == NUMBER){
+                break;
+            }
+
+            //pretypovani
+            if (op1->data == INT){
+                op1_to_number = true;
+            }
+            if (op3->data == INT){
+                op3_to_number = true;
+            }
+            break;
+        default:
+
+            break;
+    }
+    return true;
+}
+
 //TODO:
 //vytvořit funkci, která mi z tokenu vrátí data_type_t      -   zbývá IDENTIFIER
 //typ dat potom budu používat při pushování na stack
@@ -383,7 +537,9 @@ psa_error_t psa (p_data_ptr_t data)
 
         switch (tbl_data) {
             case '=': ;
-                symbol_stack_push(&stack, get_symbol_from_token(data->token));
+                if(!symbol_stack_push(&stack, get_symbol_from_token(data->token),get_type(data))){
+                    return PSA_ERR;
+                }
                 next_token(data);
                 break;
             case '<': ;                
@@ -392,7 +548,7 @@ psa_error_t psa (p_data_ptr_t data)
                     return PSA_ERR;
                 }
                 //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
-                if(!symbol_stack_push(&stack, get_symbol_from_token(data->token)))                
+                if(!symbol_stack_push(&stack, get_symbol_from_token(data->token, get_type(data))))
                 {                    
                     return PSA_ERR;
                 }                  
