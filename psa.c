@@ -4,7 +4,8 @@
 #include "parser.h"
 #include "psa.h"
 #include "symstack.h"
-#include "data_types.h" 
+#include "data_types.h"
+#include "error.h" 
 /* TODO smazat */
 #include <stdio.h>
 
@@ -134,7 +135,7 @@ int get_index_enum(psa_table_symbol_enum e){
             return 15;
         case INT_NUMBER:
             return 15;
-        case STR:
+        case STRN:
             return 16;
         case DOUBLE_NUMBER:
             return 15;
@@ -161,7 +162,7 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
     {
         case 1:
             // rule E -> i
-            if (op1->symbol == IDENTIFIER || op1->symbol == INT_NUMBER || op1->symbol == DOUBLE_NUMBER || op1->symbol == STR)
+            if (op1->symbol == IDENTIFIER || op1->symbol == INT_NUMBER || op1->symbol == DOUBLE_NUMBER || op1->symbol == STRN)
                 return OPERAND;
 
             return NOT_A_RULE;
@@ -271,7 +272,7 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
         case T_DECIMAL_W_EXP:
             return DOUBLE_NUMBER;
         case T_STRING:
-            return STR;
+            return STRN;
         case T_KEYWORD:
             if(token->attribute.keyword == K_NIL){
                 return IDENTIFIER;
@@ -286,39 +287,39 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
 data_type_t get_type(p_data_ptr_t data){
     switch(data->token->type){
         case T_MUL:
-            return OPERAND;
+            return OP;
         case T_DIV:
-            return OPERAND;
+            return OP;
         case T_INT_DIV:
-            return OPERAND;
+            return OP;
         case T_PLUS:
-            return OPERAND;
+            return OP;
         case T_MINUS:
-            return OPERAND;
+            return OP;
         case T_CHAR_CNT:
-            return OPERAND;
+            return OP;
         case T_CONCAT:
-            return OPERAND;
+            return OP;
         case T_LESS_THAN:
-            return OPERAND;
+            return OP;
         case T_LESS_EQ:
-            return OPERAND;
+            return OP;
         case T_GTR_THAN:
-            return OPERAND;
+            return OP;
         case T_GTR_EQ:
-            return OPERAND;
+            return OP;
         case T_NOT_EQ:
-            return OPERAND;
+            return OP;
         case T_ASSIGN:
-            return OPERAND;
+            return OP;
         case T_EQ:
-            return OPERAND;
+            return OP;
         case T_COLON:
             return ELSE;
         case T_LEFT_BRACKET:
-            return OPERAND;
+            return OP;
         case T_RIGHT_BRACKET:
-            return OPERAND;
+            return OP;
         case T_COMMA:
             return ELSE;
         case T_INT:
@@ -327,55 +328,56 @@ data_type_t get_type(p_data_ptr_t data){
             return NUMBER;
         case T_DECIMAL_W_EXP:
             return NUMBER;
-        case T_CHAR_CNT:
-            return OPERAND;
         case T_IDENTIFIER:
             //TODO
             //je potřeba z listu identifikátorů zjistit jestli je platně deklarovasnaý a jaký má typ
-            return OPERAND;
+            //idk ještě jak vracet když to bude špatně
+            return OP;
         case T_KEYWORD:
-            if(data->token->attribute->keyword == K_NIL){
+            if(data->token->attribute->keyword == K_NIL){ //TODO ERR
                 return NIL;
             }else{
                 return ELSE;
             }
         case T_STRING:
             return STR;
+        default:
+            return ELSE;
     }
 }
 
 static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_item* op2, sym_stack_item* op3, data_type_t* final_type){
 
     bool op1_to_number = false;
-    bool op2_to_number = false;
+    bool op3_to_number = false;
 
     switch (rule) {
         //TODO - asi nepotrebuju
-        case OPERAND:
+        case OPERAND:;
 
             break;
-        case LBR_NT_RBR:
+        case LBR_NT_RBR: ;
 
             break;
 
         // podsud
-        case NT_HASHTAG:
+        case NT_HASHTAG: ;
             if (op2->data != STR){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
             *final_type = INT;
             break;
-        case NT_CONCAT_NT:
+        case NT_CONCAT_NT: ;
             if (op1->data != STR || op3->data != STR){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
             *final_type = STR;
             break;
-        case NT_PLUS_NT:
-        case NT_MINUS_NT:
-        case NT_MUL_NT:
+        case NT_PLUS_NT: ;
+        case NT_MINUS_NT: ;
+        case NT_MUL_NT: ;
             //chyba
             if (op1->data == STR || op3->data == STR){
                 err = E_SEM_INCOMPATIBLE;
@@ -401,7 +403,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 *final_type = NUMBER;
             }
             break;
-        case NT_DIV_NT:
+        case NT_DIV_NT: ;
             *final_type = NUMBER;
 
             //chyba
@@ -419,7 +421,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             }
 
             break;
-        case NT_IDIV_NT:
+        case NT_IDIV_NT: ;
             *final_type = INT;
 
             //chyba
@@ -429,8 +431,8 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             }
 
             break;
-        case NT_EQ_NT:
-        case NT_NEQ_NT:
+        case NT_EQ_NT: ;
+        case NT_NEQ_NT: ;
             *final_type = ELSE;
 
             // chyby
@@ -462,10 +464,10 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 op3_to_number = true;
             }
 
-        case NT_LEQ_NT:
-        case NT_GEQ_NT:
-        case NT_LTN_NT:
-        case NT_GTN_NT:
+        case NT_LEQ_NT: ;
+        case NT_GEQ_NT: ;
+        case NT_LTN_NT: ;
+        case NT_GTN_NT: ;
             *final_type = ELSE;
 
             //chyba
@@ -490,12 +492,13 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 op3_to_number = true;
             }
             break;
-        default:
+        default: ;
 
             break;
     }
     return true;
 }
+
 
 //TODO:
 //vytvořit funkci, která mi z tokenu vrátí data_type_t      -   zbývá IDENTIFIER
@@ -506,12 +509,13 @@ psa_error_t psa (p_data_ptr_t data)
     //printf("\nenter psa\n");
     sym_stack stack;
     sym_stack_init(&stack);
-    symbol_stack_push(&stack,DOLLAR);
+    symbol_stack_push(&stack,DOLLAR,ELSE);
 
     int ind_a;
     int ind_b;
     sym_stack_item* a;
     bool end_while = false;
+    data_type_t final_type = ELSE;
     do{
         //token na zásobníku a vstupní token
         a = symbol_stack_top_terminal(&stack);
@@ -522,6 +526,7 @@ psa_error_t psa (p_data_ptr_t data)
         ind_b = get_index_token(data->token);        
 
         if(data->token->type == T_ASSIGN){
+            err = E_INTERNAL;
             return PSA_ERR;
         }
         
@@ -537,19 +542,24 @@ psa_error_t psa (p_data_ptr_t data)
 
         switch (tbl_data) {
             case '=': ;
+                //TODO sem musím ještě mrsknout ošetření jestli type je některý z žádoucích, nebo budu mít err kvůli tomu že to nebude např. inicializovaný
                 if(!symbol_stack_push(&stack, get_symbol_from_token(data->token),get_type(data))){
+                    err = E_INTERNAL;
                     return PSA_ERR;
                 }
                 next_token(data);
                 break;
             case '<': ;                
                 //insert after top terminal
-                if(!symbol_stack_insert_after_top_terminal(&stack,STOP)){                                     
+                if(!symbol_stack_insert_after_top_terminal(&stack,STOP,ELSE)){                                     
+                    err = E_INTERNAL;
                     return PSA_ERR;
                 }
                 //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
-                if(!symbol_stack_push(&stack, get_symbol_from_token(data->token, get_type(data))))
+                //TODO tady taky
+                if(!symbol_stack_push(&stack, get_symbol_from_token(data->token), get_type(data)))
                 {                    
+                    err = E_INTERNAL;
                     return PSA_ERR;
                 }                  
 
@@ -579,6 +589,7 @@ psa_error_t psa (p_data_ptr_t data)
                             
                             if(symbol_stack_top(&stack)->symbol != STOP)
                             {                                                      
+                                err = E_INTERNAL;
                                 return PSA_ERR;
                             }                                
                         }
@@ -595,84 +606,152 @@ psa_error_t psa (p_data_ptr_t data)
 
                 switch (rule) {
                     case OPERAND:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> i
+                        if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_HASHTAG:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> #E
+                        if(symbol2.data != STR){
+                            err = E_SEM_INCOMPATIBLE;
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,STR)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case LBR_NT_RBR:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> (E)
+                        if(!symbol_stack_push(&stack,NON_TERM,symbol2.data)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_CONCAT_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E .. E
+                        if(!check_semantic(NT_CONCAT_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_PLUS_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E + E
+                        if(!check_semantic(NT_PLUS_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_MINUS_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E - E
+                        if(!check_semantic(NT_MINUS_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_MUL_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E * E
+                        if(!check_semantic(NT_MUL_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_DIV_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E / E
+                        if(!check_semantic(NT_DIV_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_IDIV_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E // E
+                        if(!check_semantic(NT_IDIV_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_EQ_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E == E
+                        if(!check_semantic(NT_EQ_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_NEQ_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E ~= E
+                        if(!check_semantic(NT_NEQ_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){                            
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_LEQ_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E <= E
+                        if(!check_semantic(NT_LEQ_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){ 
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_GEQ_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E >= E
+                        if(!check_semantic(NT_GEQ_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_LTN_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E < E
+                        if(!check_semantic(NT_LTN_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NT_GTN_NT:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
+                        // rule E -> E > E
+                        if(!check_semantic(NT_GTN_NT,&symbol1,&symbol2,&symbol3,&final_type)){
+                            return PSA_ERR;
+                        }
+                        if(!symbol_stack_push(&stack,NON_TERM,final_type)){
+                            err = E_INTERNAL;
                             return PSA_ERR;
                         }
                         break;
                     case NOT_A_RULE:
-                        if(!symbol_stack_push(&stack,NON_TERM)){                            
-                            return PSA_ERR;
-                        }                                            
+                        err = E_SYNTAX;
                         return PSA_ERR;
                         break;
                 }
@@ -683,6 +762,7 @@ psa_error_t psa (p_data_ptr_t data)
                 break;
                 
             default:
+                err = E_INTERNAL;
                 return PSA_ERR;                
         }
 
@@ -695,4 +775,3 @@ psa_error_t psa (p_data_ptr_t data)
     }
     return  PSA_ERR;
 }
-

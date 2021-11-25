@@ -6,7 +6,7 @@ typedef enum e_data_type{
     NUMBER,
     STR,
     NIL,
-    OPERAND,
+    OP,
     ELSE
 } data_type_t;
 

@@ -59,7 +59,7 @@ typedef enum
     IDENTIFIER,		// ID
     INT_NUMBER,		// int
     DOUBLE_NUMBER,	// double
-    STR,			// string
+    STRN,			// string
     DOLLAR,			// $
     STOP,			// stop symbol used when reducing
     NON_TERM		// non-terminal
