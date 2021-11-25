@@ -222,7 +222,11 @@ void create_symbol (symTree_t** tree, char* key)
 {
     symData_t* data;
     symDataInit(data);
-    symTableInsert(tree, key, data);
+
+    if (err = E_NO_ERR)
+    {
+        symTableInsert(tree, key, data);
+    }
 }
 
 void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t data_type)
@@ -235,6 +239,11 @@ void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t d
 
     /* Insert Parameter */
     paramInsert(tbl, data_type, id);
+
+    if (err != E_NO_ERR)
+    {
+        return;
+    }    
     
     /* Inc parameter count */
     (tbl->params_count)++;
@@ -250,6 +259,12 @@ void insert_parameter_type (LList *tbl_list, char* func_name, data_type_t data_t
 
     /* Insert Parameter */
     paramTypeInsert(tbl, data_type);
+
+    if (err != E_NO_ERR)
+    {
+        return;
+    }
+    
     
     /* Inc parameter type count */
     (tbl->params_type_count)++;
@@ -265,6 +280,12 @@ void insert_return (LList *tbl_list, char* func_name, data_type_t data_type)
 
     /* Insert Parameter */
     returnInsert(tbl, data_type);
+
+    if (err != E_NO_ERR)
+    {
+        return;
+    }
+    
     
     /* Inc parameter count */
     (tbl->returns_count)++;
@@ -564,6 +585,11 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
         // Add param to table
         create_symbol(func_tbl, elem->param_name);
 
+        if (err != E_NO_ERR)
+        {
+            return;
+        }        
+
         // Get param in table data
         in_tbl_param_data = symTableSearch(func_tbl, elem->param_name);
         
@@ -840,6 +866,11 @@ bool main_b (p_data_ptr_t data)
                 // Add symbol to table                
                 create_symbol(tree, func_name);
 
+                if (err != E_NO_ERR)
+                {
+                    return false;
+                }
+
                 // Set function as defined
                 symTableSearch(*tree, func_name)->defined = true;
 
@@ -865,6 +896,11 @@ bool main_b (p_data_ptr_t data)
                         /* -------------- SEMANTIC --------------*/
                         
                         copy_params_to_func_table(data->tbl_list, func_name);
+
+                        if (err != E_NO_ERR)
+                        {
+                            return false;
+                        }
 
                         /* ----------- END OF SEMANTIC ----------*/
 
@@ -960,6 +996,11 @@ bool main_b (p_data_ptr_t data)
                 // Add symbol to table
                 (*tree) = LL_GetFirst(data->tbl_list);
                 create_symbol(tree, data->token->attribute.string);
+
+                if (err != E_NO_ERR)
+                {
+                    return false;
+                }
 
                 // Create symbol table for function
                 create_sym_table(data->tbl_list);
@@ -1114,6 +1155,11 @@ bool stats (p_data_ptr_t data)
             
             
             create_symbol(tree, id);
+
+            if (err != E_NO_ERR)
+            {
+                return false;
+            }
                 
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -1426,6 +1472,11 @@ bool params (p_data_ptr_t data)
 
                 // Vlozeni noveho parametru funkce                                               
                 insert_parameter(data->tbl_list, data->func_name, id, data->type);
+
+                if (err != E_NO_ERR)
+                {
+                    return false;
+                }                
 
                 /* ----------- END OF SEMANTIC ----------*/            
 
@@ -2302,6 +2353,11 @@ bool func_types (p_data_ptr_t data)
         // Vlozeni noveho parametru funkce                                                       
         insert_return(data->tbl_list, data->func_name, data->type);
 
+        if (err != E_NO_ERR)
+        {
+            return false;
+        }
+        
         /* ----------- END OF SEMANTIC ----------*/            
 
 
@@ -2351,6 +2407,11 @@ bool n_func_types (p_data_ptr_t data)
             // Vlozeni noveho parametru funkce                                                       
             insert_return(data->tbl_list, data->func_name, data->type);
 
+            if (err != E_NO_ERR)
+            {
+                return false;
+            }
+
             /* ----------- END OF SEMANTIC ----------*/ 
 
                 ret_val = n_func_types(data);
@@ -2379,11 +2440,22 @@ bool func_def_types (p_data_ptr_t data)
         {
             // Vlozeni noveho parametru funkce                                               
             insert_parameter_type(data->tbl_list, data->func_name, data->type);
+
+            if (err != E_NO_ERR)
+            {
+                return false;
+            }
+            
         }
         else
         {
             // Vlozeni noveho parametru funkce                                                       
             insert_return(data->tbl_list, data->func_name, data->type);
+
+            if (err != E_NO_ERR)
+            {
+                return false;
+            }
         }
 
         /* ----------- END OF SEMANTIC ----------*/
@@ -2429,11 +2501,21 @@ bool n_func_def_types (p_data_ptr_t data)
                 {
                     // Vlozeni noveho parametru funkce                                               
                     insert_parameter_type(data->tbl_list, data->func_name, data->type);
+
+                    if (err != E_NO_ERR)
+                    {
+                        return false;
+                    }
                 }
                 else
                 {
                     // Vlozeni noveho parametru funkce                                                       
                     insert_return(data->tbl_list, data->func_name, data->type);
+
+                    if (err != E_NO_ERR)
+                    {
+                        return false;
+                    }
                 }
 
                 /* ----------- END OF SEMANTIC ----------*/
