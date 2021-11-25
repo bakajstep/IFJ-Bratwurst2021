@@ -215,7 +215,7 @@ void create_sym_table (LList* tbl_list)
     symTree_t** tree = NULL;
 
     symTableInit(tree);
-    LL_InsertLast(tbl_list, *tree);
+    LL_InsertLast(tbl_list, tree);
 }
 
 void create_symbol (symTree_t** tree, char* key)
@@ -223,7 +223,7 @@ void create_symbol (symTree_t** tree, char* key)
     symData_t* data = NULL;
     symDataInit(data);
 
-    if (err == E_NO_ERR)
+    if (err = E_NO_ERR)
     {
         symTableInsert(tree, key, data);
     }
@@ -395,7 +395,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
 {
     bool ret_val = false;
     LLElementPtr elem = tbl_list->lastElement;
-    symData_t* table_elem;
+    symTree_t* table_elem;
 
     /*
      * Go through tables in linked list
@@ -409,7 +409,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
          */
         if (table_elem != NULL)
         {            
-            if (table_elem->defined == true)
+            if (table_elem->data->defined == true)
             {
                 ret_val = true;                
             }
@@ -426,7 +426,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
 data_type_t identifier_type (LList* tbl_list, char* id)
 {    
     LLElementPtr elem = tbl_list->lastElement;
-    symData_t* table_elem;
+    symTree_t* table_elem;
     data_type_t id_data_type = NIL;
 
     /*
@@ -441,10 +441,10 @@ data_type_t identifier_type (LList* tbl_list, char* id)
          */
         if (table_elem != NULL)
         {            
-            id_data_type = table_elem->data_type;           
+            id_data_type = table_elem->data->data_type;           
 
             break;            
-        }
+        }        
 
         elem = elem->nextElement;        
     }
@@ -583,7 +583,7 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
         /* INSERT PARAM TO FUNC TABLE */        
         
         // Add param to table
-        create_symbol(&func_tbl, elem->param_name);
+        create_symbol(func_tbl, elem->param_name);
 
         if (err != E_NO_ERR)
         {
@@ -658,21 +658,75 @@ void idInsert(ids_list_t* ids_list, data_type_t type)
 
 void insert_built_in_functions (LList* tbl_list)
 {    
-    //symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
 
     // TODO
+    // function reads (): string
+    symData_t* data;
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    returnInsert(data, STR);
+    symTableInsert(&glb_tbl, "reads", data);
 
-    // function reads (): string   
     // function readi (): integer
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "readi", data);
+
     // function readn (): number
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    returnInsert(data, NUMBER);
+    symTableInsert(&glb_tbl, "readn", data);
 
     // function write (term_1, term_2, ..., term_n)
 
     // function tointeger (f : number) : integer
 
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 1;
+    paramInsert(data, NUMBER, "f");
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "tointeger", data);
+
     // function substr (s : string, i : number, j : number) : string
+
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 3;
+    paramInsert(data, STR, "s");
+    paramInsert(data, NUMBER, "i");
+    paramInsert(data, NUMBER, "j");
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "substr", data);
+
     // function ord (s : string, i : integer) : integer
+
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 2;
+    paramInsert(data, STR, "s");
+    paramInsert(data, INT, "i");
+    returnInsert(data, INT);
+    symTableInsert(&glb_tbl, "ord", data);
+
     // function chr (i : integer) : string
+
+    symDataInit(data);
+    data->defined = true;
+    data->returns_count = 1;
+    data->params_count = 1;
+    paramInsert(data, INT, "i");
+    returnInsert(data, STR);
+    symTableInsert(&glb_tbl, "chr", data);
 }
 
 /******************* PARSER MAIN *******************/
@@ -682,7 +736,8 @@ void insert_built_in_functions (LList* tbl_list)
 parser_error_t parser ()
 {
     err = E_NO_ERR;
-    p_data_ptr_t data;    
+    p_data_ptr_t data;
+    symTree_t** tree;
 
     data = create_data();
 
@@ -836,7 +891,7 @@ bool main_b (p_data_ptr_t data)
                 /*
                  * Check multiple definition of function
                  */
-                if (!check_function_is_not_defined(data->tbl_list, func_name))
+                if (!check_function_is_not_defined(data->tbl_list, func_name));
                 {
                     err = E_SEM_DEF;
                     return false;
@@ -859,7 +914,7 @@ bool main_b (p_data_ptr_t data)
                 }
                 else
                 {
-                    data->function_declaration_data = NULL;
+                    data->function_declaration_data == NULL;
                 }
 
                 // Add symbol to table                
@@ -973,7 +1028,7 @@ bool main_b (p_data_ptr_t data)
                     return false;
                 }                                
 
-                data->function_declaration_data = NULL;   
+                data->function_declaration_data == NULL;   
             }
                                      
             /* ----------- END OF SEMANTIC ----------*/
@@ -1353,9 +1408,9 @@ bool stats (p_data_ptr_t data)
         {
             err = E_SEM_DEF;
             return false;
-        }        
+        }
 
-        idInsert(data->ids_list, symTableSearch(LL_GetLast(data->tbl_list), data->func_name)->data_type);
+        idInsert(data->ids_list, data->func_name);
 
         if (err != E_NO_ERR)
         {
