@@ -9,7 +9,7 @@
 
 int main()
 {
-    if (parser() == false)
+    if (parser() != E_NO_ERR)
     {
         printf("SEMANTIC ERROR\n");
         printf("Err code: %d\n", err);
