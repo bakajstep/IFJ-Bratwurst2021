@@ -1120,6 +1120,7 @@ bool stats (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;    
     symTree_t** tree;
+    symData_t* data_type;
     char* id;
 
     VALIDATE_TOKEN(data->token);
@@ -1184,10 +1185,20 @@ bool stats (p_data_ptr_t data)
                     {
                         /* -------------- SEMANTIC --------------*/
 
-                        if (symTableSearch(*tree, id)->data_type != data->psa_data_type)
+                        data_type = symTableSearch(*tree, id)->data_type;
+
+                        if (data_type != data->psa_data_type)
                         {
-                            err = E_SEM_ASSIGN;
-                            return false;
+                            if (data->psa_data_type == NIL || 
+                                (data_type == NUMBER && data->psa_data_type == INT))
+                            {
+                                // VALID
+                            }
+                            else
+                            {
+                                err = E_SEM_ASSIGN;
+                                return false;
+                            }                                                        
                         }                        
 
                         /* ----------- END OF SEMANTIC ----------*/
@@ -1608,8 +1619,16 @@ bool vals (p_data_ptr_t data)
         {
             if (data->psa_data_type != data->ids_list->type)
             {
-                err = E_SEM_ASSIGN;
-                return false;
+                if (data->psa_data_type == NIL ||
+                    (data->ids_list->type == NUMBER && data->psa_data_type == INT))
+                {
+                    // VALID
+                }
+                else
+                {
+                    err = E_SEM_ASSIGN;
+                    return false;
+                }
             }
 
             data->ids_list->next;
@@ -1729,8 +1748,16 @@ bool n_vals (p_data_ptr_t data)
                 {
                     if (data->psa_data_type != data->ids_list->type)
                     {
-                        err = E_SEM_ASSIGN;
-                        return false;
+                        if (data->psa_data_type == NIL ||
+                            (data->ids_list->type == NUMBER && data->psa_data_type == INT))
+                        {
+                            // VALID
+                        }
+                        else
+                        {
+                            err = E_SEM_ASSIGN;
+                            return false;
+                        }
                     }
 
                     data->ids_list->next;
