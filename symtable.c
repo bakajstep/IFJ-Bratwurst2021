@@ -16,12 +16,48 @@
 /* TODO smazat */
 #include <stdio.h>
 
-void symTableInit(symTree_t **tree){
+/*     BACKEND FUNCTIONS    */
+void deep_copy_function_param (symData_t* data, function_params_t* orig)
+{
+    function_params_t* elem = orig;
 
-    if(!(*tree)){
+    while (elem != NULL)
+    {
+        paramInsert(data, elem->param_type, elem->param_name);
+        elem = elem->param_next;
+    }    
+}
+
+void deep_copy_function_type_param (symData_t* data, function_params_t* orig)
+{
+    function_params_t* elem = orig;
+
+    while (elem != NULL)
+    {
+        returnInsert(data, orig->param_type);
+        elem = elem->param_next;
+    }    
+}
+
+void deep_copy_function_ret (symData_t* data, function_returns_t* orig)
+{
+    function_returns_t* elem = orig;
+
+    while (elem != NULL)
+    {
+        returnInsert(data, orig->return_type);
+        elem = elem->ret_next;
+    }    
+}
+
+/* END OF BACKEND FUNCTIONS */
+
+void symTableInit(symTree_t **tree){
+tree = tree;
+    /*if(!(*tree)){
         return;
     }
-    (*tree) = NULL;
+    (*tree) = NULL;*/
 }
 
 void symDataInit(symData_t** data){
@@ -113,8 +149,7 @@ void returnInsert(symData_t* data, data_type_t type){
 }
 
 symData_t* symTableSearch(symTree_t* tree, char* key){
-    while(tree != NULL){
-
+    while(tree != NULL){        
         if(strcmp(tree->key, key) == 0){
             return tree->data;
         }
@@ -132,8 +167,11 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     /*if(*tree == NULL){        
         return;
     }*/
+   
 
-    while((*tree) != NULL){
+    while((*tree) != NULL && (*tree)->key != NULL){
+
+        printf("\ntree key: %s\n", (*tree)->key);
 
         if(strcmp((*tree)->key, key) == 0){
             err = E_INTERNAL;
@@ -154,7 +192,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     }
     //if((*tree) == NULL) return;
     
-    (*tree)->key = (char*) malloc(strlen(key));    
+    (*tree)->key = (char*) malloc(strlen(key)+1);    
 
     if ((*tree)->key == NULL)
     {
@@ -163,7 +201,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     }
     
 
-    strcpy((*tree)->key, key);
+    strcpy((*tree)->key, key);    
 
     (*tree)->data = (symData_t*) malloc(sizeof(symData_t));
 
@@ -180,9 +218,12 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     (*tree)->data->params_type_count = data->params_type_count;
     (*tree)->data->returns_count = data->returns_count;
     
+    deep_copy_function_param(data, (*tree)->data->first_param);
+    deep_copy_function_type_param(data, (*tree)->data->first_type_param);
+    deep_copy_function_ret(data, (*tree)->data->first_ret);
     
     (*tree)->nextLeft = NULL;
-    (*tree)->nextRight = NULL;
+    (*tree)->nextRight = NULL;        
 }
 
 void paramDispose(function_params_t* param){

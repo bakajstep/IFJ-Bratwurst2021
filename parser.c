@@ -221,7 +221,8 @@ void create_sym_table (LList* tbl_list)
 {
     symTree_t* tree = (symTree_t*) malloc(sizeof(symTree_t));
 
-    symTableInit(&tree);
+    symTableInit(&tree);    
+
     LL_InsertLast(tbl_list, tree);
 }
 
@@ -239,10 +240,12 @@ void create_symbol (symTree_t** tree, char* key)
 void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t data_type)
 {
     /* Get global symbol table */
-    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list); 
 
     /* Get row for this function in global symbol table */
-    symData_t* tbl = symTableSearch(glb_tbl, func_name);
+    symData_t* tbl = symTableSearch(glb_tbl, func_name);    
+    
+
 
     /* Insert Parameter */
     paramInsert(tbl, data_type, id);
@@ -337,6 +340,8 @@ bool check_function_is_not_defined (LList* tbl_list, char* func_name)
 {
     bool ret_val = false;
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+    
+
     symData_t* func_data = symTableSearch(glb_tbl, func_name);
 
     if (func_data == NULL)
@@ -579,11 +584,12 @@ bool func_is_not_def (symTree_t* tree)
 }
 
 void copy_params_to_func_table (LList* tbl_list, char* func_name)
-{
+{    
     symTree_t* func_tbl = LL_GetLast(tbl_list);
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
     function_params_t* elem = symTableSearch(glb_tbl, func_name)->first_param;
-    symData_t* in_tbl_param_data;
+    symData_t* in_tbl_param_data;        
+    
 
     while (elem != NULL)
     {
@@ -675,7 +681,8 @@ void create_tbl_list_mem (LList** tbl_list)
 
 void insert_built_in_functions (LList* tbl_list)
 {    
-    symTree_t* glb_tbl = LL_GetFirst(tbl_list);        
+    tbl_list = tbl_list;
+    symTree_t* glb_tbl = (symTree_t*) malloc(sizeof(symTree_t));
     
 
     // TODO
@@ -685,14 +692,14 @@ void insert_built_in_functions (LList* tbl_list)
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, STR);
-    symTableInsert(&glb_tbl, "reads", data);    
+    symTableInsert(&glb_tbl, "reads", data);           
 
     // function readi (): integer
     symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, INT);
-    symTableInsert(&glb_tbl, "readi", data);
+    symTableInsert(&glb_tbl, "readi", data);    
 
     // function readn (): number
     symDataInit(&data);
@@ -745,6 +752,8 @@ void insert_built_in_functions (LList* tbl_list)
     paramInsert(data, INT, "i");
     returnInsert(data, STR);
     symTableInsert(&glb_tbl, "chr", data);
+    
+    tbl_list->lastElement->root = glb_tbl; 
 }
 
 /******************* PARSER MAIN *******************/
@@ -802,7 +811,7 @@ parser_error_t parser ()
     // Insert built in functions
     insert_built_in_functions(data->tbl_list);          
 
-    /* ----------- END OF SEMANTIC ----------*/
+    /* ----------- END OF SEMANTIC ----------*/    
 
     if (!prog(data))
     {
@@ -972,9 +981,11 @@ bool main_b (p_data_ptr_t data)
                 symTableSearch(tree, func_name)->defined = true;
 
                 // Create symbol table for function
-                create_sym_table(data->tbl_list);
-
+                create_sym_table(data->tbl_list);                
+                
                 // Save function name to data->func_name
+                /* Malloc data->func_name */
+                data->func_name = (char*) malloc(strlen(func_name) + 1); // TODO pak realloc
                 strcpy(data->func_name, func_name);
                 
                 /* ----------- END OF SEMANTIC ----------*/
@@ -992,6 +1003,8 @@ bool main_b (p_data_ptr_t data)
                     {    
                         /* -------------- SEMANTIC --------------*/
                         
+                        printf("\nfunc-name: %s\n", func_name);
+
                         copy_params_to_func_table(data->tbl_list, func_name);
 
                         if (err != E_NO_ERR)
@@ -1563,7 +1576,8 @@ bool params (p_data_ptr_t data)
     if (token_type == T_IDENTIFIER)
     {
         // Ulozeni jmena parametru
-        strcpy(id, data->token->attribute.string);
+        id = (char*) malloc(strlen(data->token->attribute.string));
+        strcpy(id, data->token->attribute.string);        
 
         next_token(data);
         VALIDATE_TOKEN(data->token);
