@@ -219,10 +219,10 @@ void create_tbl_list (LList* tbl_list)
 
 void create_sym_table (LList* tbl_list)
 {
-    symTree_t** tree = (symTree_t**) malloc(sizeof(symTree_t*));
+    symTree_t* tree = (symTree_t*) malloc(sizeof(symTree_t));
 
-    symTableInit(tree);
-    LL_InsertLast(tbl_list, *tree);
+    symTableInit(&tree);
+    LL_InsertLast(tbl_list, tree);
 }
 
 void create_symbol (symTree_t** tree, char* key)
@@ -231,8 +231,7 @@ void create_symbol (symTree_t** tree, char* key)
     symDataInit(&data);
 
     if (err == E_NO_ERR)
-    {
-        printf("\nhere\n");
+    {        
         symTableInsert(tree, key, data);
     }
 }
@@ -676,7 +675,8 @@ void create_tbl_list_mem (LList** tbl_list)
 
 void insert_built_in_functions (LList* tbl_list)
 {    
-    symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);        
+    
 
     // TODO
     // function reads (): string
@@ -685,7 +685,7 @@ void insert_built_in_functions (LList* tbl_list)
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, STR);
-    symTableInsert(&glb_tbl, "reads", data);
+    symTableInsert(&glb_tbl, "reads", data);    
 
     // function readi (): integer
     symDataInit(&data);
@@ -798,8 +798,9 @@ parser_error_t parser ()
 
     // Create global symbol table
     create_sym_table(data->tbl_list);
+    
     // Insert built in functions
-    insert_built_in_functions(data->tbl_list);    
+    insert_built_in_functions(data->tbl_list);          
 
     /* ----------- END OF SEMANTIC ----------*/
 
@@ -875,12 +876,12 @@ bool main_b (p_data_ptr_t data)
 {    
     bool ret_val = false;
     token_type_t token_type;    
-    symTree_t** tree = NULL;
+    symTree_t* tree = NULL;
     char* func_name = NULL;
 
     /* Create tree */
 
-    tree = (symTree_t**) malloc(sizeof(symTree_t*));
+    tree = (symTree_t*) malloc(sizeof(symTree_t));
 
     if (tree == NULL)
     {
@@ -897,9 +898,9 @@ bool main_b (p_data_ptr_t data)
     {
         /* -------------- SEMANTIC --------------*/
         
-        (*tree) = LL_GetFirst(data->tbl_list);
+        tree = LL_GetFirst(data->tbl_list);
         
-        if (!func_is_not_def(*tree))
+        if (!func_is_not_def(tree))
         {
             err = E_SEM_DEF;
             return false;
@@ -943,16 +944,16 @@ bool main_b (p_data_ptr_t data)
                 {
                     err = E_SEM_DEF;
                     return false;
-                }
+                }    
 
-                (*tree) = LL_GetFirst(data->tbl_list);                
+                tree = LL_GetFirst(data->tbl_list);                 
 
                 /*
                  * Function has declaration before (global id : function ...)
                  */
                 if (check_function_is_declared_before (data->tbl_list, func_name))
                 {
-                    data->function_declaration_data = symTableSearch(*tree, func_name);
+                    data->function_declaration_data = symTableSearch(tree, func_name);
                 }
                 else
                 {
@@ -960,7 +961,7 @@ bool main_b (p_data_ptr_t data)
                 }
 
                 // Add symbol to table                
-                create_symbol(tree, func_name);
+                create_symbol(&tree, func_name);
 
                 if (err != E_NO_ERR)
                 {
@@ -968,7 +969,7 @@ bool main_b (p_data_ptr_t data)
                 }                
 
                 // Set function as defined
-                symTableSearch(*tree, func_name)->defined = true;
+                symTableSearch(tree, func_name)->defined = true;
 
                 // Create symbol table for function
                 create_sym_table(data->tbl_list);
@@ -1043,8 +1044,8 @@ bool main_b (p_data_ptr_t data)
              */
             if (data->function_declaration_data != NULL)
             {
-                (*tree) = LL_GetFirst(data->tbl_list);
-                symData_t* func_def = symTableSearch(*tree, func_name);
+                tree = LL_GetFirst(data->tbl_list);
+                symData_t* func_def = symTableSearch(tree, func_name);
                 
                 /*
                  * Check params lists of function declaration and definition
@@ -1090,8 +1091,8 @@ bool main_b (p_data_ptr_t data)
                 /* TODO pokud funkce jiz byla deklarovana */
 
                 // Add symbol to table
-                (*tree) = LL_GetFirst(data->tbl_list);
-                create_symbol(tree, data->token->attribute.string);
+                tree = LL_GetFirst(data->tbl_list);
+                create_symbol(&tree, data->token->attribute.string);
 
                 if (err != E_NO_ERR)
                 {

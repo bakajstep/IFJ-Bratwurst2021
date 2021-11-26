@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* TODO smazat */
+#include <stdio.h>
+
 void symTableInit(symTree_t **tree){
 
     if(!(*tree)){
@@ -126,9 +129,9 @@ symData_t* symTableSearch(symTree_t* tree, char* key){
 }
 
 void symTableInsert(symTree_t **tree, char* key, symData_t* data){
-    if(*tree == NULL){
+    /*if(*tree == NULL){        
         return;
-    }
+    }*/
 
     while((*tree) != NULL){
 
@@ -149,9 +152,35 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
         err = E_INTERNAL;
         return;
     }
-    if((*tree) == NULL) return;
+    //if((*tree) == NULL) return;
+    
+    (*tree)->key = (char*) malloc(strlen(key));    
+
+    if ((*tree)->key == NULL)
+    {
+        err = E_INTERNAL;
+        return;
+    }
+    
+
     strcpy((*tree)->key, key);
-    *(*tree)->data = *data;
+
+    (*tree)->data = (symData_t*) malloc(sizeof(symData_t));
+
+    if ((*tree)->data == NULL)
+    {
+        err = E_INTERNAL;
+        return;
+    }
+
+    (*tree)->data->declared = data->declared;
+    (*tree)->data->defined = data->defined;
+    (*tree)->data->data_type = data->data_type;
+    (*tree)->data->params_count = data->params_count;
+    (*tree)->data->params_type_count = data->params_type_count;
+    (*tree)->data->returns_count = data->returns_count;
+    
+    
     (*tree)->nextLeft = NULL;
     (*tree)->nextRight = NULL;
 }

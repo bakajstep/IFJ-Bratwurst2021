@@ -11,6 +11,9 @@
 #include "sym_linked_list.h"
 #include "symtable.h"
 
+/* TODO smazat */
+#include <stdio.h>
+
 void LL_Init( LList* list ) {
     list->lastElement = NULL;
     list->activeElement = NULL;
@@ -64,14 +67,17 @@ void LL_DeleteLast( LList* list ){
 }
 
 symTree_t * LL_GetFirst( LList* list){
-    if(list->lastElement == NULL){
+    if(list->lastElement == NULL){                 
         return NULL;
     }
+    
     struct LLElement* current;
     current = list->lastElement;
     while(current->nextElement != NULL){
         current = current->nextElement;
-    }
+    }    
+    
+
     return current->root;
 }
 
