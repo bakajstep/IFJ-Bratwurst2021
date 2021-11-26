@@ -191,7 +191,7 @@ $(SEM)-test:
 	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err1' ------------------------------------\n"
-	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
 	@echo "\nTest case 'bad_parameter_type_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG13).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output || exit 0
 
@@ -201,7 +201,7 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG14).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err3' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG15).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output
+	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG15).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output
 	@echo "\nTest case 'bad_parameter_type_err3' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG15).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output || exit 0
 

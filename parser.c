@@ -77,7 +77,8 @@ bool ret_def_types (p_data_ptr_t data);
 bool func_types (p_data_ptr_t data);
 bool n_func_types (p_data_ptr_t data);
 bool func_def_types (p_data_ptr_t data);
-bool n_func_def_types (p_data_ptr_t data);
+bool a_n_func_def_types (p_data_ptr_t data);
+bool r_n_func_def_types (p_data_ptr_t data);
 bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
 
@@ -817,7 +818,7 @@ parser_error_t parser ()
     if (!prog(data))
     {
         if (err == E_NO_ERR)
-        {
+        {            
             err = E_SYNTAX;
         }
         
@@ -1117,6 +1118,7 @@ bool main_b (p_data_ptr_t data)
                 create_sym_table(data->tbl_list);
 
                 // Save function name to data->func_name
+                data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
                 strcpy(data->func_name, data->token->attribute.string);
                 
                 /* ----------- END OF SEMANTIC ----------*/
@@ -1145,7 +1147,7 @@ bool main_b (p_data_ptr_t data)
                             next_token(data);
 
                             if (arg_def_types(data))
-                            {
+                            {                                                                
                                 VALIDATE_TOKEN(data->token);
                                 TEST_EOF(data->token);
                                 token_type = data->token->type;
@@ -1455,6 +1457,7 @@ bool stats (p_data_ptr_t data)
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
     {
+        data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 
         /* -------------- SEMANTIC --------------*/
@@ -1578,7 +1581,7 @@ bool params (p_data_ptr_t data)
     if (token_type == T_IDENTIFIER)
     {
         // Ulozeni jmena parametru
-        id = (char*) malloc(strlen(data->token->attribute.string));
+        id = (char*) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(id, data->token->attribute.string);        
 
         next_token(data);
@@ -1986,6 +1989,7 @@ bool as_vals (p_data_ptr_t data)
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
+        data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 
         if (vals(data))
@@ -2144,6 +2148,7 @@ bool assign_val (p_data_ptr_t data)
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
     {    
+        data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 
         if (expression(data))
@@ -2569,11 +2574,11 @@ bool n_func_types (p_data_ptr_t data)
  * 46. <func_def_types> -> <type>  <n_func_def_types>
  */
 bool func_def_types (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;    
                            
     if (type(data))
-    {        
+    {                
         /* -------------- SEMANTIC --------------*/
         
         if (data->arg_ret == ARG_DEF_TYPE)
@@ -2585,6 +2590,8 @@ bool func_def_types (p_data_ptr_t data)
             {
                 return false;
             }
+
+            ret_val = a_n_func_def_types(data);
             
         }
         else
@@ -2596,11 +2603,11 @@ bool func_def_types (p_data_ptr_t data)
             {
                 return false;
             }
+
+            ret_val = r_n_func_def_types(data);
         }
 
-        /* ----------- END OF SEMANTIC ----------*/
-
-        ret_val = n_func_def_types(data);
+        /* ----------- END OF SEMANTIC ----------*/        
     }            
 
     return ret_val;            
@@ -2613,7 +2620,57 @@ bool func_def_types (p_data_ptr_t data)
  * 47. <n_func_def_types> -> , <type>  <n_func_def_types>
  * 48. <n_func_def_types> -> epsilon
  */
-bool n_func_def_types (p_data_ptr_t data)
+bool a_n_func_def_types (p_data_ptr_t data)
+{
+    bool ret_val = false;    
+    token_type_t token_type;    
+
+    VALIDATE_TOKEN(data->token);
+
+    token_type = data->token->type;
+
+    /* 48. <n_func_def_types> -> epsilon */
+    if (token_type == T_RIGHT_BRACKET)
+    {
+        ret_val = true;
+    }
+    else
+    {
+        /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
+        if (token_type == T_COMMA)
+        {            
+            next_token(data);        
+            
+            if (type(data))
+            {                  
+                /* -------------- SEMANTIC --------------*/        
+                
+                // Vlozeni noveho parametru funkce                                               
+                insert_parameter_type(data->tbl_list, data->func_name, data->type);
+
+                if (err != E_NO_ERR)
+                {
+                    return false;
+                }
+                                 
+                /* ----------- END OF SEMANTIC ----------*/
+
+                ret_val = a_n_func_def_types(data);
+            }                 
+        }            
+    }
+        
+    return ret_val;        
+}
+
+/*
+ * NON-TERMINAL: <n_func_def_types>
+ *
+ * RULES:
+ * 47. <n_func_def_types> -> , <type>  <n_func_def_types>
+ * 48. <n_func_def_types> -> epsilon
+ */
+bool r_n_func_def_types (p_data_ptr_t data)
 {
     bool ret_val = false;    
     token_type_t token_type;    
@@ -2631,40 +2688,28 @@ bool n_func_def_types (p_data_ptr_t data)
 
         /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
         if (token_type == T_COMMA)
-        {
+        {            
             next_token(data);        
             
             if (type(data))
-            {            
+            {                  
                 /* -------------- SEMANTIC --------------*/        
-                if (data->arg_ret == ARG_DEF_TYPE)
+                
+                // Vlozeni noveho parametru funkce                                                       
+                insert_return(data->tbl_list, data->func_name, data->type);
+
+                if (err != E_NO_ERR)
                 {
-                    // Vlozeni noveho parametru funkce                                               
-                    insert_parameter_type(data->tbl_list, data->func_name, data->type);
-
-                    if (err != E_NO_ERR)
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    // Vlozeni noveho parametru funkce                                                       
-                    insert_return(data->tbl_list, data->func_name, data->type);
-
-                    if (err != E_NO_ERR)
-                    {
-                        return false;
-                    }
-                }
-
+                    return false;
+                }               
+   
                 /* ----------- END OF SEMANTIC ----------*/
 
-                ret_val = n_func_def_types(data);
+                ret_val = r_n_func_def_types(data);
             }                 
         }            
-    }    
-
+    }
+        
     return ret_val;        
 }
 

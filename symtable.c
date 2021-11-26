@@ -193,7 +193,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     }
     //if((*tree) == NULL) return;
     
-    (*tree)->key = (char*) malloc(strlen(key)+1);    
+    (*tree)->key = (char*) malloc(strlen(key) + 1);    
 
     if ((*tree)->key == NULL)
     {
