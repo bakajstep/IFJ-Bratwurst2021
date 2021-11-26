@@ -406,14 +406,14 @@ bool check_function_is_declared (LList* tbl_list, char* func_name)
 bool check_identifier_is_defined (LList* tbl_list, char* id)
 {
     bool ret_val = false;
-    LLElementPtr elem = tbl_list->lastElement;
+    struct LLElement* elem = tbl_list->lastElement;
     symData_t* table_elem;
 
     /*
      * Go through tables in linked list
      */
     while (elem != NULL)
-    {
+    {        
         table_elem = symTableSearch(elem->root, id);
 
         /*
@@ -588,8 +588,7 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
     symTree_t* func_tbl = LL_GetLast(tbl_list);
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
     function_params_t* elem = symTableSearch(glb_tbl, func_name)->first_param;
-    symData_t* in_tbl_param_data;        
-    
+    symData_t* in_tbl_param_data;                
 
     while (elem != NULL)
     {
@@ -615,7 +614,7 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
         /* END OF INSERT */
 
         elem = elem->param_next;
-    }    
+    }        
 }
 
 bool check_func_assign (p_data_ptr_t data)
@@ -1001,11 +1000,11 @@ bool main_b (p_data_ptr_t data)
 
                     if (params(data))
                     {    
-                        /* -------------- SEMANTIC --------------*/
-                        
-                        printf("\nfunc-name: %s\n", func_name);
+                        /* -------------- SEMANTIC --------------*/                                                
 
                         copy_params_to_func_table(data->tbl_list, func_name);
+
+                        printf("\ntbl: %s\n", data->tbl_list->lastElement->root->key);
 
                         if (err != E_NO_ERR)
                         {

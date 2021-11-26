@@ -149,7 +149,8 @@ void returnInsert(symData_t* data, data_type_t type){
 }
 
 symData_t* symTableSearch(symTree_t* tree, char* key){
-    while(tree != NULL){        
+    while(tree != NULL){ 
+        printf("\ntree->key: %s, key: %s\n", tree->key, key);       
         if(strcmp(tree->key, key) == 0){
             return tree->data;
         }
