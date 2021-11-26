@@ -1,6 +1,6 @@
 require "ifj21"
 
-global func : function(integer, integer) : string
+global func : function(integer) : string
 
 function func(n : integer) : integer
     return 5

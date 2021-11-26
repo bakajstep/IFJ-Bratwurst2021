@@ -192,7 +192,7 @@ void next_token(p_data_ptr_t data)
     data->token = get_next_token();
 
     /* TODO smazat */
-    //print(data);
+    print(data);
 }
 
 bool valid_token (token_t* token)
@@ -780,7 +780,7 @@ parser_error_t parser ()
     data->token = get_next_token();
 
     /* TODO smazat */
-    //print(data);
+    print(data);
     
     if (!valid_token(data->token))
     {
