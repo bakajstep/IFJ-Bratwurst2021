@@ -36,13 +36,14 @@ void LL_Dispose( LList* list ) {
 }
 
 void LL_InsertLast( LList* list, symTree_t* root) {
-    struct LLElement* newElement = (struct LLElement*) malloc(sizeof(struct LLElement));
+    struct LLElement* newElement = (struct LLElement*) malloc(sizeof(struct LLElement));    
+    
     newElement->root = root;
     newElement->nextElement = NULL;
 
     if(list->lastElement == NULL){
         list->lastElement = newElement;
-    } else {
+    } else {        
         newElement->nextElement = list->lastElement;
         list->lastElement = newElement;
     }
@@ -67,21 +68,20 @@ void LL_DeleteLast( LList* list ){
 }
 
 symTree_t * LL_GetFirst( LList* list){
-    if(list->lastElement == NULL){                 
+    if(list->lastElement == NULL){                        
         return NULL;
     }
     
     struct LLElement* current;
     current = list->lastElement;
-    while(current->nextElement != NULL){
+    while(current->nextElement != NULL){        
         current = current->nextElement;
-    }    
-    
+    }        
 
     return current->root;
 }
 
-symTree_t * LL_GetLast( LList* list){
+symTree_t * LL_GetLast( LList* list){    
     return list->lastElement->root;
 }
 
