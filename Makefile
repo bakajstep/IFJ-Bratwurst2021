@@ -82,7 +82,10 @@ CC=gcc
 # TODO smazat
 CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
 
-.PHONY: $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean
+.PHONY: all $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean
+
+all:
+	$(CC) $(CFLAGS) -o $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h
 
 $(LEX)-test:
 	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(LEX)_test.c
