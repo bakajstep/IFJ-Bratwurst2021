@@ -191,7 +191,7 @@ void next_token(p_data_ptr_t data)
     data->token = get_next_token();
 
     /* TODO smazat */
-    print(data);
+    //print(data);
 }
 
 bool valid_token (token_t* token)
@@ -413,7 +413,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
      * Go through tables in linked list
      */
     while (elem != NULL)
-    {        
+    {                
         table_elem = symTableSearch(elem->root, id);
 
         /*
@@ -585,7 +585,7 @@ bool func_is_not_def (symTree_t* tree)
 
 void copy_params_to_func_table (LList* tbl_list, char* func_name)
 {    
-    symTree_t* func_tbl = LL_GetLast(tbl_list);
+    //symTree_t* func_tbl = LL_GetLast(tbl_list);
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);    
     function_params_t* elem = symTableSearch(glb_tbl, func_name)->first_param;
     symData_t* in_tbl_param_data;                
@@ -595,15 +595,15 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
         /* INSERT PARAM TO FUNC TABLE */        
         
         // Add param to table
-        create_symbol(&func_tbl, elem->param_name);
+        create_symbol(&(tbl_list->lastElement->root), elem->param_name);
 
         if (err != E_NO_ERR)
         {
             return;
-        }        
+        }
 
         // Get param in table data
-        in_tbl_param_data = symTableSearch(func_tbl, elem->param_name);
+        in_tbl_param_data = symTableSearch(tbl_list->lastElement->root, elem->param_name);
         
         // Add data type to param in table
         in_tbl_param_data->data_type = elem->param_type;
@@ -614,7 +614,9 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
         /* END OF INSERT */
 
         elem = elem->param_next;
-    }        
+    }
+
+   // printf("\nlocal param: %s\n", tbl_list->lastElement->root->key);        
 }
 
 bool check_func_assign (p_data_ptr_t data)
@@ -777,7 +779,7 @@ parser_error_t parser ()
     data->token = get_next_token();
 
     /* TODO smazat */
-    print(data);
+    //print(data);
     
     if (!valid_token(data->token))
     {
@@ -1004,7 +1006,7 @@ bool main_b (p_data_ptr_t data)
 
                         copy_params_to_func_table(data->tbl_list, func_name);
 
-                        printf("\ntbl: %s\n", data->tbl_list->lastElement->root->key);
+                     //   printf("\ntbl: %s\n", data->tbl_list->lastElement->root->key);
 
                         if (err != E_NO_ERR)
                         {
@@ -1228,7 +1230,7 @@ bool stats (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;    
-    symTree_t** tree = NULL;
+    symTree_t* tree = (symTree_t*) malloc(sizeof(symTree_t));
     data_type_t data_type;
     char* id = NULL;
 
@@ -1247,11 +1249,12 @@ bool stats (p_data_ptr_t data)
 
         if (token_type == T_IDENTIFIER)
         {            
-            /* -------------- SEMANTIC --------------*/                                    
+            /* -------------- SEMANTIC --------------*/ 
+            id = (char *) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);
-            (*tree) = LL_GetLast(data->tbl_list);
+            tree = LL_GetLast(data->tbl_list);
 
-            if (!check_first_definition(*tree, id))
+            if (!check_first_definition(tree, id))
             {
                 err = E_SEM_DEF;
                 return false;
@@ -1264,7 +1267,7 @@ bool stats (p_data_ptr_t data)
             }
             
             
-            create_symbol(tree, id);
+            create_symbol(&tree, id);
 
             if (err != E_NO_ERR)
             {
@@ -1286,7 +1289,7 @@ bool stats (p_data_ptr_t data)
                 {
                     /* -------------- SEMANTIC --------------*/
                     // Set identifier data type
-                    symTableSearch(*tree, id)->data_type = data->type;    
+                    symTableSearch(tree, id)->data_type = data->type;    
                 
                     /* ----------- END OF SEMANTIC ----------*/
 
@@ -1294,7 +1297,7 @@ bool stats (p_data_ptr_t data)
                     {
                         /* -------------- SEMANTIC --------------*/
 
-                        data_type = symTableSearch(*tree, id)->data_type;
+                        data_type = symTableSearch(tree, id)->data_type;
 
                         if (data_type != data->psa_data_type)
                         {

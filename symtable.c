@@ -149,8 +149,8 @@ void returnInsert(symData_t* data, data_type_t type){
 }
 
 symData_t* symTableSearch(symTree_t* tree, char* key){
-    while(tree != NULL){ 
-        printf("\ntree->key: %s, key: %s\n", tree->key, key);       
+    while(tree != NULL && tree->key != NULL){ 
+       // printf("\ntree->key: %s, key: %s\n", tree->key, key);       
         if(strcmp(tree->key, key) == 0){
             return tree->data;
         }
@@ -172,7 +172,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
 
     while((*tree) != NULL && (*tree)->key != NULL){
 
-        printf("\ntree key: %s\n", (*tree)->key);
+        //printf("\ntree key: %s\n", (*tree)->key);
 
         if(strcmp((*tree)->key, key) == 0){
             err = E_INTERNAL;
@@ -203,6 +203,8 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     
 
     strcpy((*tree)->key, key);    
+
+    //printf("\ntree key: %s\n", (*tree)->key);
 
     (*tree)->data = (symData_t*) malloc(sizeof(symData_t));
 
