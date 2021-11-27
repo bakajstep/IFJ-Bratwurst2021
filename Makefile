@@ -35,8 +35,8 @@ PROG17=bad_return_type_err2
 PROG18=bad_type_variable_err
 PROG19=call_too_few_parameter_err1
 PROG20=call_too_few_parameter_err2
-PROG21=call_too_many_function_parameter_err1
-PROG22=call_too_many_function_parameter_err2
+PROG21=call_too_many_parameter_err1
+PROG22=call_too_many_parameter_err2
 PROG23=define_too_few_parameter_err
 PROG24=define_too_many_parameter_err
 PROG25=define_too_many_returns_err
@@ -221,7 +221,7 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG18).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG18).output || exit 0
 
 	@echo "\n------------------------------------ 'call_too_few_parameter_err1' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG19).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output
+	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG19).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output
 	@echo "\nTest case 'call_too_few_parameter_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG19).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output || exit 0
 

@@ -29,8 +29,9 @@ typedef struct p_data {
     arg_ret_t arg_ret;    
     data_type_t type;
     data_type_t psa_data_type; // psa data type
-        
+
     function_params_t* param;
+    function_returns_t* ret;
     ids_list_t* ids_list;
 } *p_data_ptr_t;
 

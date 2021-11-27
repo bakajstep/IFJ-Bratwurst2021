@@ -229,13 +229,13 @@ void create_sym_table (LList* tbl_list)
 
 void create_symbol (symTree_t** tree, char* key)
 {
-    symData_t* data = NULL;
+    symData_t* data = (symData_t*) malloc(sizeof(symData_t));
     symDataInit(&data);
 
     if (err == E_NO_ERR)
     {        
         symTableInsert(tree, key, data);
-    }
+    }    
 }
 
 void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t data_type)
@@ -415,13 +415,12 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
      */
     while (elem != NULL)
     {                
-        table_elem = symTableSearch(elem->root, id);
-
+        table_elem = symTableSearch(elem->root, id);        
         /*
          * Check if identifier is in table
-         */
+         */        
         if (table_elem != NULL)
-        {            
+        {                                
             if (table_elem->defined == true)
             {
                 ret_val = true;                
@@ -914,6 +913,7 @@ bool main_b (p_data_ptr_t data)
         
         if (!func_is_not_def(tree))
         {
+            printf("ESD: %d\n", 1);
             err = E_SEM_DEF;
             return false;
         }        
@@ -948,6 +948,7 @@ bool main_b (p_data_ptr_t data)
                  */
                 if (!check_function_is_not_defined(data->tbl_list, func_name))
                 {                    
+                    printf("\nESD: %d\n", 2);
                     err = E_SEM_DEF;
                     return false;
                 }                                    
@@ -1014,6 +1015,7 @@ bool main_b (p_data_ptr_t data)
                                                                         func_def->params_count,
                                                                         func_def->first_param))
                             {
+                                printf("\nESD: %d\n", 3);
                                 err = E_SEM_DEF;                                
                                 return false;
                             }                                                                                               
@@ -1059,6 +1061,7 @@ bool main_b (p_data_ptr_t data)
                                                                               func_def->returns_count,
                                                                               func_def->first_ret))
                                     {
+                                        printf("\nESD: %d\n", 4);
                                         err = E_SEM_DEF;
                                         return false;
                                     }                                                                    
@@ -1067,7 +1070,7 @@ bool main_b (p_data_ptr_t data)
                                 /* ----------- END OF SEMANTIC ----------*/
 
                                 if (stats(data))
-                                {
+                                {                                    
                                     VALIDATE_TOKEN(data->token);
                                     TEST_EOF(data->token);
                                     token_type = data->token->type;                                
@@ -1110,7 +1113,8 @@ bool main_b (p_data_ptr_t data)
                 /* TODO pokud funkce jiz byla deklarovana */
 
                 if (!check_no_multiple_function_declaration(data->tbl_list, data->token->attribute.string))
-                {                    
+                {         
+                    printf("\nESD: %d\n", 5);           
                     err = E_SEM_DEF;
                     return false;
                 }
@@ -1187,6 +1191,7 @@ bool main_b (p_data_ptr_t data)
              */
             if (!check_function_is_declared(data->tbl_list, data->token->attribute.string))
             {
+                printf("\nESD: %d\n", 6);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -1242,7 +1247,7 @@ bool stats (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;    
-    symTree_t* tree = (symTree_t*) malloc(sizeof(symTree_t));
+    symTree_t* tree = NULL;
     data_type_t data_type;
     char* id = NULL;
 
@@ -1266,20 +1271,29 @@ bool stats (p_data_ptr_t data)
             strcpy(id, data->token->attribute.string);
             tree = LL_GetLast(data->tbl_list);
 
+            
+            
+            //printf("\n tree: %s \n", tree->key);
+                        
+
             if (!check_first_definition(tree, id))
             {
+                printf("\nESD: %d\n", 7);
                 err = E_SEM_DEF;
                 return false;
             }
 
             if (!check_conflict_id_func(data->tbl_list, id))
             {
+                printf("\nESD: %d\n", 8);
                 err = E_SEM_DEF;
                 return false;
             }
             
             
-            create_symbol(&tree, id);
+            create_symbol(&tree, id);                        
+
+            //printf("\n tree: %s \n", tree->key);
 
             if (err != E_NO_ERR)
             {
@@ -1460,7 +1474,7 @@ bool stats (p_data_ptr_t data)
         next_token(data);
 
         if (ret_vals(data))
-        {
+        {            
             ret_val = stats(data);
         }        
     }    
@@ -1477,6 +1491,7 @@ bool stats (p_data_ptr_t data)
          */     
         if (!check_function_is_declared(data->tbl_list, data->func_name))
         {
+            printf("\nESD: %d\n", 9);
             err = E_SEM_DEF;
             return false;
         }        
@@ -1737,6 +1752,7 @@ bool n_ids (p_data_ptr_t data)
              */
             if (!check_function_is_declared(data->tbl_list, data->token->attribute.string))
             {
+                printf("\nESD: %d\n", 10);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -1823,17 +1839,25 @@ bool r_vals (p_data_ptr_t data)
         glb_tbl = LL_GetFirst(data->tbl_list);
         func_data = symTableSearch(glb_tbl, data->func_name);
 
-        data->param = func_data->first_param;
+        data->ret = func_data->first_ret;
 
-        if (data->param != NULL)
-        {
-            if (data->psa_data_type != data->param->param_type)
-            {
-                err = E_SEM_PARAM;
-                return false;
+        if (data->ret != NULL)
+        {            
+            if (data->psa_data_type != data->ret->return_type)
+            {           
+                if (data->psa_data_type == NIL || 
+                    (data->ret->return_type == NUMBER && data->psa_data_type == INT))
+                {
+                    // VALID
+                }
+                else
+                {       
+                    err = E_SEM_PARAM;
+                    return false;             
+                }                       
             }   
 
-            data->param  = data->param->param_next;
+            data->ret = data->ret->ret_next;
         }
         else
         {
@@ -1968,15 +1992,23 @@ bool r_n_vals (p_data_ptr_t data)
             {
                 /* -------------- SEMANTIC --------------*/                   
 
-                if (data->param != NULL)
+                if (data->ret != NULL)
                 {
-                    if (data->psa_data_type != data->param->param_type)
+                    if (data->psa_data_type != data->ret->return_type)
                     {
-                        err = E_SEM_PARAM;
-                        return false;
+                        if (data->psa_data_type == NIL || 
+                            (data->ret->return_type == NUMBER && data->psa_data_type == INT))
+                        {
+                            // VALID
+                        }
+                        else
+                        {       
+                            err = E_SEM_PARAM;
+                            return false;             
+                        }                           
                     }   
 
-                    data->param  = data->param->param_next;
+                    data->ret  = data->ret->ret_next;
                 }             
                 else
                 {
@@ -2050,6 +2082,7 @@ bool as_vals (p_data_ptr_t data)
              */       
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
+                printf("\nESD: %d\n", 11);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -2123,13 +2156,19 @@ bool ret_vals (p_data_ptr_t data)
 
     /* 25. <ret_vals> -> <vals> */ 
     if (r_vals(data))
-    {
+    {        
         ret_val = true;
     }
     /* 26. <ret_vals> -> epsilon */
-    else if (stats(data))
+    else
     {
-        ret_val = true;
+        if (err == E_NO_ERR)
+        {
+            if (stats(data))
+            {
+                ret_val = true;
+            }        
+        }                
     }              
 
     return ret_val;
@@ -2209,6 +2248,7 @@ bool assign_val (p_data_ptr_t data)
              */       
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
+                printf("\nESD: %d\n", 12);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -2282,8 +2322,10 @@ bool term (p_data_ptr_t data)
     if (token_type == T_IDENTIFIER)
     {
         /* -------------- SEMANTIC --------------*/
+
         if (!check_identifier_is_defined(data->tbl_list, data->token->attribute.string))
         {
+            printf("\nESD: %d\n", 13);
             err = E_SEM_DEF;
             return false;
         }
