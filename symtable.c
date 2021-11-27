@@ -76,28 +76,32 @@ void symDataInit(symData_t** data){
 }
 
 void paramInsert(symData_t* data, data_type_t type, char* param_name){
+
     function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
 
     if(!newParam){
         err = E_INTERNAL;
         return;
     }
-    newParam->param_name = param_name;
+    
+    newParam->param_name = param_name;    
+    //newParam->param_name = (char*) malloc(strlen(param_name) + 1);
+    //strcpy(newParam->param_name, param_name);     
     newParam->param_type = type;
 
-    if(data->first_param == NULL){
+    if(data->first_param == NULL){        
         data->first_param = newParam;
         data->first_param->param_next = NULL;
     }else{
         function_params_t* current;
         current = data->first_param;
 
-        while(current != NULL){
+        while(current->param_next != NULL){
             current = current->param_next;
         }
-        current = newParam;
-        current->param_next = NULL;
-    }
+        current->param_next = newParam;
+        newParam->param_next = NULL;
+    }       
 }
 
 void paramTypeInsert(symData_t* data, data_type_t type){
@@ -107,20 +111,21 @@ void paramTypeInsert(symData_t* data, data_type_t type){
         err = E_INTERNAL;
         return;
     }
+
     newParam->param_type = type;
 
-    if(data->first_param == NULL){
-        data->first_param = newParam;
-        data->first_param->param_next = NULL;
+    if(data->first_type_param == NULL){
+        data->first_type_param = newParam;
+        data->first_type_param->param_next = NULL;
     }else{
         function_params_t* current;
-        current = data->first_param;
+        current = data->first_type_param;
 
-        while(current != NULL){
+        while(current->param_next != NULL){
             current = current->param_next;
         }
-        current = newParam;
-        current->param_next = NULL;
+        current->param_next = newParam;
+        newParam->param_next = NULL;
     }
 }
 
@@ -140,11 +145,11 @@ void returnInsert(symData_t* data, data_type_t type){
         function_returns_t* current;
         current = data->first_ret;
 
-        while(current != NULL){
+        while(current->ret_next != NULL){
             current = current->ret_next;
         }
-        current = newReturn;
-        current->ret_next = NULL;
+        current->ret_next = newReturn;
+        newReturn->ret_next = NULL;
     }
 }
 

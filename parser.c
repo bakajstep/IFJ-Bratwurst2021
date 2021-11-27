@@ -243,13 +243,13 @@ void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t d
     /* Get global symbol table */
     symTree_t* glb_tbl = LL_GetFirst(tbl_list); 
 
-    /* Get row for this function in global symbol table */
-    symData_t* tbl = symTableSearch(glb_tbl, func_name);    
-    
-
+    /* Get row for this function in global symbol table */    
+    symData_t* tbl = symTableSearch(glb_tbl, func_name);                    
 
     /* Insert Parameter */
     paramInsert(tbl, data_type, id);
+    //printf("\nname: %s\n", tbl->first_param->param_name);
+    //printf("\ntype: %d\n", tbl->first_param->param_type);    
 
     if (err != E_NO_ERR)
     {
@@ -265,7 +265,7 @@ void insert_parameter_type (LList *tbl_list, char* func_name, data_type_t data_t
     /* Get global symbol table */
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);
 
-    /* Get row for this function in global symbol table */
+    /* Get row for this function in global symbol table */    
     symData_t* tbl = symTableSearch(glb_tbl, func_name);
 
     /* Insert Parameter */
@@ -286,7 +286,7 @@ void insert_return (LList *tbl_list, char* func_name, data_type_t data_type)
     /* Get global symbol table */
     symTree_t* glb_tbl = LL_GetFirst(tbl_list);
 
-    /* Get row for this function in global symbol table */
+    /* Get row for this function in global symbol table */    
     symData_t* tbl = symTableSearch(glb_tbl, func_name);
 
     /* Insert Parameter */
@@ -592,10 +592,10 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
     symData_t* in_tbl_param_data;                
 
     while (elem != NULL)
-    {
-        /* INSERT PARAM TO FUNC TABLE */        
-        
+    {                
+        /* INSERT PARAM TO FUNC TABLE */                
         // Add param to table
+        //printf("\nfunc name: %s\n", func_name);
         create_symbol(&(tbl_list->lastElement->root), elem->param_name);
 
         if (err != E_NO_ERR)
@@ -718,7 +718,7 @@ void insert_built_in_functions (LList* tbl_list)
     data->defined = true;
     data->returns_count = 1;
     data->params_count = 1;
-    paramInsert(data, NUMBER, "f");
+    paramInsert(data, NUMBER, "f");    
     returnInsert(data, INT);
     symTableInsert(&glb_tbl, "tointeger", data);
 
@@ -889,6 +889,7 @@ bool main_b (p_data_ptr_t data)
     token_type_t token_type;    
     symTree_t* tree = NULL;
     char* func_name = NULL;
+    symData_t* function_declaration_data = NULL;
 
     /* Create tree */
 
@@ -946,16 +947,10 @@ bool main_b (p_data_ptr_t data)
                  * Check multiple definition of function
                  */
                 if (!check_function_is_not_defined(data->tbl_list, func_name))
-                {
+                {                    
                     err = E_SEM_DEF;
                     return false;
-                }
-                
-                if (!check_no_multiple_function_declaration(data->tbl_list, func_name))
-                {
-                    err = E_SEM_DEF;
-                    return false;
-                }    
+                }                                    
 
                 tree = LL_GetFirst(data->tbl_list);                 
 
@@ -964,15 +959,15 @@ bool main_b (p_data_ptr_t data)
                  */
                 if (check_function_is_declared_before (data->tbl_list, func_name))
                 {
-                    data->function_declaration_data = symTableSearch(tree, func_name);
+                    function_declaration_data = symTableSearch(tree, func_name);
                 }
                 else
                 {
-                    data->function_declaration_data = NULL;
-                }
-
-                // Add symbol to table                
-                create_symbol(&tree, func_name);
+                    //function_declaration_data = NULL;
+                    // Add symbol to table                
+                    create_symbol(&tree, func_name);
+                }                
+                //create_symbol(&tree, func_name);
 
                 if (err != E_NO_ERR)
                 {
@@ -1002,10 +997,30 @@ bool main_b (p_data_ptr_t data)
                     next_token(data);                
 
                     if (params(data))
-                    {    
-                        /* -------------- SEMANTIC --------------*/                                                
-
-                        copy_params_to_func_table(data->tbl_list, func_name);
+                    {
+                        /*
+                        * Check if function has declaration before definition
+                        */
+                        if (function_declaration_data != NULL)
+                        {
+                            tree = LL_GetFirst(data->tbl_list);
+                            symData_t* func_def = symTableSearch(tree, func_name);
+                            
+                            /*
+                            * Check params lists of function declaration and definition
+                            */                                                                
+                            if (!check_function_dec_def_params_list (function_declaration_data->params_type_count,
+                                                                        function_declaration_data->first_type_param,
+                                                                        func_def->params_count,
+                                                                        func_def->first_param))
+                            {
+                                err = E_SEM_DEF;                                
+                                return false;
+                            }                                                                                               
+                        }
+                                                                                                                                                  
+                        /* Copy parameters to function symbol table as they are local variables */
+                        copy_params_to_func_table(data->tbl_list, data->func_name);
 
                      //   printf("\ntbl: %s\n", data->tbl_list->lastElement->root->key);
 
@@ -1024,72 +1039,61 @@ bool main_b (p_data_ptr_t data)
                         {                            
                             next_token(data);                                        
 
-                            if (ret_func_types(data) && stats(data))
-                            {                                                
-                                VALIDATE_TOKEN(data->token);
-                                TEST_EOF(data->token);
-                                token_type = data->token->type;                                
+                            if (ret_func_types(data))
+                            {     
+                                /* -------------- SEMANTIC --------------*/
 
-                                if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
+                                /*
+                                * Check if function has declaration before definition
+                                */
+                                if (function_declaration_data != NULL)
                                 {
-                                    /* -------------- SEMANTIC --------------*/
-                                    
-                                    // Deleting the table representing function block from the linked list
-                                    LL_DeleteLast(data->tbl_list);
+                                    tree = LL_GetFirst(data->tbl_list);
+                                    symData_t* func_def = symTableSearch(tree, func_name);                                                                        
 
-                                    /* ----------- END OF SEMANTIC ----------*/
-
-                                    next_token(data);                                
-                                    
-                                    if (main_b(data))
+                                    /*
+                                    * Check returns lists of function declaration and definition
+                                    */
+                                    if (!check_function_dec_def_returns_list (function_declaration_data->returns_count,
+                                                                              function_declaration_data->first_ret,
+                                                                              func_def->returns_count,
+                                                                              func_def->first_ret))
                                     {
-                                        ret_val = true;
-                                    }                                
-                                }                            
+                                        err = E_SEM_DEF;
+                                        return false;
+                                    }                                                                    
+                                }
+                                                        
+                                /* ----------- END OF SEMANTIC ----------*/
+
+                                if (stats(data))
+                                {
+                                    VALIDATE_TOKEN(data->token);
+                                    TEST_EOF(data->token);
+                                    token_type = data->token->type;                                
+
+                                    if (token_type == T_KEYWORD && data->token->attribute.keyword == K_END)
+                                    {
+                                        /* -------------- SEMANTIC --------------*/
+                                        
+                                        // Deleting the table representing function block from the linked list
+                                        LL_DeleteLast(data->tbl_list);
+
+                                        /* ----------- END OF SEMANTIC ----------*/
+
+                                        next_token(data);                                
+                                        
+                                        if (main_b(data))
+                                        {
+                                            ret_val = true;
+                                        }                                
+                                    }
+                                }                                                                                                                     
                             }                        
                         }                    
                     }                
                 }            
-            }
-
-            /* -------------- SEMANTIC --------------*/
-
-            /*
-             * Check if function has declaration before definition
-             */
-            if (data->function_declaration_data != NULL)
-            {
-                tree = LL_GetFirst(data->tbl_list);
-                symData_t* func_def = symTableSearch(tree, func_name);
-                
-                /*
-                 * Check params lists of function declaration and definition
-                 */                                                                
-                if (!check_function_dec_def_params_list (data->function_declaration_data->params_type_count,
-                                                         data->function_declaration_data->first_type_param,
-                                                         func_def->params_count,
-                                                         func_def->first_param))
-                {
-                    err = E_SEM_DEF;
-                    return false;
-                }
-
-                /*
-                 * Check returns lists of function declaration and definition
-                 */
-                if (!check_function_dec_def_returns_list (data->function_declaration_data->returns_count,
-                                                          data->function_declaration_data->first_ret,
-                                                          func_def->returns_count,
-                                                          func_def->first_ret))
-                {
-                    err = E_SEM_DEF;
-                    return false;
-                }                                
-
-                data->function_declaration_data = NULL;   
-            }
-                                     
-            /* ----------- END OF SEMANTIC ----------*/
+            }            
         }        
         /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
         else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_GLOBAL)
@@ -1105,6 +1109,12 @@ bool main_b (p_data_ptr_t data)
 
                 /* TODO pokud funkce jiz byla deklarovana */
 
+                if (!check_no_multiple_function_declaration(data->tbl_list, data->token->attribute.string))
+                {                    
+                    err = E_SEM_DEF;
+                    return false;
+                }
+
                 // Add symbol to table
                 tree = LL_GetFirst(data->tbl_list);
                 create_symbol(&tree, data->token->attribute.string);
@@ -1115,7 +1125,7 @@ bool main_b (p_data_ptr_t data)
                 }
 
                 // Create symbol table for function
-                create_sym_table(data->tbl_list);
+                //create_sym_table(data->tbl_list);
 
                 // Save function name to data->func_name
                 data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
@@ -1597,7 +1607,8 @@ bool params (p_data_ptr_t data)
             {   
                 /* -------------- SEMANTIC --------------*/
 
-                // Vlozeni noveho parametru funkce                                               
+                // Vlozeni noveho parametru funkce    
+               // printf("\nfunc_name: %s, id: %s, type: %d\n", data->func_name, id, data->type);                                           
                 insert_parameter(data->tbl_list, data->func_name, id, data->type);
 
                 if (err != E_NO_ERR)
@@ -1631,6 +1642,7 @@ bool n_params (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;
+    char* id = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -1641,11 +1653,45 @@ bool n_params (p_data_ptr_t data)
     if (token_type == T_COMMA)
     {
         next_token(data);
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
 
-        if (type(data))
-        {            
-            ret_val = n_params(data);
-        }        
+        token_type = data->token->type;
+
+        if (token_type == T_IDENTIFIER)
+        {
+            // Ulozeni jmena parametru
+            id = (char*) malloc(strlen(data->token->attribute.string) + 1);
+            strcpy(id, data->token->attribute.string);    
+
+            next_token(data);
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
+
+            if (token_type == T_COLON)
+            {
+                next_token(data);
+
+                if (type(data))
+                {            
+                    /* -------------- SEMANTIC --------------*/
+
+                    // Vlozeni noveho parametru funkce 
+                  //  printf("\nfunc_name: %s, id: %s, type: %d\n", data->func_name, id, data->type);                                                                
+                    insert_parameter(data->tbl_list, data->func_name, id, data->type);
+
+                    if (err != E_NO_ERR)
+                    {
+                        return false;
+                    }                
+
+                    /* ----------- END OF SEMANTIC ----------*/    
+
+                    ret_val = n_params(data);
+                } 
+            }               
+        }                       
     }    
     /* 17. <n_params> -> epsilon */
     else if (token_type == T_RIGHT_BRACKET)
