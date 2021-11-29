@@ -2,7 +2,7 @@ require "ifj21"
 
 global func : function(integer, integer) : string
 
-function func(n : integer) : stirng
+function func(n : integer) : string
     return n
 end
 

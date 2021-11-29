@@ -29,6 +29,7 @@ typedef struct p_data {
     arg_ret_t arg_ret;    
     data_type_t type;
     data_type_t psa_data_type; // psa data type
+    unsigned returns_def_count;
 
     function_params_t* param;
     function_returns_t* ret;

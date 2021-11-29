@@ -307,6 +307,27 @@ void insert_return (LList *tbl_list, char* func_name, data_type_t data_type)
     (tbl->returns_count)++;
 }
 
+void insert_def_return (LList *tbl_list, char* func_name, data_type_t data_type)
+{
+    /* Get global symbol table */
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);
+
+    /* Get row for this function in global symbol table */    
+    symData_t* tbl = symTableSearch(glb_tbl, func_name);
+
+    /* Insert Parameter */
+    returnDefInsert(tbl, data_type);
+
+    if (err != E_NO_ERR)
+    {
+        return;
+    }
+    
+    
+    /* Inc parameter count */
+    (tbl->returns_def_count)++;
+}
+
 /***** SEMANTIC ANALYSIS *****/
 /*
  * Check first definition of identifier or function in table
@@ -498,6 +519,8 @@ bool check_function_dec_def_params_list (unsigned params_type_count,
     function_params_t* elem_declaration = NULL;
     function_params_t* elem_definition = NULL;
 
+    //printf("\nparams_type_count: %d, params_count: %d\n", params_type_count, params_count);
+
     /*
      * Identical count of parameters
      */
@@ -534,6 +557,8 @@ bool check_function_dec_def_returns_list (unsigned returns_dec_count,
     bool ret_val = true;
     function_returns_t* elem_declaration = NULL;
     function_returns_t* elem_definition = NULL;
+
+    printf("\nreturns_dec_count: %d, returns_def_count: %d\n", returns_dec_count, returns_def_count);
 
     if (returns_dec_count == returns_def_count)
     {
@@ -917,7 +942,7 @@ bool main_b (p_data_ptr_t data)
         tree = LL_GetFirst(data->tbl_list);
         
         if (!func_is_not_def(tree))
-        {
+        {            
             printf("ESD: %d\n", 1);
             err = E_SEM_DEF;
             return false;
@@ -1061,8 +1086,8 @@ bool main_b (p_data_ptr_t data)
                                     /*
                                     * Check returns lists of function declaration and definition
                                     */
-                                    if (!check_function_dec_def_returns_list (function_declaration_data->returns_count,
-                                                                              function_declaration_data->first_ret,
+                                    if (!check_function_dec_def_returns_list (function_declaration_data->returns_def_count,
+                                                                              function_declaration_data->first_def_ret,
                                                                               func_def->returns_count,
                                                                               func_def->first_ret))
                                     {
@@ -1339,7 +1364,7 @@ bool stats (p_data_ptr_t data)
                                 // VALID                                
                             }
                             else
-                            {
+                            {                                
                                 err = E_SEM_ASSIGN;
                                 return false;
                             }                                                        
@@ -2567,18 +2592,21 @@ bool ret_def_types (p_data_ptr_t data)
        ret_val = true;
     }
     else
-    {        
-        token_type = data->token->type;
-
-        /* 41. <ret_def_types> -> : <func_def_types> */ 
-        if (token_type == T_COLON)
+    {     
+        if (err == E_NO_ERR)
         {
-            next_token(data);
+            token_type = data->token->type;
 
-            data->arg_ret = RET_DEF_TYPE;
+            /* 41. <ret_def_types> -> : <func_def_types> */ 
+            if (token_type == T_COLON)
+            {
+                next_token(data);
 
-            ret_val = func_def_types(data);
-        }
+                data->arg_ret = RET_DEF_TYPE;
+
+                ret_val = func_def_types(data);
+            }   
+        }                   
     }
 
     return ret_val;
@@ -2700,7 +2728,7 @@ bool func_def_types (p_data_ptr_t data)
         else
         {
             // Vlozeni noveho parametru funkce                                                       
-            insert_return(data->tbl_list, data->func_name, data->type);
+            insert_def_return(data->tbl_list, data->func_name, data->type);
 
             if (err != E_NO_ERR)
             {
@@ -2786,31 +2814,34 @@ bool r_n_func_def_types (p_data_ptr_t data)
         ret_val = true;
     }
     else
-    {        
-        token_type = data->token->type;
+    {
+        if (err == E_NO_ERR)
+        {
+            token_type = data->token->type;
 
-        /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
-        if (token_type == T_COMMA)
-        {            
-            next_token(data);        
-            
-            if (type(data))
-            {                  
-                /* -------------- SEMANTIC --------------*/        
+            /* 47. <n_func_def_types> -> , <type>  <n_func_def_types> */
+            if (token_type == T_COMMA)
+            {            
+                next_token(data);        
                 
-                // Vlozeni noveho parametru funkce                                                       
-                insert_return(data->tbl_list, data->func_name, data->type);
+                if (type(data))
+                {                  
+                    /* -------------- SEMANTIC --------------*/        
+                    
+                    // Vlozeni noveho parametru funkce                                                       
+                    insert_def_return(data->tbl_list, data->func_name, data->type);
 
-                if (err != E_NO_ERR)
-                {
-                    return false;
-                }               
-   
-                /* ----------- END OF SEMANTIC ----------*/
+                    if (err != E_NO_ERR)
+                    {
+                        return false;
+                    }               
+    
+                    /* ----------- END OF SEMANTIC ----------*/
 
-                ret_val = r_n_func_def_types(data);
-            }                 
-        }            
+                    ret_val = r_n_func_def_types(data);
+                }                 
+            }   
+        }                                    
     }
         
     return ret_val;        

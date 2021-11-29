@@ -35,9 +35,11 @@ typedef struct symData{
     data_type_t data_type;          /* data type */
     unsigned params_count;       /* func params count*/
     unsigned params_type_count;       /* func params count*/
-    unsigned returns_count;
+    unsigned returns_def_count;
+    unsigned returns_count;    
     function_params_t* first_param; /* func params list */
     function_params_t* first_type_param; /* func type params list */
+    function_returns_t* first_def_ret;
     function_returns_t* first_ret;  /* func returns list */
 } symData_t;
 
@@ -52,6 +54,7 @@ void symTableInit(symTree_t **tree);
 void symDataInit(symData_t** data);
 void paramInsert(symData_t* data, data_type_t type, char* param_name);
 void paramTypeInsert(symData_t* data, data_type_t type);
+void returnDefInsert(symData_t* data, data_type_t type);
 void returnInsert(symData_t* data, data_type_t type);
 symData_t* symTableSearch(symTree_t *tree, char* key);
 void symTableInsert(symTree_t **tree, char* key, symData_t* data);
