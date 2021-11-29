@@ -82,6 +82,11 @@ bool r_n_func_def_types (p_data_ptr_t data);
 bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
 
+/* TODO
+ * todo inicializovat v data parametry a returny?
+ * todo vymazat v data parametry a returny
+ */
+
 /* TODO smazat */
 
 void print(p_data_ptr_t data)
@@ -412,17 +417,17 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
 
     /*
      * Go through tables in linked list
-     */
+     */    
     while (elem != NULL)
     {                
         table_elem = symTableSearch(elem->root, id);        
         /*
          * Check if identifier is in table
-         */        
+         */                
         if (table_elem != NULL)
-        {                                
+        {                                            
             if (table_elem->defined == true)
-            {
+            {                
                 ret_val = true;                
             }
 
@@ -1258,7 +1263,7 @@ bool stats (p_data_ptr_t data)
 
     /* 6. <stats> -> local id : <type> <assign> <stats> */
     if (token_type == T_KEYWORD && data->token->attribute.keyword == K_LOCAL)
-    {                        
+    {                                             
         next_token(data);
         VALIDATE_TOKEN(data->token);
         TEST_EOF(data->token);
@@ -1269,10 +1274,10 @@ bool stats (p_data_ptr_t data)
             /* -------------- SEMANTIC --------------*/ 
             id = (char *) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);
-            tree = LL_GetLast(data->tbl_list);
+            tree = LL_GetLast(data->tbl_list);            
+            
 
-            
-            
+        
             //printf("\n tree: %s \n", tree->key);
                         
 
@@ -1289,8 +1294,7 @@ bool stats (p_data_ptr_t data)
                 err = E_SEM_DEF;
                 return false;
             }
-            
-            
+                        
             create_symbol(&tree, id);                        
 
             //printf("\n tree: %s \n", tree->key);
@@ -1319,6 +1323,8 @@ bool stats (p_data_ptr_t data)
                 
                     /* ----------- END OF SEMANTIC ----------*/
 
+                    data->tbl_list->lastElement->root = tree;
+
                     if (assign(data))
                     {
                         /* -------------- SEMANTIC --------------*/
@@ -1330,14 +1336,16 @@ bool stats (p_data_ptr_t data)
                             if (data->psa_data_type == NIL || 
                                 (data_type == NUMBER && data->psa_data_type == INT))
                             {
-                                // VALID
+                                // VALID                                
                             }
                             else
                             {
                                 err = E_SEM_ASSIGN;
                                 return false;
                             }                                                        
-                        }                        
+                        }                                                
+
+                        symTableSearch(tree, id)->defined = true;                          
 
                         /* ----------- END OF SEMANTIC ----------*/
 
@@ -2189,6 +2197,8 @@ bool assign (p_data_ptr_t data)
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
 
+    //printf("\nassign key: %s\n", data->tbl_list->lastElement->root->key);
+
     /* 28. <assign> -> epsilon */
     if (stats(data))
     {                    
@@ -2204,8 +2214,7 @@ bool assign (p_data_ptr_t data)
         /* 27. <assign> -> = <assign_val> */
         if (token_type == T_ASSIGN)
         {
-            next_token(data);
-
+            next_token(data);            
             ret_val = assign_val(data);
         }                   
     }    
@@ -2241,7 +2250,7 @@ bool assign_val (p_data_ptr_t data)
             ret_val = true;
         }
         else
-        {
+        {                        
             /* -------------- SEMANTIC --------------*/ 
             /*
              * Check if called function is declared
@@ -2253,20 +2262,19 @@ bool assign_val (p_data_ptr_t data)
                 return false;
             }
         
-            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
-
             func_data = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);
+            data->param = func_data->first_param;        
 
             if (func_data->first_ret != NULL)
             {
-                data->psa_data_type = func_data->first_ret->return_type;
+                data->psa_data_type = func_data->first_ret->return_type;                
             }
             else
             {
                 err = E_SEM_PARAM;
                 return false;
             }                        
-
+            
             /* ----------- END OF SEMANTIC ----------*/
 
             VALIDATE_TOKEN(data->token);
@@ -2320,11 +2328,10 @@ bool term (p_data_ptr_t data)
 
     /* 31. <term> -> id */
     if (token_type == T_IDENTIFIER)
-    {
-        /* -------------- SEMANTIC --------------*/
-
+    {        
+        /* -------------- SEMANTIC --------------*/        
         if (!check_identifier_is_defined(data->tbl_list, data->token->attribute.string))
-        {
+        {            
             printf("\nESD: %d\n", 13);
             err = E_SEM_DEF;
             return false;
@@ -2354,7 +2361,7 @@ bool term (p_data_ptr_t data)
  * 34. <args> -> epsilon
  */
 bool args (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;
 
@@ -2366,10 +2373,9 @@ bool args (p_data_ptr_t data)
     /* 34. <args> -> epsilon */
     if (token_type == T_RIGHT_BRACKET)
     {
-        /* -------------- SEMANTIC --------------*/
-        
+        /* -------------- SEMANTIC --------------*/        
         if (data->param != NULL)
-        {
+        {            
             err = E_SEM_PARAM;
             return false;
         }        
@@ -2380,7 +2386,7 @@ bool args (p_data_ptr_t data)
     }                
     /* 33. <args> -> <term> <n_args> */    
     else if (term(data))
-    {
+    {             
         /* -------------- SEMANTIC --------------*/
         if (data->param != NULL)
         {
@@ -2455,6 +2461,15 @@ bool n_args (p_data_ptr_t data)
     /* 36. <n_args> -> epsilon */
     else if (token_type == T_RIGHT_BRACKET)
     {
+        /* -------------- SEMANTIC --------------*/        
+        if (data->param != NULL)
+        {            
+            err = E_SEM_PARAM;
+            return false;
+        }        
+        
+        /* ----------- END OF SEMANTIC ----------*/
+
         ret_val = true;
     }               
 
