@@ -428,6 +428,40 @@ bool check_function_is_declared (LList* tbl_list, char* func_name)
 }
 
 /*
+ * Check that identifier is declared
+ */
+bool check_identifier_is_declared (LList* tbl_list, char* id)
+{
+    bool ret_val = false;
+    struct LLElement* elem = tbl_list->lastElement;
+    symData_t* table_elem;
+
+    /*
+     * Go through tables in linked list
+     */    
+    while (elem != NULL)
+    {                                                
+        table_elem = symTableSearch(elem->root, id);        
+        /*
+         * Check if identifier is in table
+         */                        
+        if (table_elem != NULL)
+        {                                                      
+            if (table_elem->declared == true)
+            {
+                ret_val = true;                
+            }
+
+            break;            
+        }        
+
+        elem = elem->nextElement;        
+    }
+     
+    return ret_val;
+}
+
+/*
  * Check that identifier is defined
  */
 bool check_identifier_is_defined (LList* tbl_list, char* id)
@@ -675,7 +709,7 @@ bool check_func_assign (p_data_ptr_t data)
     return ret_val;
 }
 
-void idInsert(ids_list_t* ids_list, data_type_t type)
+void idInsert(ids_list_t** ids_list, data_type_t type)
 {
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
 
@@ -683,14 +717,14 @@ void idInsert(ids_list_t* ids_list, data_type_t type)
         err = E_INTERNAL;
         return;
     }
-    newId->type = type;
+    newId->type = type;    
 
-    if(ids_list == NULL){
-        ids_list = newId;
-        ids_list->next = NULL;
+    if(*ids_list == NULL){
+        *ids_list = newId;
+        (*ids_list)->next = NULL;
     }else{
         ids_list_t* current;
-        current = ids_list;
+        current = (*ids_list);
 
         while(current != NULL){
             current = current->next;
@@ -1375,7 +1409,7 @@ bool stats (p_data_ptr_t data)
                         /* ----------- END OF SEMANTIC ----------*/
 
                         if (stats(data))
-                        {
+                        {                            
                             ret_val = true;    
                         }                        
                     }                    
@@ -1515,21 +1549,45 @@ bool stats (p_data_ptr_t data)
     else if (token_type == T_IDENTIFIER)
     {
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
-        strcpy(data->func_name, data->token->attribute.string);
+        strcpy(data->func_name, data->token->attribute.string);        
+
+        next_token(data);  
 
         /* -------------- SEMANTIC --------------*/
 
         /*
          * Check if called function/identifier is declared
-         */     
-        if (!check_function_is_declared(data->tbl_list, data->func_name))
-        {
-            printf("\nESD: %d\n", 9);
-            err = E_SEM_DEF;
-            return false;
-        }        
+         */
 
-        idInsert(data->ids_list, symTableSearch(LL_GetLast(data->tbl_list), data->func_name)->data_type);
+        VALIDATE_TOKEN(data->token);
+        TEST_EOF(data->token);
+        token_type = data->token->type;
+
+        if (token_type == T_LEFT_BRACKET)
+        {
+            if (!check_function_is_declared(data->tbl_list, data->func_name))
+            {
+                printf("\nESD: %d\n", 9);
+                err = E_SEM_DEF;
+                return false;
+            }      
+        }
+        else if (token_type == T_COMMA || token_type == T_ASSIGN)
+        {
+            
+            if (!check_identifier_is_declared(data->tbl_list, data->func_name))
+            {                
+                printf("\nESD: %d\n", 9);
+                err = E_SEM_DEF;
+                return false;
+            }
+
+            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name));
+        }
+        /*else
+        {
+            return false;
+        } */                       
 
         if (err != E_NO_ERR)
         {
@@ -1537,8 +1595,6 @@ bool stats (p_data_ptr_t data)
         }        
 
         /* ----------- END OF SEMANTIC ----------*/
-
-        next_token(data);  
 
         if (id_func(data))
         {
@@ -1783,14 +1839,14 @@ bool n_ids (p_data_ptr_t data)
             /*
              * Check if identifier is declared
              */
-            if (!check_function_is_declared(data->tbl_list, data->token->attribute.string))
+            if (!check_identifier_is_declared(data->tbl_list, data->token->attribute.string))
             {
                 printf("\nESD: %d\n", 10);
                 err = E_SEM_DEF;
                 return false;
             }
 
-            idInsert(data->ids_list, symTableSearch(LL_GetLast(data->tbl_list), data->token->attribute.string)->data_type);
+            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->token->attribute.string));
 
             if (err != E_NO_ERR)
             {

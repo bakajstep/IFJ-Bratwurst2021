@@ -194,9 +194,9 @@ void returnInsert(symData_t* data, data_type_t type){
 }
 
 symData_t* symTableSearch(symTree_t* tree, char* key){
-    while(tree != NULL && tree->key != NULL){ 
-       // printf("\ntree->key: %s, key: %s\n", tree->key, key);       
-        if(strcmp(tree->key, key) == 0){
+    
+    while(tree != NULL && tree->key != NULL){                
+        if(strcmp(tree->key, key) == 0){            
             return tree->data;
         }
 
@@ -206,6 +206,7 @@ symData_t* symTableSearch(symTree_t* tree, char* key){
             tree = tree->nextRight;
         }
     }
+    
     return NULL;
 }
 
@@ -312,11 +313,16 @@ void symTableDispose(symTree_t **tree){
     if((*tree) != NULL){
         if((*tree)->nextLeft != NULL) symTableDispose(&((*tree)->nextLeft));
         if((*tree)->nextRight != NULL) symTableDispose(&((*tree)->nextRight));
-        paramDispose((*tree)->data->first_param);
-        paramTypeDispose((*tree)->data->first_type_param);
-        returnDefDispose((*tree)->data->first_def_ret);
-        returnDispose((*tree)->data->first_ret);
-        free((*tree)->data);
+        
+        if ((*tree)->data != NULL)
+        {
+            paramDispose((*tree)->data->first_param);
+            paramTypeDispose((*tree)->data->first_type_param);
+            returnDefDispose((*tree)->data->first_def_ret);
+            returnDispose((*tree)->data->first_ret);
+            free((*tree)->data);
+        }
+                
         free((*tree));
         (*tree) = NULL;
     }
