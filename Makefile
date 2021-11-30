@@ -79,7 +79,7 @@ SEMPATH=$(TESTSDIR)/$(SEM)/
 EXPLPATH=$(TESTSDIR)/$(EXPLDIR)/
 
 CC=gcc
-# TODO smazat
+# TODO smazat -g
 CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
 
 .PHONY: all $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean
