@@ -19,6 +19,7 @@ void sym_stack_init(sym_stack* stack){
 }
 
 bool symbol_stack_push(sym_stack* stack, psa_table_symbol_enum symbol, data_type_t data){
+    /* TODO free */
     sym_stack_item *new_item = (sym_stack_item *) malloc(sizeof(sym_stack_item));
     if (!new_item){
         return false;
@@ -50,6 +51,7 @@ bool symbol_stack_insert_after_top_terminal(sym_stack* stack, psa_table_symbol_e
 
     while (iterator){
         if (iterator->symbol < STOP){
+            /* TODO free */
             sym_stack_item *new_item = (sym_stack_item *) malloc(sizeof(sym_stack_item));
             if (!new_item){
                 return false;

@@ -178,6 +178,7 @@ void print(p_data_ptr_t data)
 
 p_data_ptr_t create_data ()
 {
+    /* TODO free */
     return (p_data_ptr_t) malloc(sizeof(struct p_data));
 }
 
@@ -225,6 +226,7 @@ void create_tbl_list (LList* tbl_list)
 
 void create_sym_table (LList* tbl_list)
 {
+    /* TODO free */
     symTree_t* tree = (symTree_t*) malloc(sizeof(symTree_t));
 
     symTableInit(&tree);    
@@ -234,6 +236,7 @@ void create_sym_table (LList* tbl_list)
 
 void create_symbol (symTree_t** tree, char* key)
 {
+    /* TODO free */
     symData_t* data = (symData_t*) malloc(sizeof(symData_t));
     symDataInit(&data);
 
@@ -715,6 +718,7 @@ bool check_func_assign (p_data_ptr_t data)
 
 void idInsert(ids_list_t** ids_list, data_type_t type)
 {
+    /* TODO free */
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
 
     if(!newId){
@@ -740,6 +744,7 @@ void idInsert(ids_list_t** ids_list, data_type_t type)
 
 void create_tbl_list_mem (LList** tbl_list)
 {
+    /* TODO free */
     *tbl_list = (LList*) malloc(sizeof(LList));
 
     if (*tbl_list == NULL)
@@ -751,6 +756,7 @@ void create_tbl_list_mem (LList** tbl_list)
 void insert_built_in_functions (LList* tbl_list)
 {    
     tbl_list = tbl_list;
+    /* TODO free */
     symTree_t* glb_tbl = (symTree_t*) malloc(sizeof(symTree_t));
     
 
@@ -960,6 +966,7 @@ bool main_b (p_data_ptr_t data)
 
     /* Create tree */
 
+    /* TODO free */
     tree = (symTree_t*) malloc(sizeof(symTree_t));
 
     if (tree == NULL)
@@ -1051,6 +1058,8 @@ bool main_b (p_data_ptr_t data)
                 
                 // Save function name to data->func_name
                 /* Malloc data->func_name */
+
+                /* TODO free */
                 data->func_name = (char*) malloc(strlen(func_name) + 1); // TODO pak realloc
                 strcpy(data->func_name, func_name);
                 
@@ -1200,6 +1209,7 @@ bool main_b (p_data_ptr_t data)
                 //create_sym_table(data->tbl_list);
 
                 // Save function name to data->func_name
+                /* TODO free */
                 data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
                 strcpy(data->func_name, data->token->attribute.string);
                 
@@ -1335,6 +1345,7 @@ bool stats (p_data_ptr_t data)
         if (token_type == T_IDENTIFIER)
         {            
             /* -------------- SEMANTIC --------------*/ 
+            /* TODO free */
             id = (char *) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);
             tree = LL_GetLast(data->tbl_list);            
@@ -1552,6 +1563,7 @@ bool stats (p_data_ptr_t data)
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
     {
+        /* TODO free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);        
 
@@ -1700,6 +1712,7 @@ bool params (p_data_ptr_t data)
     if (token_type == T_IDENTIFIER)
     {
         // Ulozeni jmena parametru
+        /* TODO free */
         id = (char*) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(id, data->token->attribute.string);        
 
@@ -1770,6 +1783,7 @@ bool n_params (p_data_ptr_t data)
         if (token_type == T_IDENTIFIER)
         {
             // Ulozeni jmena parametru
+            /* TODO free */
             id = (char*) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);    
 
@@ -2161,6 +2175,7 @@ bool as_vals (p_data_ptr_t data)
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
+        /* TODO free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 
@@ -2328,6 +2343,7 @@ bool assign_val (p_data_ptr_t data)
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
     {    
+        /* TODO free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 

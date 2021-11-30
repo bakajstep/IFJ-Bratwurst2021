@@ -36,6 +36,7 @@ void LL_Dispose( LList* list ) {
 }
 
 void LL_InsertLast( LList* list, symTree_t* root) {
+    /* TODO free */
     struct LLElement* newElement = (struct LLElement*) malloc(sizeof(struct LLElement));    
     
     newElement->root = root;

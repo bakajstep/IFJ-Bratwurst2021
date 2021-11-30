@@ -82,6 +82,7 @@ void set_id_keyword (token_t* token, char* str){
 
 token_t* create_token ()
 {
+    /* TODO free */
     return (token_t*) malloc(sizeof(token_t));
 }
 
