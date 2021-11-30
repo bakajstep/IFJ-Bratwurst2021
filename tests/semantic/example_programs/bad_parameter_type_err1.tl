@@ -1,6 +1,6 @@
 require "ifj21"
 
-function func(n : integer) : string
+function func(n : integer) : integer
     return n
 end
 

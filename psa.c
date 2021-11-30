@@ -331,8 +331,8 @@ data_type_t get_type(p_data_ptr_t data){
         case T_IDENTIFIER:
             //TODO
             //je potřeba z listu identifikátorů zjistit jestli je platně deklarovasnaý a jaký má typ
-            //idk ještě jak vracet když to bude špatně
-            if(!check_identifier_is_defined(data->tbl_list,data->token->attribute.string)){
+            //idk ještě jak vracet když to bude špatně            
+            if(!check_identifier_is_defined(data->tbl_list,data->token->attribute.string)){                
                 return DERR;
             }
             return identifier_type(data->tbl_list,data->token->attribute.string);
@@ -563,7 +563,7 @@ psa_error_t psa (p_data_ptr_t data)
                     return PSA_ERR;
                 }
                 //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
-                if(get_type(data) == DERR){
+                if(get_type(data) == DERR){                    
                     err = E_SEM_DEF;
                     return PSA_ERR;
                 }

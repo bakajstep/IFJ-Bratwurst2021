@@ -76,18 +76,27 @@ void set_id_keyword (token_t* token, char* str){
         token->type = T_KEYWORD;
     }else{
         token->type = T_IDENTIFIER;
-        token->attribute.string = str;
+        //token->attribute.string = str;
     }
 }
 
 token_t* create_token ()
 {
-    /* TODO free */
+    /* DONE free */
     return (token_t*) malloc(sizeof(token_t));
 }
 
 void delete_token (token_t* token)
 {
+    if (token != NULL)
+    {
+        if (token->type == T_IDENTIFIER ||            
+            token->type == T_STRING)
+        {
+            free(token->attribute.string);                        
+        }        
+    }
+    
     free(token);
     token = NULL;
 }
@@ -423,7 +432,20 @@ token_t* get_next_token ()
                 if (symbol == '"')
                 {                    
                     token->type = T_STRING;
-                    token->attribute.string = get_char_arr(str);
+                    /* DONE free */
+                    token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
+
+                    if (token->attribute.string == NULL)
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }                    
+
+                    strcpy(token->attribute.string, get_char_arr(str));
+                    string_free(str);
 
                     return token;                 
                 }
@@ -909,15 +931,29 @@ token_t* get_next_token ()
                         return NULL;
                     }                                     
                     
-                    char* id_keyword = get_char_arr(str);                     
+                    char* id_keyword = get_char_arr(str);                    
 
                     set_id_keyword(token, id_keyword);                                      
                     
-                    if (token->type == T_KEYWORD)
+                    if (token->type == T_IDENTIFIER)
                     {
-                        string_free(str);
+                        /* DONE free */
+                        token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
+
+                        if (token->attribute.string == NULL)
+                        {
+                            err = E_INTERNAL;
+                            delete_token(token);
+                            string_free(str);
+
+                            return NULL;
+                        }                    
+
+                        strcpy(token->attribute.string, get_char_arr(str));
                     }
                     
+                    string_free(str);
+
                     return token;
                 }
                 

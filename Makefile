@@ -211,7 +211,7 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG16).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_return_type_err2' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG17).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output
+	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG17).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output
 	@echo "\nTest case 'bad_return_type_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG17).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output || exit 0
 
@@ -271,7 +271,7 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG28).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG28).output || exit 0
 
 	@echo "\n------------------------------------ 'more_returns_than_variables_err' ------------------------------------\n"
-	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG29).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output
+	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG29).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output
 	@echo "\nTest case 'more_returns_than_variables_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG29).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output || exit 0
 

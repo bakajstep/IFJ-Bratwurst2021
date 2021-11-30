@@ -178,13 +178,34 @@ void print(p_data_ptr_t data)
 
 p_data_ptr_t create_data ()
 {
-    /* TODO free */
+    /* DONE free */
     return (p_data_ptr_t) malloc(sizeof(struct p_data));
+}
+
+void delete_ids_list(ids_list_t* ids_list)
+{
+    ids_list_t* current = NULL;
+
+    while (ids_list != NULL)
+    {
+        current = ids_list;
+        ids_list = ids_list->next;   
+
+        free(current);
+    }    
+}
+
+void delete_tbl_list_mem(LList* tbl_list)
+{
+    free(tbl_list);
+    tbl_list = NULL;
 }
 
 void delete_data (p_data_ptr_t data)
 {
     delete_token(data->token);
+    free(data->func_name);
+    delete_ids_list(data->ids_list);    
 
     free(data);
     data = NULL;
@@ -226,7 +247,7 @@ void create_tbl_list (LList* tbl_list)
 
 void create_sym_table (LList* tbl_list)
 {
-    /* TODO free */
+    /* DONE free */
     symTree_t* tree = (symTree_t*) malloc(sizeof(symTree_t));
 
     symTableInit(&tree);    
@@ -235,9 +256,8 @@ void create_sym_table (LList* tbl_list)
 }
 
 void create_symbol (symTree_t** tree, char* key)
-{
-    /* TODO free */
-    symData_t* data = (symData_t*) malloc(sizeof(symData_t));
+{    
+    symData_t* data = NULL;//(symData_t*) malloc(sizeof(symData_t));
     symDataInit(&data);
 
     if (err == E_NO_ERR)
@@ -247,7 +267,7 @@ void create_symbol (symTree_t** tree, char* key)
 }
 
 void insert_parameter (LList *tbl_list, char* func_name, char* id, data_type_t data_type)
-{
+{        
     /* Get global symbol table */
     symTree_t* glb_tbl = LL_GetFirst(tbl_list); 
 
@@ -486,8 +506,10 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
         /*
          * Check if identifier is in table
          */                
+        //printf("\njsem zde\n");
         if (table_elem != NULL)
-        {                                            
+        {                            
+          //  printf("\nprvek je v tabulce\n");                            
             if (table_elem->defined == true)
             {                
                 ret_val = true;                
@@ -662,7 +684,7 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
     symData_t* in_tbl_param_data;                
 
     while (elem != NULL)
-    {                
+    {                       
         /* INSERT PARAM TO FUNC TABLE */                
         // Add param to table
         //printf("\nfunc name: %s\n", func_name);
@@ -718,7 +740,7 @@ bool check_func_assign (p_data_ptr_t data)
 
 void idInsert(ids_list_t** ids_list, data_type_t type)
 {
-    /* TODO free */
+    /* DONE free */
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
 
     if(!newId){
@@ -744,7 +766,7 @@ void idInsert(ids_list_t** ids_list, data_type_t type)
 
 void create_tbl_list_mem (LList** tbl_list)
 {
-    /* TODO free */
+    /* DONE free */
     *tbl_list = (LList*) malloc(sizeof(LList));
 
     if (*tbl_list == NULL)
@@ -755,10 +777,8 @@ void create_tbl_list_mem (LList** tbl_list)
 
 void insert_built_in_functions (LList* tbl_list)
 {    
-    tbl_list = tbl_list;
-    /* TODO free */
-    symTree_t* glb_tbl = (symTree_t*) malloc(sizeof(symTree_t));
-    
+    tbl_list = tbl_list;    
+    symTree_t* glb_tbl = NULL;//(symTree_t*) malloc(sizeof(symTree_t));    
 
     // TODO
     // function reads (): string
@@ -895,11 +915,13 @@ parser_error_t parser ()
             err = E_SYNTAX;
         }
         
-        delete_data(data);
+        delete_tbl_list_mem(data->tbl_list);
+        delete_data(data);        
 
         return PARSE_ERR;
     }
     
+    delete_tbl_list_mem(data->tbl_list);
     delete_data(data);
 
     return PARSE_NO_ERR;
@@ -936,12 +958,26 @@ bool prog (p_data_ptr_t data)
         {            
             next_token(data);            
 
+            /* -------------- SEMANTIC --------------*/
+            
+            data->func_name = NULL;
+            
+            /* ----------- END OF SEMANTIC ----------*/
+
             if (main_b(data))
             {                                
                 ret_val = true;
+            }
+
+            /* -------------- SEMANTIC --------------*/
+
+            if (data->tbl_list != NULL)
+            {
+                LL_Dispose(data->tbl_list);
             }            
-        }
-                                
+
+            /* ----------- END OF SEMANTIC ----------*/                  
+        }                                
     }    
 
     return ret_val;
@@ -960,22 +996,21 @@ bool main_b (p_data_ptr_t data)
 {    
     bool ret_val = false;
     token_type_t token_type;    
-    symTree_t* tree = NULL;
-    char* func_name = NULL;
+    symTree_t* tree = NULL;    
     symData_t* function_declaration_data = NULL;
 
-    /* Create tree */
+    /* Create tree
 
-    /* TODO free */
-    tree = (symTree_t*) malloc(sizeof(symTree_t));
+    //tree = (symTree_t*) malloc(sizeof(symTree_t));
 
     if (tree == NULL)
     {
         err = E_INTERNAL;
         return false;
     }
+    
 
-    /* End of create tree */
+    End of create tree */
 
     VALIDATE_TOKEN(data->token);
 
@@ -1016,12 +1051,22 @@ bool main_b (p_data_ptr_t data)
 
                 /* TODO pokud funkce jiz byla deklarovana - tabulka symbolu*/
 
-                func_name = data->token->attribute.string;
+                // Save function name to data->func_name
+                /* Malloc data->func_name */
+
+                if (data->func_name != NULL)
+                {
+                    free(data->func_name);
+                }
+                
+                /* DONE free */
+                data->func_name = (char*) malloc(strlen(data->token->attribute.string) + 1); // TODO pak realloc
+                strcpy(data->func_name, data->token->attribute.string);                
 
                 /*
                  * Check multiple definition of function
                  */
-                if (!check_function_is_not_defined(data->tbl_list, func_name))
+                if (!check_function_is_not_defined(data->tbl_list, data->func_name))
                 {                    
                     printf("\nESD: %d\n", 2);
                     err = E_SEM_DEF;
@@ -1033,15 +1078,15 @@ bool main_b (p_data_ptr_t data)
                 /*
                  * Function has declaration before (global id : function ...)
                  */
-                if (check_function_is_declared_before (data->tbl_list, func_name))
+                if (check_function_is_declared_before (data->tbl_list, data->func_name))
                 {
-                    function_declaration_data = symTableSearch(tree, func_name);
+                    function_declaration_data = symTableSearch(tree, data->func_name);
                 }
                 else
                 {
                     //function_declaration_data = NULL;
                     // Add symbol to table                
-                    create_symbol(&tree, func_name);
+                    create_symbol(&tree, data->func_name);
                 }                
                 //create_symbol(&tree, func_name);
 
@@ -1051,17 +1096,10 @@ bool main_b (p_data_ptr_t data)
                 }                
 
                 // Set function as defined
-                symTableSearch(tree, func_name)->defined = true;
+                symTableSearch(tree, data->func_name)->defined = true;
 
                 // Create symbol table for function
-                create_sym_table(data->tbl_list);                
-                
-                // Save function name to data->func_name
-                /* Malloc data->func_name */
-
-                /* TODO free */
-                data->func_name = (char*) malloc(strlen(func_name) + 1); // TODO pak realloc
-                strcpy(data->func_name, func_name);
+                create_sym_table(data->tbl_list);                                                
                 
                 /* ----------- END OF SEMANTIC ----------*/
 
@@ -1082,7 +1120,7 @@ bool main_b (p_data_ptr_t data)
                         if (function_declaration_data != NULL)
                         {
                             tree = LL_GetFirst(data->tbl_list);
-                            symData_t* func_def = symTableSearch(tree, func_name);
+                            symData_t* func_def = symTableSearch(tree, data->func_name);
                             
                             /*
                             * Check params lists of function declaration and definition
@@ -1097,7 +1135,8 @@ bool main_b (p_data_ptr_t data)
                                 return false;
                             }                                                                                               
                         }
-                                                                                                                                                  
+
+                        //printf("\ndata func name: %s\n", data->func_name);                                                                                  
                         /* Copy parameters to function symbol table as they are local variables */
                         copy_params_to_func_table(data->tbl_list, data->func_name);
 
@@ -1128,7 +1167,7 @@ bool main_b (p_data_ptr_t data)
                                 if (function_declaration_data != NULL)
                                 {
                                     tree = LL_GetFirst(data->tbl_list);
-                                    symData_t* func_def = symTableSearch(tree, func_name);                                                                        
+                                    symData_t* func_def = symTableSearch(tree, data->func_name);                                                                        
 
                                     /*
                                     * Check returns lists of function declaration and definition
@@ -1209,7 +1248,13 @@ bool main_b (p_data_ptr_t data)
                 //create_sym_table(data->tbl_list);
 
                 // Save function name to data->func_name
-                /* TODO free */
+
+                if (data->func_name != NULL)
+                {
+                    free(data->func_name);
+                }
+
+                /* DONE free */
                 data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
                 strcpy(data->func_name, data->token->attribute.string);
                 
@@ -1345,7 +1390,7 @@ bool stats (p_data_ptr_t data)
         if (token_type == T_IDENTIFIER)
         {            
             /* -------------- SEMANTIC --------------*/ 
-            /* TODO free */
+            /* DONE free */
             id = (char *) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);
             tree = LL_GetLast(data->tbl_list);            
@@ -1359,6 +1404,7 @@ bool stats (p_data_ptr_t data)
             {
                 printf("\nESD: %d\n", 7);
                 err = E_SEM_DEF;
+                free(id);
                 return false;
             }
 
@@ -1366,6 +1412,7 @@ bool stats (p_data_ptr_t data)
             {
                 printf("\nESD: %d\n", 8);
                 err = E_SEM_DEF;
+                free(id);
                 return false;
             }
                         
@@ -1375,6 +1422,7 @@ bool stats (p_data_ptr_t data)
 
             if (err != E_NO_ERR)
             {
+                free(id);
                 return false;
             }
                 
@@ -1415,6 +1463,7 @@ bool stats (p_data_ptr_t data)
                             else
                             {                                
                                 err = E_SEM_ASSIGN;
+                                free(id);
                                 return false;
                             }                                                        
                         }                                                
@@ -1429,8 +1478,10 @@ bool stats (p_data_ptr_t data)
                         }                        
                     }                    
                 }                            
-            }            
-        }        
+            }
+
+            free(id);         
+        } // if (token_type == T_IDENTIFIER)       
     }    
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_IF)
@@ -1563,7 +1614,12 @@ bool stats (p_data_ptr_t data)
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
     {
-        /* TODO free */
+        if (data->func_name != NULL)
+        {
+            free(data->func_name);
+        }
+
+        /* DONE free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);        
 
@@ -1712,7 +1768,7 @@ bool params (p_data_ptr_t data)
     if (token_type == T_IDENTIFIER)
     {
         // Ulozeni jmena parametru
-        /* TODO free */
+        /* DONE free */
         id = (char*) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(id, data->token->attribute.string);        
 
@@ -1735,6 +1791,7 @@ bool params (p_data_ptr_t data)
 
                 if (err != E_NO_ERR)
                 {
+                    free(id);
                     return false;
                 }                
 
@@ -1749,6 +1806,8 @@ bool params (p_data_ptr_t data)
     {
         ret_val = true;
     }    
+
+    free(id);
 
     return ret_val;
 }
@@ -1783,7 +1842,7 @@ bool n_params (p_data_ptr_t data)
         if (token_type == T_IDENTIFIER)
         {
             // Ulozeni jmena parametru
-            /* TODO free */
+            /* DONE free */
             id = (char*) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);    
 
@@ -1806,6 +1865,7 @@ bool n_params (p_data_ptr_t data)
 
                     if (err != E_NO_ERR)
                     {
+                        free(id);
                         return false;
                     }                
 
@@ -1813,8 +1873,10 @@ bool n_params (p_data_ptr_t data)
 
                     ret_val = n_params(data);
                 } 
-            }               
-        }                       
+            } 
+
+            free(id);              
+        } // if (token_type == T_IDENTIFIER)                     
     }    
     /* 17. <n_params> -> epsilon */
     else if (token_type == T_RIGHT_BRACKET)
@@ -2175,7 +2237,12 @@ bool as_vals (p_data_ptr_t data)
     /* 24. <as_vals> -> id (<args>) */
     if (token_type == T_IDENTIFIER)
     {
-        /* TODO free */
+        if (data->func_name != NULL)
+        {
+            free(data->func_name);
+        }
+
+        /* DONE free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 
@@ -2343,7 +2410,12 @@ bool assign_val (p_data_ptr_t data)
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
     {    
-        /* TODO free */
+        if (data->func_name != NULL)
+        {
+            free(data->func_name);
+        }
+
+        /* DONE free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(data->func_name, data->token->attribute.string);
 
