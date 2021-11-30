@@ -65,7 +65,10 @@ void deep_copy_function_ret (symData_t* data, function_returns_t* orig)
 /* END OF BACKEND FUNCTIONS */
 
 void symTableInit(symTree_t **tree){
-tree = tree;
+    (*tree)->key = NULL;
+    (*tree)->data = NULL;
+    (*tree)->nextLeft = NULL;
+    (*tree)->nextRight = NULL;
     /*if(!(*tree)){
         return;
     }
@@ -193,13 +196,13 @@ void returnInsert(symData_t* data, data_type_t type){
     }
 }
 
-symData_t* symTableSearch(symTree_t* tree, char* key){
-    
-    while(tree != NULL && tree->key != NULL){                
-        if(strcmp(tree->key, key) == 0){            
+symData_t* symTableSearch(symTree_t* tree, char* key){   
+    while(tree != NULL && tree->key != NULL){    
+        if(strcmp(tree->key, key) == 0){        
+            
             return tree->data;
         }
-
+        
         if(strcmp(tree->key, key) > 0){
             tree = tree->nextLeft;
         } else if(strcmp(tree->key, key) < 0){

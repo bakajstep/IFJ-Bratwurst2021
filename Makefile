@@ -350,10 +350,10 @@ $(SEM)-test:
 	@echo "\nTest case 'same_name_variable_main_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG44).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG44).output || exit 0
 
-#	@echo "\n------------------------------------ 'same_name_variable_main_if_noerr' ------------------------------------\n"
-#	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG45).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output
-#	@echo "\nTest case 'same_name_variable_main_if_noerr' output differences:"
-#	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG45).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output || exit 0
+	@echo "\n------------------------------------ 'same_name_variable_main_if_noerr' ------------------------------------\n"
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG45).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output
+	@echo "\nTest case 'same_name_variable_main_if_noerr' output differences:"
+	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG45).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG45).output || exit 0
 
 	@echo "\n------------------------------------ 'same_name_variable_main_while_noerr' ------------------------------------\n"
 	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG46).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG46).output

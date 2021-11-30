@@ -5,8 +5,7 @@ function main()
 
     if a == 1 then
         local a : integer = 2
-    else
-        --local b : integer = 5
+    else        
         a = 5
     end
 end

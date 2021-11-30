@@ -432,6 +432,9 @@ bool check_function_is_declared (LList* tbl_list, char* func_name)
  */
 bool check_identifier_is_declared (LList* tbl_list, char* id)
 {
+    //printf("\nahoj\n");
+    //printf("\ns: %s\n", tbl_list->lastElement->nextElement->root->key);
+
     bool ret_val = false;
     struct LLElement* elem = tbl_list->lastElement;
     symData_t* table_elem;
@@ -440,8 +443,9 @@ bool check_identifier_is_declared (LList* tbl_list, char* id)
      * Go through tables in linked list
      */    
     while (elem != NULL)
-    {                                                
+    {                                       
         table_elem = symTableSearch(elem->root, id);        
+
         /*
          * Check if identifier is in table
          */                        
@@ -592,7 +596,7 @@ bool check_function_dec_def_returns_list (unsigned returns_dec_count,
     function_returns_t* elem_declaration = NULL;
     function_returns_t* elem_definition = NULL;
 
-    printf("\nreturns_dec_count: %d, returns_def_count: %d\n", returns_dec_count, returns_def_count);
+    //printf("\nreturns_dec_count: %d, returns_def_count: %d\n", returns_dec_count, returns_def_count);
 
     if (returns_dec_count == returns_def_count)
     {
@@ -1573,14 +1577,15 @@ bool stats (p_data_ptr_t data)
             }      
         }
         else if (token_type == T_COMMA || token_type == T_ASSIGN)
-        {
-            
+        {     
+            //printf("\nhello\n");
+            //printf("\ns: %s\n", data->tbl_list->lastElement->nextElement->root->key);
             if (!check_identifier_is_declared(data->tbl_list, data->func_name))
             {                
                 printf("\nESD: %d\n", 9);
                 err = E_SEM_DEF;
                 return false;
-            }
+            }                          
 
             idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name));
         }
