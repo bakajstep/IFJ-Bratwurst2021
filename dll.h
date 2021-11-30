@@ -27,8 +27,6 @@ typedef struct DLLElement {
 typedef struct {
     /** Ukazatel na první prvek seznamu. */
     DLLElementPtr firstElement;
-    /** Ukazatel na aktuální prvek seznamu. */
-    DLLElementPtr activeElement;
     /** Ukazatel na posledni prvek seznamu. */
     DLLElementPtr lastElement;
 } DLList;
@@ -37,17 +35,8 @@ void DLL_Init( DLList * );
 
 void DLL_Dispose( DLList * );
 
-void DLL_InsertFirst( DLList *, char * );
+void DLL_PrintAll( DLList * );
 
 void DLL_InsertLast( DLList *, char * );
-
-void DLL_GetFirst( DLList *);
-
-void DLL_GetLast( DLList *);
-
-void DLL_DeleteFirst( DLList * );
-
-void DLL_DeleteLast( DLList * );
-
 
 #endif //IFJ_BRATWURST2021_DLL_H
