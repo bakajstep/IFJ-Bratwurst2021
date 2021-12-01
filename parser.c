@@ -1393,7 +1393,7 @@ bool main_b (p_data_ptr_t data)
  * 11. <stats> -> epsilon
  */
 bool stats (p_data_ptr_t data)
-{    
+{        
     bool ret_val = false;
     token_type_t token_type;    
     symTree_t* tree = NULL;
@@ -2037,6 +2037,9 @@ bool r_vals (p_data_ptr_t data)
         glb_tbl = LL_GetFirst(data->tbl_list);
         func_data = symTableSearch(glb_tbl, data->func_name);
 
+        printf("\ndata func name: %s\n", data->func_name);
+        
+
         data->ret = func_data->first_ret;
 
         if (data->ret != NULL)
@@ -2356,7 +2359,7 @@ bool ret_vals (p_data_ptr_t data)
     bool ret_val = false;            
 
     VALIDATE_TOKEN(data->token);
-    TEST_EOF(data->token);
+    TEST_EOF(data->token);    
 
     /* 25. <ret_vals> -> <vals> */ 
     if (r_vals(data))
@@ -2386,7 +2389,7 @@ bool ret_vals (p_data_ptr_t data)
  * 28. <assign> -> epsilon
  */
 bool assign (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;    
 
@@ -2411,7 +2414,7 @@ bool assign (p_data_ptr_t data)
         if (token_type == T_ASSIGN)
         {
             next_token(data);            
-            ret_val = assign_val(data);
+            ret_val = assign_val(data);            
         }                   
     }    
 
@@ -2430,6 +2433,7 @@ bool assign_val (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_data;
+    char* func_name = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -2438,14 +2442,15 @@ bool assign_val (p_data_ptr_t data)
     /* 30. <assign_val> -> id (<args>) */    
     if (token_type == T_IDENTIFIER)
     {    
+        /*
         if (data->func_name != NULL)
         {
             free(data->func_name);
         }
-
+        */
         /* DONE free */
-        data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
-        strcpy(data->func_name, data->token->attribute.string);
+        func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
+        strcpy(func_name, data->token->attribute.string);
 
         if (expression(data))
         {
@@ -2457,14 +2462,15 @@ bool assign_val (p_data_ptr_t data)
             /*
              * Check if called function is declared
              */       
-            if (!check_function_is_declared(data->tbl_list, data->func_name))
+            if (!check_function_is_declared(data->tbl_list, func_name))
             {
                 printf("\nESD: %d\n", 12);
                 err = E_SEM_DEF;
+                free(func_name);
                 return false;
             }
         
-            func_data = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);
+            func_data = symTableSearch(LL_GetFirst(data->tbl_list), func_name);
             data->param = func_data->first_param;        
 
             if (func_data->first_ret != NULL)
@@ -2474,6 +2480,7 @@ bool assign_val (p_data_ptr_t data)
             else
             {
                 err = E_SEM_PARAM;
+                free(func_name);
                 return false;
             }                        
             
@@ -2507,6 +2514,8 @@ bool assign_val (p_data_ptr_t data)
     {        
         ret_val = true;
     }        
+
+    free(func_name);
 
     return ret_val;
 }
