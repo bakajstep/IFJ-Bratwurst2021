@@ -181,6 +181,33 @@ p_data_ptr_t create_data ()
     return (p_data_ptr_t) malloc(sizeof(struct p_data));
 }
 
+void delete_data_param(function_params_t* param)
+{
+    function_params_t* current = NULL;
+
+    while (param != NULL)
+    {
+        current = param;
+        param = param->param_next;
+
+        free(current->param_name);
+        free(current);
+    }    
+}
+
+void delete_data_ret(function_returns_t* ret)
+{
+    function_returns_t* current = NULL;
+
+    while (ret != NULL)
+    {
+        current = ret;
+        ret = ret->ret_next;
+
+        free(current);   
+    }    
+}
+
 void delete_ids_list(ids_list_t* ids_list)
 {
     ids_list_t* current = NULL;
@@ -205,10 +232,27 @@ void delete_data (p_data_ptr_t data)
 {
     delete_token(data->token);
     free(data->func_name);
+    delete_data_param(data->param);
+    delete_data_ret(data->ret);
     delete_ids_list(data->ids_list);    
 
     free(data);
     data = NULL;
+}
+
+void delete_symtable_data(symData_t** data)
+{
+    paramDispose((*data)->first_param);
+    paramTypeDispose((*data)->first_type_param);
+    returnDefDispose((*data)->first_def_ret);
+    returnDispose((*data)->first_ret);
+
+    (*data)->first_param = NULL;
+    (*data)->first_type_param = NULL;
+    (*data)->first_def_ret = NULL;
+    (*data)->first_ret = NULL;
+
+    free(*data);
 }
 
 /**************** BACKEND FUNCTIONS ****************/
@@ -263,6 +307,8 @@ void create_symbol (symTree_t** tree, char* key)
     if (err == E_NO_ERR)
     {        
         symTableInsert(tree, key, data);
+        delete_symtable_data(&data);
+        data = NULL;
     }    
 }
 
@@ -642,11 +688,11 @@ bool check_function_dec_def_returns_list (unsigned returns_dec_count,
     bool ret_val = true;
     function_returns_t* elem_declaration = NULL;
     function_returns_t* elem_definition = NULL;
-
-    //printf("\nreturns_dec_count: %d, returns_def_count: %d\n", returns_dec_count, returns_def_count);
+    
+    //printf("\nreturns_dec_count: %d, returns_def_count: %d\n", returns_dec_count, returns_def_count);    
 
     if (returns_dec_count == returns_def_count)
-    {
+    {        
         elem_declaration = first_dec_return;
         elem_definition = first_def_return;
 
@@ -834,14 +880,18 @@ void insert_built_in_functions (LList* tbl_list)
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, STR);
-    symTableInsert(&glb_tbl, "reads", data);           
+    symTableInsert(&glb_tbl, "reads", data);
+    delete_symtable_data(&data);
+    data = NULL;           
 
     // function readi (): integer
     symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
     returnInsert(data, INT);                        
-    symTableInsert(&glb_tbl, "readi", data);    
+    symTableInsert(&glb_tbl, "readi", data);
+    delete_symtable_data(&data);
+    data = NULL;    
 
     // function readn (): number
     symDataInit(&data);
@@ -849,6 +899,8 @@ void insert_built_in_functions (LList* tbl_list)
     data->returns_count = 1;
     returnInsert(data, NUMBER);
     symTableInsert(&glb_tbl, "readn", data);
+    delete_symtable_data(&data);
+    data = NULL;
 
     // function write (term_1, term_2, ..., term_n)
 
@@ -861,6 +913,8 @@ void insert_built_in_functions (LList* tbl_list)
     paramInsert(data, NUMBER, "f");    
     returnInsert(data, INT);
     symTableInsert(&glb_tbl, "tointeger", data);
+    delete_symtable_data(&data);
+    data = NULL;
 
     // function substr (s : string, i : number, j : number) : string
 
@@ -873,6 +927,8 @@ void insert_built_in_functions (LList* tbl_list)
     paramInsert(data, NUMBER, "j");
     returnInsert(data, INT);
     symTableInsert(&glb_tbl, "substr", data);
+    delete_symtable_data(&data);
+    data = NULL;
 
     // function ord (s : string, i : integer) : integer
 
@@ -884,6 +940,8 @@ void insert_built_in_functions (LList* tbl_list)
     paramInsert(data, INT, "i");
     returnInsert(data, INT);
     symTableInsert(&glb_tbl, "ord", data);
+    delete_symtable_data(&data);
+    data = NULL;
 
     // function chr (i : integer) : string
 
@@ -893,7 +951,9 @@ void insert_built_in_functions (LList* tbl_list)
     data->params_count = 1;
     paramInsert(data, INT, "i");
     returnInsert(data, STR);
-    symTableInsert(&glb_tbl, "chr", data);    
+    symTableInsert(&glb_tbl, "chr", data);
+    delete_symtable_data(&data);
+    data = NULL;
 
     tbl_list->lastElement->root = glb_tbl; 
 }
@@ -1218,7 +1278,7 @@ bool main_b (p_data_ptr_t data)
                                 {
                                     tree = LL_GetFirst(data->tbl_list);
                                     symData_t* func_def = symTableSearch(tree, data->func_name);                                                                        
-
+                                    
                                     /*
                                     * Check returns lists of function declaration and definition
                                     */
@@ -2065,8 +2125,12 @@ bool r_vals (p_data_ptr_t data)
         glb_tbl = LL_GetFirst(data->tbl_list);
         func_data = symTableSearch(glb_tbl, data->func_name);
 
-        printf("\ndata func name: %s\n", data->func_name);
-        
+        //printf("\ndata func name: %s\n", data->func_name);
+
+        if (data->ret != NULL)
+        {
+            delete_data_ret(data->ret);
+        }                
 
         data->ret = func_data->first_ret;
 

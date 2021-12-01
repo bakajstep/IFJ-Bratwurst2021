@@ -119,7 +119,7 @@ $(STX)-test:
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG1).output $(STXPATH)$(STX)$(CURTEST)$(PROG1).output || exit 0
 
 	@echo "\n------------------------------------ 'fact_rec' -------------------------------------\n"
-	./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG2).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG2).output	
+	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG2).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG2).output	
 	@echo "\nTest case 'fact_rec' output differences:"
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG2).output $(STXPATH)$(STX)$(CURTEST)$(PROG2).output || exit 0
 
@@ -134,7 +134,7 @@ $(STX)-test:
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG4).output $(STXPATH)$(STX)$(CURTEST)$(PROG4).output || exit 0
 
 	@echo "\n------------------------------------ 'fact_iter_err_2' -------------------------------------\n"
-	./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG5).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG5).output	
+	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG5).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG5).output	
 	@echo "\nTest case 'fact_iter_err_2' output differences:"
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG5).output $(STXPATH)$(STX)$(CURTEST)$(PROG5).output || exit 0
 
@@ -203,17 +203,17 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG14).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG14).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err3' ------------------------------------\n"
-	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG15).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG15).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output
 	@echo "\nTest case 'bad_parameter_type_err3' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG15).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG15).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_return_type_err1' ------------------------------------\n"
-	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG16).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG16).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output
 	@echo "\nTest case 'bad_return_type_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG16).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG16).output || exit 0
 
 	@echo "\n------------------------------------ 'bad_return_type_err2' ------------------------------------\n"
-	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG17).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG17).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output
 	@echo "\nTest case 'bad_return_type_err2' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG17).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG17).output || exit 0
 
@@ -223,7 +223,7 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG18).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG18).output || exit 0
 
 	@echo "\n------------------------------------ 'call_too_few_parameter_err1' ------------------------------------\n"
-	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG19).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG19).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output
 	@echo "\nTest case 'call_too_few_parameter_err1' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG19).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG19).output || exit 0
 
@@ -273,7 +273,7 @@ $(SEM)-test:
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG28).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG28).output || exit 0
 
 	@echo "\n------------------------------------ 'more_returns_than_variables_err' ------------------------------------\n"
-	./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG29).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output
+	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG29).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output
 	@echo "\nTest case 'more_returns_than_variables_err' output differences:"
 	@diff -su $(SEMPATH)$(SEM)$(REFTEST)$(PROG29).output $(SEMPATH)$(SEM)$(CURTEST)$(PROG29).output || exit 0
 

@@ -89,6 +89,9 @@ void symDataInit(symData_t** data){
     (*data)->defined = false;
     (*data)->data_type = NIL;
     (*data)->params_count = 0;
+    (*data)->params_type_count = 0;
+    (*data)->returns_def_count = 0;
+    (*data)->returns_count = 0;
     (*data)->first_param = NULL;
     (*data)->first_type_param = NULL;
     (*data)->first_def_ret = NULL;
@@ -281,7 +284,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
 
     (*tree)->data->declared = data->declared;
     (*tree)->data->defined = data->defined;
-    (*tree)->data->data_type = data->data_type;
+    (*tree)->data->data_type = data->data_type;    
     (*tree)->data->params_count = data->params_count;
     (*tree)->data->params_type_count = data->params_type_count;
     (*tree)->data->returns_def_count = data->returns_def_count;
