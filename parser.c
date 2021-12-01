@@ -650,7 +650,7 @@ bool check_function_dec_def_params_list (unsigned params_type_count,
     function_params_t* elem_declaration = NULL;
     function_params_t* elem_definition = NULL;
 
-    //printf("\nparams_type_count: %d, params_count: %d\n", params_type_count, params_count);
+    //printf("\nparams_type_count: %d, params_count: %d\n", params_type_count, params_count);        
 
     /*
      * Identical count of parameters
@@ -903,6 +903,11 @@ void insert_built_in_functions (LList* tbl_list)
     data = NULL;
 
     // function write (term_1, term_2, ..., term_n)
+    symDataInit(&data);
+    data->defined = true;    
+    symTableInsert(&glb_tbl, "write", data);
+    delete_symtable_data(&data);
+    data = NULL;
 
     // function tointeger (f : number) : integer
 
@@ -1417,19 +1422,28 @@ bool main_b (p_data_ptr_t data)
         /* 4. <main_b> -> id (<args>) <main_b> */
         else if (token_type == T_IDENTIFIER)
         {
+            if (data->func_name != NULL)
+            {
+                free(data->func_name);
+            }
+
+            /* DONE free */
+            data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
+            strcpy(data->func_name, data->token->attribute.string);  
+
             /* -------------- SEMANTIC --------------*/
 
             /*
              * Check if called function is declared
              */
-            if (!check_function_is_declared(data->tbl_list, data->token->attribute.string))
+            if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
                 printf("\nESD: %d\n", 6);
                 err = E_SEM_DEF;
                 return false;
             }
 
-            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->token->attribute.string)->first_param;
+            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
 
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -2712,29 +2726,32 @@ bool args (p_data_ptr_t data)
     else if (term(data))
     {             
         /* -------------- SEMANTIC --------------*/
-        if (data->param != NULL)
+        if (strcmp(data->func_name, "write") != 0)
         {
-            if (data->param->param_type != data->type)
+            if (data->param != NULL)
             {
-                if (data->type == NIL ||
-                    (data->param->param_type == NUMBER && data->type == INT))
+                if (data->param->param_type != data->type)
                 {
-                    // VALID
+                    if (data->type == NIL ||
+                        (data->param->param_type == NUMBER && data->type == INT))
+                    {
+                        // VALID
+                    }
+                    else
+                    {
+                        err = E_SEM_PARAM;
+                        return false;
+                    }                                
                 }
-                else
-                {
-                    err = E_SEM_PARAM;
-                    return false;
-                }                                
+                
+                data->param = data->param->param_next;        
             }
-            
-            data->param = data->param->param_next;        
-        }
-        else
-        {
-            err = E_SEM_PARAM;
-            return false;
-        }
+            else
+            {
+                err = E_SEM_PARAM;
+                return false;
+            }
+        }                
         
         /* ----------- END OF SEMANTIC ----------*/
 
@@ -2769,29 +2786,32 @@ bool n_args (p_data_ptr_t data)
         if (term(data))
         {
             /* -------------- SEMANTIC --------------*/
-            if (data->param != NULL)
+            if (strcmp(data->func_name, "write") != 0)
             {
-                if (data->param->param_type != data->type)
+                if (data->param != NULL)
                 {
-                    if (data->type == NIL ||
-                        (data->param->param_type == NUMBER && data->type == INT))
+                    if (data->param->param_type != data->type)
                     {
-                        // VALID
+                        if (data->type == NIL ||
+                            (data->param->param_type == NUMBER && data->type == INT))
+                        {
+                            // VALID
+                        }
+                        else
+                        {
+                            err = E_SEM_PARAM;
+                            return false;
+                        }                       
                     }
-                    else
-                    {
-                        err = E_SEM_PARAM;
-                        return false;
-                    }                       
+                    
+                    data->param = data->param->param_next;        
                 }
-                
-                data->param = data->param->param_next;        
-            }
-            else
-            {
-                err = E_SEM_PARAM;
-                return false;
-            }
+                else
+                {
+                    err = E_SEM_PARAM;
+                    return false;
+                }
+            }                                                            
             
             /* ----------- END OF SEMANTIC ----------*/
 
