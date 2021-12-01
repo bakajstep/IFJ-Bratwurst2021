@@ -1,0 +1,9 @@
+testy lex, syntax, semantic - uvolnovani pameti (create_sym_table, symbol_stack_push, ...)
+
+kontrola promenne err (E_INTERNAL):
+- symTableInsert
+- symDataInit
+- paramInsert
+- paramTypeInsert
+- returnDefInsert
+- returnInsert
