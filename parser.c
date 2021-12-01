@@ -795,7 +795,7 @@ bool check_func_assign (p_data_ptr_t data)
                 // VALID
             }
             else
-            {
+            {                
                 err = E_SEM_PARAM;
                 ret_val = false;
                 break;
@@ -930,7 +930,7 @@ void insert_built_in_functions (LList* tbl_list)
     paramInsert(data, STR, "s");
     paramInsert(data, NUMBER, "i");
     paramInsert(data, NUMBER, "j");
-    returnInsert(data, INT);
+    returnInsert(data, STR);
     symTableInsert(&glb_tbl, "substr", data);
     delete_symtable_data(&data);
     data = NULL;
