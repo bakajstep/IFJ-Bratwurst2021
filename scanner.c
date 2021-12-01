@@ -103,8 +103,9 @@ void delete_token (token_t* token)
 
 token_t* get_next_token ()
 {
-    char symbol; //readed character from stdin
-    token_t* token;
+    char symbol; //readed character from stdin    
+    token_t* token;    
+    bool f_state = false;
     string_ptr_t str = NULL;
     state_t state = S_INIT;    
     
@@ -147,6 +148,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '/')
                 {
+                    f_state = true;
                     state = S_DIV;
                 }
                 else if (symbol == '+')
@@ -158,6 +160,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '-')
                 {
+                    f_state = true;
                     state = S_MINUS;
                 }
                 else if (symbol == '.')
@@ -166,10 +169,12 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '<')
                 {
+                    f_state = true;
                     state = S_LESS_THAN;
                 }
                 else if (symbol == '>')
                 {
+                    f_state = true;
                     state = S_GTR_THAN;
                 }
                 else if (symbol == '~')
@@ -178,6 +183,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '=')
                 {
+                    f_state = true;
                     state = S_ASSIGN;
                 }
                 else if (symbol == ':')
@@ -210,6 +216,7 @@ token_t* get_next_token ()
                 }
                 else if (isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_INT;
 
                     if (!string_append_character(str, symbol))
@@ -223,6 +230,7 @@ token_t* get_next_token ()
                 }
                 else if (isalpha(symbol) || symbol == '_')
                 {
+                    f_state = true;
                     state = S_IDENTIFIER_KEYWORD;
                     
                     if (!string_append_character(str, symbol))
@@ -343,6 +351,7 @@ token_t* get_next_token ()
             case (S_DECIMAL_POINT):     
                 if (isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_DECIMAL;
                     
                     if (!string_append_character(str, symbol))
@@ -381,6 +390,7 @@ token_t* get_next_token ()
                 }
                 else if(isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_DECIMAL_W_EXP;
                     
                     if (!string_append_character(str, symbol))
@@ -406,6 +416,7 @@ token_t* get_next_token ()
             case (S_EXP_PLUS_MINUS):
                 if (isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_DECIMAL_W_EXP;
                     
                     if (!string_append_character(str, symbol))
@@ -674,7 +685,7 @@ token_t* get_next_token ()
             //***************** F STATES *****************//
             case (S_DIV):
                 if (symbol == '/')
-                {
+                {                    
                     token->type = T_INT_DIV;
                     string_free(str);
                     
@@ -702,6 +713,7 @@ token_t* get_next_token ()
             case (S_MINUS):
                 if (symbol == '-')
                 {
+                    f_state = false;
                     state = S_ONE_LINE_COMMENT;
                 }
                 else
@@ -806,7 +818,8 @@ token_t* get_next_token ()
             
             case (S_INT):
                 if (symbol == 'e' || symbol == 'E')
-                {                    
+                {
+                    f_state = false;                    
                     state = S_EXP;
                 
                     if (!string_append_character(str, symbol))
@@ -820,6 +833,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '.')
                 {
+                    f_state = false;
                     state = S_DECIMAL_POINT;
                     
                     if (!string_append_character(str, symbol))
@@ -865,6 +879,7 @@ token_t* get_next_token ()
             case (S_DECIMAL):                
                 if (symbol == 'e' || symbol == 'E')
                 {
+                    f_state = false;
                     state = S_EXP;
                     
                     if (!string_append_character(str, symbol))
@@ -993,6 +1008,11 @@ token_t* get_next_token ()
                 break;                               
         }
     }
+
+    if (state != S_INIT && f_state == false)
+    {
+        err = E_LEX;   
+    }    
 
     delete_token(token);
     string_free(str);
