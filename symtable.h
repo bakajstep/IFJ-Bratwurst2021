@@ -58,6 +58,10 @@ void returnDefInsert(symData_t* data, data_type_t type);
 void returnInsert(symData_t* data, data_type_t type);
 symData_t* symTableSearch(symTree_t *tree, char* key);
 void symTableInsert(symTree_t **tree, char* key, symData_t* data);
+void paramDispose(function_params_t* param);
+void paramTypeDispose(function_params_t* param_type);
+void returnDefDispose(function_returns_t *return_def);
+void returnDispose(function_returns_t* returns);
 void symTableDispose(symTree_t **tree);
 
 
