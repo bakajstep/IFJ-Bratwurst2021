@@ -30,7 +30,7 @@ void deep_copy_function_param (symData_t* data, function_params_t* orig)
 
 void deep_copy_function_type_param (symData_t* data, function_params_t* orig)
 {
-    function_params_t* elem = orig;
+    function_params_t* elem = orig;    
 
     while (elem != NULL)
     {
@@ -43,6 +43,8 @@ void deep_copy_function_type_param (symData_t* data, function_params_t* orig)
 void deep_copy_function_def_ret (symData_t* data, function_returns_t* orig)
 {
     function_returns_t* elem = orig;
+
+    //printf("elem ret type: %d", elem->return_type);
 
     while (elem != NULL)
     {
@@ -191,7 +193,7 @@ void returnInsert(symData_t* data, data_type_t type){
     }
     newReturn->return_type = type;
 
-    if(data->first_ret == NULL){
+    if(data->first_ret == NULL){        
         data->first_ret = newReturn;
         data->first_ret->ret_next = NULL;
     }else{
@@ -284,11 +286,11 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     (*tree)->data->params_type_count = data->params_type_count;
     (*tree)->data->returns_def_count = data->returns_def_count;
     (*tree)->data->returns_count = data->returns_count;
-    
-    deep_copy_function_param(data, (*tree)->data->first_param);
-    deep_copy_function_type_param(data, (*tree)->data->first_type_param);
-    deep_copy_function_def_ret(data, (*tree)->data->first_def_ret);
-    deep_copy_function_ret(data, (*tree)->data->first_ret);
+           
+    deep_copy_function_param((*tree)->data, data->first_param);
+    deep_copy_function_type_param((*tree)->data, data->first_type_param);
+    deep_copy_function_def_ret((*tree)->data, data->first_def_ret);
+    deep_copy_function_ret((*tree)->data, data->first_ret);
     
     (*tree)->nextLeft = NULL;
     (*tree)->nextRight = NULL;        

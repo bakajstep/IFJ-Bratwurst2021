@@ -82,9 +82,8 @@ bool r_n_func_def_types (p_data_ptr_t data);
 bool type (p_data_ptr_t data);
 bool constant (p_data_ptr_t data);
 
-/* TODO
- * todo inicializovat v data parametry a returny?
- * todo vymazat v data parametry a returny
+/* TODO 
+ * todo vymazat v data returny
  */
 
 /* TODO smazat */
@@ -191,8 +190,9 @@ void delete_ids_list(ids_list_t* ids_list)
         current = ids_list;
         ids_list = ids_list->next;   
 
+        free(current->id);
         free(current);
-    }    
+    }
 }
 
 void delete_tbl_list_mem(LList* tbl_list)
@@ -715,22 +715,33 @@ void copy_params_to_func_table (LList* tbl_list, char* func_name)
 bool check_func_assign (p_data_ptr_t data)
 {
     bool ret_val = true;
-    function_returns_t* func_returns = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_ret;
-    
+    function_returns_t* func_returns = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_ret;            
+
     while (func_returns != NULL && data->ids_list != NULL)
     {                
         if (func_returns->return_type != data->ids_list->type)
-        {
-            err = E_SEM_PARAM;
-            ret_val = false;
-            break;
+        {       
+            if (func_returns->return_type == NIL ||
+                (data->ids_list->type == NUMBER && func_returns->return_type == INT))
+            {
+                // VALID
+            }
+            else
+            {
+                err = E_SEM_PARAM;
+                ret_val = false;
+                break;
+            }            
         }
+
+        symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id)->defined = true;
         
         func_returns = func_returns->ret_next;
+        data->ids_list = data->ids_list->next;
     }
     /* The function returns fewer values ​​than the variables expect */
     if (func_returns == NULL && data->ids_list != NULL)
-    {
+    {               
         err = E_SEM_PARAM;
         ret_val = false;
     }    
@@ -738,7 +749,7 @@ bool check_func_assign (p_data_ptr_t data)
     return ret_val;
 }
 
-void idInsert(ids_list_t** ids_list, data_type_t type)
+void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
 {
     /* DONE free */
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
@@ -747,7 +758,19 @@ void idInsert(ids_list_t** ids_list, data_type_t type)
         err = E_INTERNAL;
         return;
     }
-    newId->type = type;    
+
+    /* DONE free */
+    newId->id = (char*) malloc(strlen(id)+1);
+
+    if (newId->id == NULL)
+    {
+        free(newId);
+        err = E_INTERNAL;
+        return;
+    }
+    
+    strcpy(newId->id, id);
+    newId->type = type; 
 
     if(*ids_list == NULL){
         *ids_list = newId;
@@ -778,7 +801,7 @@ void create_tbl_list_mem (LList** tbl_list)
 void insert_built_in_functions (LList* tbl_list)
 {    
     tbl_list = tbl_list;    
-    symTree_t* glb_tbl = NULL;//(symTree_t*) malloc(sizeof(symTree_t));    
+    symTree_t* glb_tbl = NULL;//(symTree_t*) malloc(sizeof(symTree_t));        
 
     // TODO
     // function reads (): string
@@ -793,7 +816,7 @@ void insert_built_in_functions (LList* tbl_list)
     symDataInit(&data);
     data->defined = true;
     data->returns_count = 1;
-    returnInsert(data, INT);
+    returnInsert(data, INT);                        
     symTableInsert(&glb_tbl, "readi", data);    
 
     // function readn (): number
@@ -846,8 +869,8 @@ void insert_built_in_functions (LList* tbl_list)
     data->params_count = 1;
     paramInsert(data, INT, "i");
     returnInsert(data, STR);
-    symTableInsert(&glb_tbl, "chr", data);
-    
+    symTableInsert(&glb_tbl, "chr", data);    
+
     tbl_list->lastElement->root = glb_tbl; 
 }
 
@@ -904,7 +927,7 @@ parser_error_t parser ()
     create_sym_table(data->tbl_list);
     
     // Insert built in functions
-    insert_built_in_functions(data->tbl_list);          
+    insert_built_in_functions(data->tbl_list);    
 
     /* ----------- END OF SEMANTIC ----------*/    
 
@@ -961,6 +984,9 @@ bool prog (p_data_ptr_t data)
             /* -------------- SEMANTIC --------------*/
             
             data->func_name = NULL;
+            data->param = NULL;
+            data->ret = NULL;
+            data->ids_list = NULL;
             
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -1367,7 +1393,7 @@ bool main_b (p_data_ptr_t data)
  * 11. <stats> -> epsilon
  */
 bool stats (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;    
     symTree_t* tree = NULL;
@@ -1655,7 +1681,7 @@ bool stats (p_data_ptr_t data)
                 return false;
             }                          
 
-            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name));
+            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name), data->func_name);
         }
         /*else
         {
@@ -1670,7 +1696,7 @@ bool stats (p_data_ptr_t data)
         /* ----------- END OF SEMANTIC ----------*/
 
         if (id_func(data))
-        {
+        {                        
             ret_val = stats(data);
         }
     }    
@@ -1695,7 +1721,7 @@ bool stats (p_data_ptr_t data)
  * 13. <id_func> -> (<args>)
  */
 bool id_func (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;
 
@@ -1927,7 +1953,7 @@ bool n_ids (p_data_ptr_t data)
                 return false;
             }
 
-            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->token->attribute.string));
+            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->token->attribute.string), data->token->attribute.string);
 
             if (err != E_NO_ERR)
             {
@@ -1970,7 +1996,7 @@ bool vals (p_data_ptr_t data)
                 if (data->psa_data_type == NIL ||
                     (data->ids_list->type == NUMBER && data->psa_data_type == INT))
                 {
-                    // VALID
+                    // VALID                    
                 }
                 else
                 {
@@ -1978,6 +2004,8 @@ bool vals (p_data_ptr_t data)
                     return false;
                 }
             }
+
+            symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id);
 
             data->ids_list = data->ids_list->next;
         }                        
@@ -2226,7 +2254,7 @@ bool r_n_vals (p_data_ptr_t data)
  * 24. <as_vals> -> id (<args>)
  */
 bool as_vals (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;
 
@@ -2566,8 +2594,16 @@ bool args (p_data_ptr_t data)
         {
             if (data->param->param_type != data->type)
             {
-                err = E_SEM_PARAM;
-                return false;
+                if (data->type == NIL ||
+                    (data->param->param_type == NUMBER && data->type == INT))
+                {
+                    // VALID
+                }
+                else
+                {
+                    err = E_SEM_PARAM;
+                    return false;
+                }                                
             }
             
             data->param = data->param->param_next;        
@@ -2615,8 +2651,16 @@ bool n_args (p_data_ptr_t data)
             {
                 if (data->param->param_type != data->type)
                 {
-                    err = E_SEM_PARAM;
-                    return false;
+                    if (data->type == NIL ||
+                        (data->param->param_type == NUMBER && data->type == INT))
+                    {
+                        // VALID
+                    }
+                    else
+                    {
+                        err = E_SEM_PARAM;
+                        return false;
+                    }                       
                 }
                 
                 data->param = data->param->param_next;        

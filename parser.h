@@ -19,6 +19,7 @@ typedef enum e_arg_ret {
 typedef struct ids_list {
     data_type_t type;
     struct ids_list* next;
+    char* id;
 } ids_list_t;
 
 typedef struct p_data {
