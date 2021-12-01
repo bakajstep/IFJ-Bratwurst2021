@@ -2,12 +2,14 @@
 require "ifj21"
 
 function factorial(n : integer) : integer
+	local a : integer local b : integer local c : integer
 	local n1 : integer = n - 1
 	if n < 2 then
 		return 1
 	else
 		local tmp : integer = factorial(n1)
-		return
+		--a,b,c = 1,2,3
+		return n1
         a,b,c = 1,2,3
 	end
 end
