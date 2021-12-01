@@ -14,6 +14,8 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
     static bool write = false;
     static bool defTerm = false;
     static char *defId = false;
+    static DLList list = NULL;
+    static char* id;
 
     if(table == NULL){
         table = malloc(stackSize * sizeof(tableItem_t));
@@ -24,16 +26,25 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
         table = realloc(table, tableSize * sizeof(tableItem_t));
     }
 
+    if(list == NULL){
+        list = malloc(sizeof(DLList));
+        DLL_Init(list);
+    }
+
     switch(type){
         case T_IDENTIFIER:
             if(strcmp(token->attribute->string, "print") == 0){
                 write = true;
             }else if(defTerm){
-                defID = token->data;
-
+                defID = token->attribute->string;
+                printf("JUMP %s$end\nLABEL %s$body\n", defId, defId)
+            }else{
+                id = token->attribute->string;
             }
             break;
+        case T_KEYWORD:
 
+            break;
         default:break;
     }
 }.

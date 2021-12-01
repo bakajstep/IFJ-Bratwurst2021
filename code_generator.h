@@ -5,9 +5,11 @@
 #ifndef IFJ_BRATWURST2021_CODE_GENERATOR_H
 #define IFJ_BRATWURST2021_CODE_GENERATOR_H
 
+#include <stdio.h>
 #include <string.h>
 #include "scanner.h"
 #include "symtable.h"
+#include "dll.h"
 
 #define TABLE_SIZE 10;
 
