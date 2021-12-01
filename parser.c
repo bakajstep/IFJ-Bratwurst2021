@@ -1503,6 +1503,8 @@ bool stats (p_data_ptr_t data)
 
                         data_type = symTableSearch(tree, id)->data_type;
 
+                        printf("\n psa_data_type: %d\n", data->psa_data_type);
+
                         if (data_type != data->psa_data_type)
                         {
                             if (data->psa_data_type == NIL || 
@@ -1512,7 +1514,7 @@ bool stats (p_data_ptr_t data)
                             }
                             else
                             {                          
-                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);      
+                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                
                                 err = E_SEM_ASSIGN;
                                 free(id);
                                 return false;
@@ -2426,7 +2428,8 @@ bool assign (p_data_ptr_t data)
 
     /* 28. <assign> -> epsilon */
     if (stats(data))
-    {                    
+    {    
+        data->psa_data_type = NIL;                
         ret_val = true;
     }
     else
@@ -2483,7 +2486,27 @@ bool assign_val (p_data_ptr_t data)
             ret_val = true;
         }
         else
-        {                        
+        {                 
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
+
+            if (token_type != T_LEFT_BRACKET)
+            {
+                /* Not function call */
+                if (err == E_INTERNAL)
+                {
+                    err = E_SYNTAX;
+                }
+                                
+                free(func_name);
+                return false;
+            }
+            else
+            {
+                err = E_NO_ERR;
+            }            
+             
             /* -------------- SEMANTIC --------------*/ 
             /*
              * Check if called function is declared
@@ -2512,12 +2535,12 @@ bool assign_val (p_data_ptr_t data)
             
             /* ----------- END OF SEMANTIC ----------*/
 
-            VALIDATE_TOKEN(data->token);
-            TEST_EOF(data->token);
-            token_type = data->token->type;
+            //VALIDATE_TOKEN(data->token);
+            //TEST_EOF(data->token);
+            //token_type = data->token->type;
 
-            if (token_type == T_LEFT_BRACKET)
-            {
+            //if (token_type == T_LEFT_BRACKET)
+            //{
                 next_token(data);
 
                 if (args(data))
@@ -2532,7 +2555,7 @@ bool assign_val (p_data_ptr_t data)
                         next_token(data);
                     }                
                 }            
-            }
+            //}
         }                        
     }    
     /* 29. <assign_val> -> exp */
