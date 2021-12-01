@@ -1514,7 +1514,7 @@ bool stats (p_data_ptr_t data)
                             }
                             else
                             {                          
-                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                
+                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                            
                                 err = E_SEM_ASSIGN;
                                 free(id);
                                 return false;
@@ -2621,7 +2621,7 @@ bool term (p_data_ptr_t data)
  * 34. <args> -> epsilon
  */
 bool args (p_data_ptr_t data)
-{    
+{        
     bool ret_val = false;
     token_type_t token_type;
 
@@ -3193,7 +3193,7 @@ bool constant (p_data_ptr_t data)
             break;
 
         case T_STRING:
-            data->type = NIL;
+            data->type = STR;
             break;    
 
         case T_KEYWORD:
