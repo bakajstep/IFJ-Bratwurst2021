@@ -524,6 +524,28 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
     return ret_val;
 }
 
+void set_identifier_defined (LList* tbl_list, char* id)
+{    
+    struct LLElement* elem = tbl_list->lastElement;
+    symData_t* table_elem;
+
+    /*
+     * Go through tables in linked list
+     */    
+    while (elem != NULL)
+    {
+        table_elem = symTableSearch(elem->root, id);
+
+        if (table_elem != NULL)
+        {
+            table_elem->defined = true;
+            break;
+        }        
+
+        elem = elem->nextElement;
+    }    
+}
+
 data_type_t identifier_type (LList* tbl_list, char* id)
 {    
     LLElementPtr elem = tbl_list->lastElement;
@@ -734,7 +756,9 @@ bool check_func_assign (p_data_ptr_t data)
             }            
         }
 
-        symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id)->defined = true;
+        set_identifier_defined(data->tbl_list, data->ids_list->id);
+        
+        //symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id)->defined = true;
         
         func_returns = func_returns->ret_next;
         data->ids_list = data->ids_list->next;
@@ -1487,7 +1511,8 @@ bool stats (p_data_ptr_t data)
                                 // VALID                                
                             }
                             else
-                            {                                
+                            {                          
+                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);      
                                 err = E_SEM_ASSIGN;
                                 free(id);
                                 return false;
@@ -1999,18 +2024,19 @@ bool vals (p_data_ptr_t data)
                     // VALID                    
                 }
                 else
-                {
+                {                    
                     err = E_SEM_ASSIGN;
                     return false;
                 }
             }
 
-            symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id);
+            set_identifier_defined(data->tbl_list, data->ids_list->id);
+            //symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id)->defined = true;
 
             data->ids_list = data->ids_list->next;
         }                        
         else
-        {
+        {            
             err = E_SEM_ASSIGN;
             return false;
         }        
@@ -2141,7 +2167,7 @@ bool n_vals (p_data_ptr_t data)
                             // VALID
                         }
                         else
-                        {
+                        {                            
                             err = E_SEM_ASSIGN;
                             return false;
                         }
@@ -2150,7 +2176,7 @@ bool n_vals (p_data_ptr_t data)
                     data->ids_list = data->ids_list->next;
                 }                        
                 else
-                {
+                {                    
                     err = E_SEM_ASSIGN;
                     return false;
                 }        
@@ -2335,7 +2361,7 @@ bool as_vals (p_data_ptr_t data)
         /* -------------- SEMANTIC --------------*/ 
         
         if (data->ids_list != NULL)
-        {
+        {            
             err = E_SEM_ASSIGN;
             return false;
         }

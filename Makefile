@@ -134,7 +134,7 @@ $(STX)-test:
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG4).output $(STXPATH)$(STX)$(CURTEST)$(PROG4).output || exit 0
 
 	@echo "\n------------------------------------ 'fact_iter_err_2' -------------------------------------\n"
-	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG5).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG5).output	
+	./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG5).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG5).output	
 	@echo "\nTest case 'fact_iter_err_2' output differences:"
 	@diff -su $(STXPATH)$(STX)$(REFTEST)$(PROG5).output $(STXPATH)$(STX)$(CURTEST)$(PROG5).output || exit 0
 
