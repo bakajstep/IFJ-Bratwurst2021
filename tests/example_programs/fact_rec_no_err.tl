@@ -22,10 +22,10 @@ function main()
 			--write("Faktorial nejde spocitat!", "\n")
 		else
 			local vysl : integer = factorial(a)
-			--write("Vysledek je ", vysl, "\n")
+			write("Vysledek je ", vysl, "\n")
 		end
 	else
-		--write("Chyba pri nacitani celeho cisla!\n")
+		write("Chyba pri nacitani celeho cisla!\n")
 	end
 end
 
