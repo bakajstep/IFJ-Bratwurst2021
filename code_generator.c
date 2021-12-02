@@ -24,6 +24,7 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
     static int whileCounter = 0;
     static int params = 1;
     static char* varType;
+    static char* tokenVal;
 
     if(table == NULL){
         table = malloc(stackSize * sizeof(tableItem_t));
@@ -70,11 +71,11 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
                 printf("DEFVAR LF@$return\nCREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
                 defParams = false;
             }
-
-            if(assign){
+            //nejsem si jistej
+            /*if(assign){
                 printf("MOVE LF@%s TF@$return\n", assignId);
                 assign = false;
-            }
+            }*/
             break;
         case T_LEFT_BRACKET:
             printf("CREATEFRAME\n");
@@ -83,9 +84,13 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
                 callFunc = true;
             }
             break;
+        case T_INT:
+        case T_DECIMAL:
+        case T_STRING:
+
+            break;
         case T_KEYWORD:
             switch(token->attribute->keyword){
-                /*TODO vyresit definici funkce*/
                 case K_FUNCTION:
                     defTerm = true;
                     defFunc = true;
@@ -153,7 +158,10 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
             break;
         default:break;
     }
-    //ADD
+    void operations(char* operationName){
+        //operace ADDS...
+    }
+
     //SUB
     //DIV
     //MUL
