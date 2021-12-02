@@ -4,8 +4,6 @@
 
 #include "code_generator.h"
 
-
-
 void codeFromToken(token_type_t type, token_t token, symTree_t tree){
     static int tableLines = TABLE_SIZE;
     static tableItem_t table = NULL;
@@ -15,19 +13,25 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
     static bool defTerm = false;
     static bool defParams = false;
     static bool defFunc = false;
-    static char *defId = false;
+    static bool assign = false;
+    static bool callFunc = false;
+    static char* assignId;
+    static char* defId;
+    static char* callId;
     static DLList list = NULL;
     static char* id;
     static int ifCounter = 0;
     static int whileCounter = 0;
+    static int params = 1;
+    static char* varType;
 
     if(table == NULL){
         table = malloc(stackSize * sizeof(tableItem_t));
     }
 
-    if(lastItem + 1 >= tableLines){
-        tableLines += tableLines;
-        table = realloc(table, tableLines * sizeof(tableItem_t));
+    if(lastItem + 1 >= tableLiness){
+        tableLiness += tableLiness;
+        table = realloc(table, tableLiness * sizeof(tableItem_t));
     }
 
     if(list == NULL){
@@ -36,14 +40,47 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
     }
 
     switch(type){
+        case T_ASSIGN:
+            assign = true; //pro výpis move
+            assignId = id;
+            break;
         case T_IDENTIFIER:
-            if(strcmp(token->attribute->string, "print") == 0){
+            else if(strcmp(token->attribute->string, "print") == 0){
                 write = true;
             }else if(defTerm){
                 defID = token->attribute->string;
                 printf("JUMP %s$end\nLABEL %s$body\n", defId, defId)
             }else{
                 id = token->attribute->string;
+            }
+            break;
+        case T_RIGHT_BRACKET:
+            params = 1;
+            if(callFunc){
+                printf("CALL %s\n", callId);
+                callFunc = false;
+            }
+
+            if(write){
+                printf("DEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
+                callPrint = false;
+            }
+
+            if(defParams){
+                printf("DEFVAR LF@$return\nCREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
+                defParams = false;
+            }
+
+            if(assign){
+                printf("MOVE LF@%s TF@$return\n", assignId);
+                assign = false;
+            }
+            break;
+        case T_LEFT_BRACKET:
+            printf("CREATEFRAME\n");
+            if(!write){
+                callId = id;
+                callFunc = true;
             }
             break;
         case T_KEYWORD:
@@ -54,17 +91,31 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
                     defFunc = true;
                     defParams = true;
                     break;
-                case
+                case K_INTEGER:
+                    varType = "integer";
+                    break;
+                case K_NUMBER:
+                    varType = "number";
+                    break;
+                case K_STRING:
+                    varType = "string";
+                    break;
+                case K_NILL:
+                    varType = "nill";
+                    break;
                 case K_THEN:
                     lastItem++;
-                    //kontrola velikosti tabulky
-
+                    
+                    if(lastItem >= tableLines){
+                        tableLines += tableLines;
+                        table = realloc(table, tableLines * sizeof(tableItem_t));
+                    }
                     table[lastItem].id = ifCounter;
                     table[lastItem];isIf = true;
                     ifcounter++;
                     //kontrola jestli podminka hodila bool
 
-                    printf("JUMIFNEQ $if$%i$else TF@$return bool@true\nMOVE TF@$return nil@nil", table[tableLine].id);
+                    printf("JUMIFNEQ $if$%i$else TF@$return bool@true\nMOVE TF@$return nil@nil", table[tableLines].id);
                     break;
                 case K_ELSE:
                     printf("JUMP $if$%i$end\n", table[lastItem].id);
@@ -72,22 +123,22 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
                     break;
                 case K_END:
                     if(lastItem >= 0){
-                        if(table[tableLine].isIf){
-                            print("LABEL $if$%i$end\n", table[lastItem].id)
+                        if(table[tableLines].isIf){
+                            printf("LABEL $if$%i$end\n", table[lastItem].id)
                         }else{
-                            print("JUMP $while$%i$start\n", table[lastItem].id);
-                            print("LABEL $while$%i$end\n", table[lastItem].id);
+                            printf("JUMP $while$%i$start\n", table[lastItem].id);
+                            printf("LABEL $while$%i$end\n", table[lastItem].id);
 
-                            print("LABEL $if$%i$\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
+                            printf("LABEL $if$%i$\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
                         }
                     //end funkce
                     }
                     break;
                 case K_WHILE:
                     lastItem++;
-                    if(lastItem >= tableLine){
+                    if(lastItem >= tableLines){
                         tableLines += tableLines;
-                        table = realloc(table, tableLine * sizeof(tableItem_t));
+                        table = realloc(table, tableLines * sizeof(tableItem_t));
                     }
                     table[lastItem].id = whileCounter;
                     table[lastItem].isIf = false;
