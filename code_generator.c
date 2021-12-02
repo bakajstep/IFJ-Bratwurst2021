@@ -121,6 +121,7 @@ void codeFromToken(token_type_t type, token_t token){
             break;
         case T_KEYWORD:
             switch(token.attribute.keyword){
+                //nfunc
                 case K_FUNCTION:
                     defTerm = true;
                     defFunc = true;
@@ -176,5 +177,119 @@ void codeFromToken(token_type_t type, token_t token){
             break;
         default:break;
     }
+    //konec radku
 }
-//defvarid, nbodyid
+
+void generate_operation(psa_rules_enum operation){
+    switch (operation){
+        case NT_PLUS_NT:
+            //rule E -> E + E
+            printf("ADDS\n");
+            break;
+        case NT_MINUS_NT:
+            //rule E -> E - E
+            printf("SUBS\n");
+            break;
+        case NT_MUL_NT:
+            // rule E -> E * E
+            printf("MULS\n");
+            break;
+        case NT_DIV_NT:
+            // rule E -> E / E
+            printf("DIVS\n");
+            break;
+        case NT_IDIV_NT:
+            // rule E -> E // E
+            printf("IDIVS\n");
+            break;
+        case NT_CONCAT_NT:
+            // rule E -> E .. E
+            printf("POPS GF@tmp1\n");
+            printf("POPS GF@tmp2\n");
+            printf("CONCAT GF@tmp3 GF@tmp1 GF@tmp2\n");
+            printf("PUSHS GF@tmp3\n");
+            break;
+        case NT_EQ_NT:
+            // rule E -> E == E
+            printf("EQS\n");
+            break;
+        case NT_NEQ_NT:
+            // rule E -> E ~= E
+            printf("NOT EQS\n");
+            break;
+        case NT_LEQ_NT:
+            // rule E -> E <= E
+            printf("GTS\nNOTS\n");
+            break;
+        case NT_GEQ_NT:
+            // rule E -> E >= E
+            printf("LTS\nNOTS\n");
+            break;
+        case NT_LTN_NT:
+            // rule E -> E < E
+            printf("LTS\n");
+            break;
+        case NT_GTN_NT:
+            // rule E -> E > E
+            printf("GTS\n");
+            break;
+        case NT_HASHTAG:
+            // rule E -> #E
+            printf("POPS GF@tmp1\n");
+            printf("STRLEN GF@tmp4 GF@tmp1\n");
+            printf("PUSHS GF@tmp4");
+            break;
+
+    }
+}
+
+char* convert_string(char* str_toconvert){
+    char* string = str_toconvert;
+    string_ptr_t string_res = string_init();
+
+    while(*string != '\0'){
+        //iteruji přes vstupní string
+        if(*string == 92){
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, '9');
+            string_append_character(string_res, '2');
+        }else if(*string == 35){
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, '3');
+            string_append_character(string_res, '5');
+        }else if(*string <= 32){
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, ((*string / 10) + 48));
+            string_append_character(string_res, ((*string % 10) + 48));
+        }else{
+            string_append_character(string_res, *string);
+        }
+
+        string++;
+    }
+    return string_res->string;
+}
+
+void generate_val_string(char* value){
+
+    printf("PUSHS string@");
+    printf(convert_string(value));
+
+}
+void generate_val_int(int value){
+    printf("PUSHS int@%d",value);
+}
+void generate_val_number(double value){
+    printf("PUSHS float@%a",value);
+}
+void generate_val_nil(){
+    printf("PUSHS nil@nil");
+}
+
+    //SUB
+    //DIV
+    //MUL
+    //honecna funkce na freecka
