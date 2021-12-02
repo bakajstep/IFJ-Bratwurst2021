@@ -14,6 +14,7 @@ PSA=psa
 SYMSTK=symstack
 SYMTBL=symtable
 SYMLL=sym_linked_list
+CDGEN=code_generator
 
 PROG1=fact_iter
 PROG2=fact_rec
@@ -189,8 +190,9 @@ $(STX)-clean:
 	$(STX)$(CURTEST)$(PROG12).output \
 	$(STX)-test
 
+#TODO smazat code_generator
 $(SEM)-test:
-	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h
+	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err1' ------------------------------------\n"
 	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
