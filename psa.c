@@ -13,7 +13,7 @@
 
 static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 /*    *//* #   +   -   *   /   //  ..  <   >   <=  >=  ~=  ==  (   )   i   s   $*/
-/* #  */ {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','<','>','=','=',' '},
+/* #  */ {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','<','>','<','<','>'},
 /* +  */ {'<','>','>','<','<','<',' ','>','>','>','>','>','>','<','>','<',' ','>'},
 /* -  */ {'<','>','>','<','<','<',' ','>','>','>','>','>','>','<','>','<',' ','>'},
 /* *  */ {'<','>','>','>','>','>',' ','>','>','>','>','>','>','<','>','<',' ','>'},
@@ -168,9 +168,8 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
             return NOT_A_RULE;
         case 2:
             // rule E -> #E
-            if (op1->symbol == HASHTAG && op2->symbol == NON_TERM)
+            if (op2->symbol == HASHTAG && op1->symbol == NON_TERM)
                 return NT_HASHTAG;
-
             return NOT_A_RULE;
         case 3:
             // rule E -> (E)
@@ -237,6 +236,8 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
 {
     switch (token->type)
     {
+        case T_CHAR_CNT:
+            return HASHTAG;
         case T_PLUS:
             return PLUS;
         case T_MINUS:
@@ -331,8 +332,8 @@ data_type_t get_type(p_data_ptr_t data){
         case T_IDENTIFIER:
             //TODO
             //je potřeba z listu identifikátorů zjistit jestli je platně deklarovasnaý a jaký má typ
-            //idk ještě jak vracet když to bude špatně
-            if(!check_identifier_is_defined(data->tbl_list,data->token->attribute.string)){
+            //idk ještě jak vracet když to bude špatně            
+            if(!check_identifier_is_defined(data->tbl_list,data->token->attribute.string)){                
                 return DERR;
             }
             return identifier_type(data->tbl_list,data->token->attribute.string);
@@ -562,8 +563,9 @@ psa_error_t psa (p_data_ptr_t data)
                     err = E_INTERNAL;
                     return PSA_ERR;
                 }
+                //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
                 //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
-                if(get_type(data) == DERR){
+                if(get_type(data) == DERR){                    
                     err = E_SEM_DEF;
                     return PSA_ERR;
                 }
@@ -572,7 +574,7 @@ psa_error_t psa (p_data_ptr_t data)
                     err = E_INTERNAL;
                     return PSA_ERR;
                 }                  
-
+                //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
                 next_token(data);
                 break;
             case '>': ;
@@ -581,12 +583,12 @@ psa_error_t psa (p_data_ptr_t data)
                 sym_stack_item symbol2;
                 sym_stack_item symbol3;
                 int num=0;
-                
+            //printf("top stack for check rule %d",symbol_stack_top(&stack)->symbol);
                 if(symbol_stack_top(&stack)->symbol != STOP){
                     symbol1 = *(symbol_stack_top(&stack));
                     symbol_stack_pop(&stack);
                     num++;
-                    
+                //printf("top stack for check rule %d",symbol_stack_top(&stack)->symbol);
                     if(symbol_stack_top(&stack)->symbol != STOP){
                         symbol2 = *(symbol_stack_top(&stack));
                         symbol_stack_pop(&stack);
@@ -611,27 +613,33 @@ psa_error_t psa (p_data_ptr_t data)
                 //zjistím jestli jse pro tohle nějaký pravidlo
 
                 psa_rules_enum rule = test_rule(num,&symbol1,&symbol2,&symbol3);
-
+		//printf("\nnumber for testing rule: %d\n",num);
                 //podle pravidla zpustím redukci
 
                 switch (rule) {
                     case OPERAND:
                         // rule E -> i
-                        if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){                            
+                        if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){    
+                        
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                //printf("\nredukuju identifikátor\n");                        
                         break;
                     case NT_HASHTAG:
                         // rule E -> #E
-                        if(symbol2.data != STR){
+                //printf("\npushnul jsem nonterm s int\n");  
+                        if(symbol1.data != STR){
                             err = E_SEM_INCOMPATIBLE;
+                            printf("motherfucker here");
                             return PSA_ERR;
                         }
-                        if(!symbol_stack_push(&stack,NON_TERM,STR)){                            
+                        if(!symbol_stack_push(&stack,NON_TERM,INT)){    
+                        
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                                              
                         break;
                     case LBR_NT_RBR:
                         // rule E -> (E)
@@ -778,11 +786,14 @@ psa_error_t psa (p_data_ptr_t data)
 
     }while(!end_while);
 
+
     if(symbol_stack_top(&stack)->symbol == NON_TERM)
     {
         //printf("\nexit psa\n");
+        data->psa_data_type = symbol_stack_top(&stack)->data;
         symbol_stack_free(&stack);
         return PSA_NO_ERR;    
     }
+    
     return  PSA_ERR;
 }

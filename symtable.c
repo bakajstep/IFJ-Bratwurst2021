@@ -30,13 +30,27 @@ void deep_copy_function_param (symData_t* data, function_params_t* orig)
 
 void deep_copy_function_type_param (symData_t* data, function_params_t* orig)
 {
-    function_params_t* elem = orig;
+    function_params_t* elem = orig;    
 
     while (elem != NULL)
     {
-        returnInsert(data, orig->param_type);
+        paramTypeInsert(data, orig->param_type);
         elem = elem->param_next;
     }    
+}
+
+
+void deep_copy_function_def_ret (symData_t* data, function_returns_t* orig)
+{
+    function_returns_t* elem = orig;
+
+    //printf("elem ret type: %d", elem->return_type);
+
+    while (elem != NULL)
+    {
+        returnDefInsert(data, orig->return_type);
+        elem = elem->ret_next;
+    }
 }
 
 void deep_copy_function_ret (symData_t* data, function_returns_t* orig)
@@ -53,7 +67,10 @@ void deep_copy_function_ret (symData_t* data, function_returns_t* orig)
 /* END OF BACKEND FUNCTIONS */
 
 void symTableInit(symTree_t **tree){
-tree = tree;
+    (*tree)->key = NULL;
+    (*tree)->data = NULL;
+    (*tree)->nextLeft = NULL;
+    (*tree)->nextRight = NULL;
     /*if(!(*tree)){
         return;
     }
@@ -61,6 +78,7 @@ tree = tree;
 }
 
 void symDataInit(symData_t** data){
+    /* DONE free */
     *data = (symData_t*) malloc(sizeof(symData_t));
 
     if(!(*data)){
@@ -71,12 +89,17 @@ void symDataInit(symData_t** data){
     (*data)->defined = false;
     (*data)->data_type = NIL;
     (*data)->params_count = 0;
+    (*data)->params_type_count = 0;
+    (*data)->returns_def_count = 0;
+    (*data)->returns_count = 0;
     (*data)->first_param = NULL;
+    (*data)->first_type_param = NULL;
+    (*data)->first_def_ret = NULL;
     (*data)->first_ret = NULL;
 }
 
 void paramInsert(symData_t* data, data_type_t type, char* param_name){
-
+    /* DONE free */
     function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
 
     if(!newParam){
@@ -84,9 +107,15 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
         return;
     }
     
-    newParam->param_name = param_name;    
-    //newParam->param_name = (char*) malloc(strlen(param_name) + 1);
-    //strcpy(newParam->param_name, param_name);     
+    newParam->param_name = (char*) malloc(strlen(param_name)+1);
+
+    if (newParam->param_name == NULL)
+    {
+        err = E_INTERNAL;
+        return;
+    }    
+
+    strcpy(newParam->param_name, param_name);     
     newParam->param_type = type;
 
     if(data->first_param == NULL){        
@@ -105,6 +134,7 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
 }
 
 void paramTypeInsert(symData_t* data, data_type_t type){
+    /* DONE free */
     function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
 
     if(!newParam){
@@ -129,7 +159,35 @@ void paramTypeInsert(symData_t* data, data_type_t type){
     }
 }
 
+void returnDefInsert(symData_t* data, data_type_t type){
+    /* DONE free */
+    function_returns_t* newReturn = (function_returns_t*) malloc(sizeof(function_returns_t));
+
+    if(!newReturn){
+        err = E_INTERNAL;
+        return;
+    }
+
+    newReturn->return_type = type;
+
+    if(data->first_def_ret == NULL){
+        data->first_def_ret = newReturn;
+        data->first_def_ret->ret_next = NULL;
+    }else{
+        function_returns_t* current;
+        current = data->first_def_ret;
+
+        while(current->ret_next != NULL){
+            current = current->ret_next;
+        }
+        current->ret_next = newReturn;
+        newReturn->ret_next = NULL;
+    }
+}
+
+
 void returnInsert(symData_t* data, data_type_t type){
+    /* DONE free */
     function_returns_t* newReturn = (function_returns_t*) malloc(sizeof(function_returns_t));
 
     if(!newReturn){
@@ -138,7 +196,7 @@ void returnInsert(symData_t* data, data_type_t type){
     }
     newReturn->return_type = type;
 
-    if(data->first_ret == NULL){
+    if(data->first_ret == NULL){        
         data->first_ret = newReturn;
         data->first_ret->ret_next = NULL;
     }else{
@@ -153,19 +211,21 @@ void returnInsert(symData_t* data, data_type_t type){
     }
 }
 
-symData_t* symTableSearch(symTree_t* tree, char* key){
-    while(tree != NULL && tree->key != NULL){ 
-       // printf("\ntree->key: %s, key: %s\n", tree->key, key);       
-        if(strcmp(tree->key, key) == 0){
+symData_t* symTableSearch(symTree_t* tree, char* key){   
+    //printf("\nkey: %s\n", key);
+    while(tree != NULL && tree->key != NULL){    
+        if(strcmp(tree->key, key) == 0){        
+            
             return tree->data;
         }
-
+        
         if(strcmp(tree->key, key) > 0){
             tree = tree->nextLeft;
         } else if(strcmp(tree->key, key) < 0){
             tree = tree->nextRight;
         }
     }
+    
     return NULL;
 }
 
@@ -191,6 +251,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
         }
     }
 
+    /* DONE free */
     (*tree) = (symTree_t *)malloc(sizeof(symTree_t));
     if(!(*tree)){
         err = E_INTERNAL;
@@ -198,6 +259,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     }
     //if((*tree) == NULL) return;
     
+    /* DONE free */
     (*tree)->key = (char*) malloc(strlen(key) + 1);    
 
     if ((*tree)->key == NULL)
@@ -211,6 +273,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
 
     //printf("\ntree key: %s\n", (*tree)->key);
 
+    /* DONE free */
     (*tree)->data = (symData_t*) malloc(sizeof(symData_t));
 
     if ((*tree)->data == NULL)
@@ -221,14 +284,16 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
 
     (*tree)->data->declared = data->declared;
     (*tree)->data->defined = data->defined;
-    (*tree)->data->data_type = data->data_type;
+    (*tree)->data->data_type = data->data_type;    
     (*tree)->data->params_count = data->params_count;
     (*tree)->data->params_type_count = data->params_type_count;
+    (*tree)->data->returns_def_count = data->returns_def_count;
     (*tree)->data->returns_count = data->returns_count;
-    
-    deep_copy_function_param(data, (*tree)->data->first_param);
-    deep_copy_function_type_param(data, (*tree)->data->first_type_param);
-    deep_copy_function_ret(data, (*tree)->data->first_ret);
+           
+    deep_copy_function_param((*tree)->data, data->first_param);
+    deep_copy_function_type_param((*tree)->data, data->first_type_param);
+    deep_copy_function_def_ret((*tree)->data, data->first_def_ret);
+    deep_copy_function_ret((*tree)->data, data->first_ret);
     
     (*tree)->nextLeft = NULL;
     (*tree)->nextRight = NULL;        
@@ -237,8 +302,25 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
 void paramDispose(function_params_t* param){
     if(param != NULL){
         if(param->param_next != NULL) paramDispose(param->param_next);
+        free(param->param_name);
         free(param);
         param = NULL;
+    }
+}
+
+void paramTypeDispose(function_params_t* param_type){
+    if(param_type != NULL){
+        if(param_type->param_next != NULL) paramTypeDispose(param_type->param_next);
+        free(param_type);
+        param_type = NULL;
+    }
+}
+
+void returnDefDispose(function_returns_t *return_def){
+    if(return_def != NULL){
+        if(return_def->ret_next != NULL) returnDefDispose(return_def->ret_next);
+        free(return_def);
+        return_def = NULL;
     }
 }
 
@@ -254,9 +336,17 @@ void symTableDispose(symTree_t **tree){
     if((*tree) != NULL){
         if((*tree)->nextLeft != NULL) symTableDispose(&((*tree)->nextLeft));
         if((*tree)->nextRight != NULL) symTableDispose(&((*tree)->nextRight));
-        paramDispose((*tree)->data->first_param);
-        returnDispose((*tree)->data->first_ret);
-        free((*tree)->data);
+        
+        if ((*tree)->data != NULL)
+        {
+            paramDispose((*tree)->data->first_param);
+            paramTypeDispose((*tree)->data->first_type_param);
+            returnDefDispose((*tree)->data->first_def_ret);
+            returnDispose((*tree)->data->first_ret);
+            free((*tree)->data);
+        }
+
+        free((*tree)->key);                        
         free((*tree));
         (*tree) = NULL;
     }

@@ -76,25 +76,36 @@ void set_id_keyword (token_t* token, char* str){
         token->type = T_KEYWORD;
     }else{
         token->type = T_IDENTIFIER;
-        token->attribute.string = str;
+        //token->attribute.string = str;
     }
 }
 
 token_t* create_token ()
 {
+    /* DONE free */
     return (token_t*) malloc(sizeof(token_t));
 }
 
 void delete_token (token_t* token)
 {
+    if (token != NULL)
+    {
+        if (token->type == T_IDENTIFIER ||            
+            token->type == T_STRING)
+        {
+            free(token->attribute.string);                        
+        }        
+    }
+    
     free(token);
     token = NULL;
 }
 
 token_t* get_next_token ()
 {
-    char symbol; //readed character from stdin
-    token_t* token;
+    char symbol; //readed character from stdin    
+    token_t* token;    
+    bool f_state = false;
     string_ptr_t str = NULL;
     state_t state = S_INIT;    
     
@@ -137,6 +148,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '/')
                 {
+                    f_state = true;
                     state = S_DIV;
                 }
                 else if (symbol == '+')
@@ -148,6 +160,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '-')
                 {
+                    f_state = true;
                     state = S_MINUS;
                 }
                 else if (symbol == '.')
@@ -156,10 +169,12 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '<')
                 {
+                    f_state = true;
                     state = S_LESS_THAN;
                 }
                 else if (symbol == '>')
                 {
+                    f_state = true;
                     state = S_GTR_THAN;
                 }
                 else if (symbol == '~')
@@ -168,6 +183,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '=')
                 {
+                    f_state = true;
                     state = S_ASSIGN;
                 }
                 else if (symbol == ':')
@@ -200,6 +216,7 @@ token_t* get_next_token ()
                 }
                 else if (isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_INT;
 
                     if (!string_append_character(str, symbol))
@@ -213,6 +230,7 @@ token_t* get_next_token ()
                 }
                 else if (isalpha(symbol) || symbol == '_')
                 {
+                    f_state = true;
                     state = S_IDENTIFIER_KEYWORD;
                     
                     if (!string_append_character(str, symbol))
@@ -333,6 +351,7 @@ token_t* get_next_token ()
             case (S_DECIMAL_POINT):     
                 if (isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_DECIMAL;
                     
                     if (!string_append_character(str, symbol))
@@ -371,6 +390,7 @@ token_t* get_next_token ()
                 }
                 else if(isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_DECIMAL_W_EXP;
                     
                     if (!string_append_character(str, symbol))
@@ -396,6 +416,7 @@ token_t* get_next_token ()
             case (S_EXP_PLUS_MINUS):
                 if (isdigit(symbol))
                 {
+                    f_state = true;
                     state = S_DECIMAL_W_EXP;
                     
                     if (!string_append_character(str, symbol))
@@ -422,7 +443,20 @@ token_t* get_next_token ()
                 if (symbol == '"')
                 {                    
                     token->type = T_STRING;
-                    token->attribute.string = get_char_arr(str);
+                    /* DONE free */
+                    token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
+
+                    if (token->attribute.string == NULL)
+                    {
+                        err = E_INTERNAL;
+                        delete_token(token);
+                        string_free(str);
+
+                        return NULL;
+                    }                    
+
+                    strcpy(token->attribute.string, get_char_arr(str));
+                    string_free(str);
 
                     return token;                 
                 }
@@ -651,7 +685,7 @@ token_t* get_next_token ()
             //***************** F STATES *****************//
             case (S_DIV):
                 if (symbol == '/')
-                {
+                {                    
                     token->type = T_INT_DIV;
                     string_free(str);
                     
@@ -679,6 +713,7 @@ token_t* get_next_token ()
             case (S_MINUS):
                 if (symbol == '-')
                 {
+                    f_state = false;
                     state = S_ONE_LINE_COMMENT;
                 }
                 else
@@ -783,7 +818,8 @@ token_t* get_next_token ()
             
             case (S_INT):
                 if (symbol == 'e' || symbol == 'E')
-                {                    
+                {
+                    f_state = false;                    
                     state = S_EXP;
                 
                     if (!string_append_character(str, symbol))
@@ -797,6 +833,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '.')
                 {
+                    f_state = false;
                     state = S_DECIMAL_POINT;
                     
                     if (!string_append_character(str, symbol))
@@ -842,6 +879,7 @@ token_t* get_next_token ()
             case (S_DECIMAL):                
                 if (symbol == 'e' || symbol == 'E')
                 {
+                    f_state = false;
                     state = S_EXP;
                     
                     if (!string_append_character(str, symbol))
@@ -908,15 +946,29 @@ token_t* get_next_token ()
                         return NULL;
                     }                                     
                     
-                    char* id_keyword = get_char_arr(str);                     
+                    char* id_keyword = get_char_arr(str);                    
 
                     set_id_keyword(token, id_keyword);                                      
                     
-                    if (token->type == T_KEYWORD)
+                    if (token->type == T_IDENTIFIER)
                     {
-                        string_free(str);
+                        /* DONE free */
+                        token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
+
+                        if (token->attribute.string == NULL)
+                        {
+                            err = E_INTERNAL;
+                            delete_token(token);
+                            string_free(str);
+
+                            return NULL;
+                        }                    
+
+                        strcpy(token->attribute.string, get_char_arr(str));
                     }
                     
+                    string_free(str);
+
                     return token;
                 }
                 
@@ -956,6 +1008,11 @@ token_t* get_next_token ()
                 break;                               
         }
     }
+
+    if (state != S_INIT && f_state == false)
+    {
+        err = E_LEX;   
+    }    
 
     delete_token(token);
     string_free(str);

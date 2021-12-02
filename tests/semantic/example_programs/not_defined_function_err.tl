@@ -1,8 +1,6 @@
 require "ifj21"
 
-function func(n : integer) : number
-    return n
-end
+global func : function(integer) : number
 
 function main()
     local a : integer = 1

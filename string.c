@@ -15,6 +15,7 @@
 #define ALLOCATE_LENGTH 8
 
 string_ptr_t string_init(){
+    /* DONE free */
     string_ptr_t string = (string_ptr_t) malloc(sizeof(struct string));
     if (!string){
         return NULL;

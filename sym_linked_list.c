@@ -22,20 +22,26 @@ void LL_Init( LList* list ) {
 void LL_Dispose( LList* list ) {
 
     struct LLElement *current = NULL;
+    struct LLElement *to_delete = NULL;
     current = list->lastElement;
 
     if(list->lastElement == NULL){
         return;
     }
 
-    while(current->nextElement != NULL){
+    while(current != NULL){
+        symTableDispose(&(current->root));
+        to_delete = current;
         current = current->nextElement;
+        free(to_delete);
     }
+
     list->lastElement = NULL;
     list->activeElement = NULL;
 }
 
 void LL_InsertLast( LList* list, symTree_t* root) {
+    /* DONE free */
     struct LLElement* newElement = (struct LLElement*) malloc(sizeof(struct LLElement));    
     
     newElement->root = root;
@@ -59,11 +65,14 @@ void LL_DeleteLast( LList* list ){
     if(list->lastElement->nextElement == NULL){
         list->lastElement = NULL;
     }else{
-        struct LLElement *delElement = NULL;
-        delElement = list->lastElement;
-        symTableDispose(&delElement->root);
+        struct LLElement *delElement = list->lastElement;
+        
+        symTableDispose(&delElement->root);        
+
         list->lastElement = list->lastElement->nextElement;
-        delElement = NULL;
+
+        free(delElement);
+        delElement = NULL;        
     }
 }
 

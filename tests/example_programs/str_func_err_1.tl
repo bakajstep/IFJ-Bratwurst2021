@@ -3,7 +3,7 @@ require "ifj21"
 
 function main()
 	local s1 : string = "Toto je nejaky text"
-	local s2 : string = s1 ", ktery jeste trochu obohatime"
+	local s2 : string = s1 ", ktery jeste trochu obohatime"	
 	write(s1, "\010", s2)local s1len:integer=#s1 local s1len4: integer=s1len
 	s1len = s1len - 4 s1 = substr(s2, s1len, s1len4) s1len = s1len + 1
 	write("4 znaky od", s1len, ". znaku v \"", s2, "\":", s1, "\n")
