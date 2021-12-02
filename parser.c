@@ -265,7 +265,7 @@ void next_token(p_data_ptr_t data)
     data->token = get_next_token();
 
     /* TODO smazat */
-    print(data);
+    //print(data);
 }
 
 bool valid_token (token_t* token)
@@ -987,7 +987,7 @@ parser_error_t parser ()
     data->token = get_next_token();
 
     /* TODO smazat */
-    print(data);
+    //print(data);
     
     if (!valid_token(data->token))
     {
@@ -1140,7 +1140,7 @@ bool main_b (p_data_ptr_t data)
         
         if (!func_is_not_def(tree))
         {            
-            printf("ESD: %d\n", 1);
+            //printf("ESD: %d\n", 1);
             err = E_SEM_DEF;
             return false;
         }        
@@ -1192,7 +1192,7 @@ bool main_b (p_data_ptr_t data)
                  */
                 if (!check_function_is_not_defined(data->tbl_list, data->func_name))
                 {                    
-                    printf("\nESD: %d\n", 2);
+                    //printf("\nESD: %d\n", 2);
                     err = E_SEM_DEF;
                     return false;
                 }                                    
@@ -1254,7 +1254,7 @@ bool main_b (p_data_ptr_t data)
                                                                         func_def->params_count,
                                                                         func_def->first_param))
                             {
-                                printf("\nESD: %d\n", 3);
+                                //printf("\nESD: %d\n", 3);
                                 err = E_SEM_DEF;                                
                                 return false;
                             }                                                                                               
@@ -1301,7 +1301,7 @@ bool main_b (p_data_ptr_t data)
                                                                               func_def->returns_count,
                                                                               func_def->first_ret))
                                     {
-                                        printf("\nESD: %d\n", 4);
+                                        //printf("\nESD: %d\n", 4);
                                         err = E_SEM_DEF;
                                         return false;
                                     }                                                                    
@@ -1354,7 +1354,7 @@ bool main_b (p_data_ptr_t data)
 
                 if (!check_no_multiple_function_declaration(data->tbl_list, data->token->attribute.string))
                 {         
-                    printf("\nESD: %d\n", 5);           
+                    //printf("\nESD: %d\n", 5);           
                     err = E_SEM_DEF;
                     return false;
                 }
@@ -1461,7 +1461,7 @@ bool main_b (p_data_ptr_t data)
              */
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
-                printf("\nESD: %d\n", 6);
+                //printf("\nESD: %d\n", 6);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -1554,7 +1554,7 @@ bool stats (p_data_ptr_t data)
 
             if (!check_first_definition(tree, id))
             {
-                printf("\nESD: %d\n", 7);
+                //printf("\nESD: %d\n", 7);
                 err = E_SEM_DEF;
                 free(id);
                 return false;
@@ -1562,7 +1562,7 @@ bool stats (p_data_ptr_t data)
 
             if (!check_conflict_id_func(data->tbl_list, id))
             {
-                printf("\nESD: %d\n", 8);
+                //printf("\nESD: %d\n", 8);
                 err = E_SEM_DEF;
                 free(id);
                 return false;
@@ -1605,7 +1605,7 @@ bool stats (p_data_ptr_t data)
 
                         data_type = symTableSearch(tree, id)->data_type;
 
-                        printf("\n psa_data_type: %d\n", data->psa_data_type);
+                        //printf("\n psa_data_type: %d\n", data->psa_data_type);
 
                         if (data_type != data->psa_data_type)
                         {
@@ -1801,7 +1801,7 @@ bool stats (p_data_ptr_t data)
         {
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
-                printf("\nESD: %d\n", 9);
+                //printf("\nESD: %d\n", 9);
                 err = E_SEM_DEF;
                 return false;
             }      
@@ -1812,7 +1812,7 @@ bool stats (p_data_ptr_t data)
             //printf("\ns: %s\n", data->tbl_list->lastElement->nextElement->root->key);
             if (!check_identifier_is_declared(data->tbl_list, data->func_name))
             {                
-                printf("\nESD: %d\n", 9);
+                //printf("\nESD: %d\n", 9);
                 err = E_SEM_DEF;
                 return false;
             }                          
@@ -2089,7 +2089,7 @@ bool n_ids (p_data_ptr_t data)
              */
             if (!check_identifier_is_declared(data->tbl_list, data->token->attribute.string))
             {
-                printf("\nESD: %d\n", 10);
+                //printf("\nESD: %d\n", 10);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -2456,7 +2456,7 @@ bool as_vals (p_data_ptr_t data)
              */       
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
-                printf("\nESD: %d\n", 11);
+                //printf("\nESD: %d\n", 11);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -2673,7 +2673,7 @@ bool assign_val (p_data_ptr_t data)
              */       
             if (!check_function_is_declared(data->tbl_list, func_name))
             {
-                printf("\nESD: %d\n", 12);
+                //printf("\nESD: %d\n", 12);
                 err = E_SEM_DEF;
                 free(func_name);
                 return false;
@@ -2768,7 +2768,7 @@ bool term (p_data_ptr_t data)
         /* -------------- SEMANTIC --------------*/        
         if (!check_identifier_is_defined(data->tbl_list, data->token->attribute.string))
         {            
-            printf("\nESD: %d\n", 13);
+            //printf("\nESD: %d\n", 13);
             err = E_SEM_DEF;
             return false;
         }
@@ -2823,7 +2823,7 @@ bool args (p_data_ptr_t data)
     /* 33. <args> -> <term> <n_args> */    
     else if (term(data))
     {             
-        printf("\nfunc name: %s\n", data->func_name);
+        //printf("\nfunc name: %s\n", data->func_name);
         /* -------------- SEMANTIC --------------*/
         if (strcmp(data->func_name, "write") != 0)
         {
