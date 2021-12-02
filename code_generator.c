@@ -153,4 +153,9 @@ void codeFromToken(token_type_t type, token_t token, symTree_t tree){
             break;
         default:break;
     }
+    //ADD
+    //SUB
+    //DIV
+    //MUL
+    //honecna funkce na freecka
 }
