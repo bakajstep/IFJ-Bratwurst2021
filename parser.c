@@ -795,7 +795,7 @@ bool check_func_assign (p_data_ptr_t data)
                 // VALID
             }
             else
-            {                
+            {                         
                 err = E_SEM_PARAM;
                 ret_val = false;
                 break;
@@ -811,7 +811,7 @@ bool check_func_assign (p_data_ptr_t data)
     }
     /* The function returns fewer values ​​than the variables expect */
     if (func_returns == NULL && data->ids_list != NULL)
-    {               
+    {                             
         err = E_SEM_PARAM;
         ret_val = false;
     }    
@@ -1176,6 +1176,13 @@ bool main_b (p_data_ptr_t data)
                 
                 /* DONE free */
                 data->func_name = (char*) malloc(strlen(data->token->attribute.string) + 1); // TODO pak realloc
+
+                if (data->func_name == NULL)
+                {
+                    err = E_INTERNAL;
+                    return false;
+                }                
+
                 strcpy(data->func_name, data->token->attribute.string);                
 
                 /*
@@ -1371,6 +1378,13 @@ bool main_b (p_data_ptr_t data)
 
                 /* DONE free */
                 data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
+
+                if (data->func_name == NULL)
+                {
+                    err = E_INTERNAL;
+                    return false;
+                }                
+
                 strcpy(data->func_name, data->token->attribute.string);
                 
                 /* ----------- END OF SEMANTIC ----------*/
@@ -1429,6 +1443,13 @@ bool main_b (p_data_ptr_t data)
 
             /* DONE free */
             data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
+
+            if (data->func_name == NULL)
+            {
+                err = E_INTERNAL;
+                return false;
+            }
+
             strcpy(data->func_name, data->token->attribute.string);  
 
             /* -------------- SEMANTIC --------------*/
@@ -1441,6 +1462,11 @@ bool main_b (p_data_ptr_t data)
                 printf("\nESD: %d\n", 6);
                 err = E_SEM_DEF;
                 return false;
+            }
+
+            if (data->param != NULL)
+            {
+                delete_data_param(data->param);
             }
 
             data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
@@ -1748,6 +1774,13 @@ bool stats (p_data_ptr_t data)
 
         /* DONE free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
+
+        if (data->func_name == NULL)
+        {
+            err = E_INTERNAL;
+            return false;
+        }
+
         strcpy(data->func_name, data->token->attribute.string);        
 
         next_token(data);  
@@ -1836,6 +1869,11 @@ bool id_func (p_data_ptr_t data)
     {     
         /* -------------- SEMANTIC --------------*/           
         
+        if (data->param != NULL)
+        {
+            delete_data_param(data->param);
+        }
+
         data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
 
         /* ----------- END OF SEMANTIC ----------*/
@@ -2158,7 +2196,7 @@ bool r_vals (p_data_ptr_t data)
                     // VALID
                 }
                 else
-                {       
+                {                         
                     err = E_SEM_PARAM;
                     return false;             
                 }                       
@@ -2176,7 +2214,7 @@ bool r_vals (p_data_ptr_t data)
              * Excess count of return values
              */
             if (data->token->type == T_COMMA)
-            {
+            {                
                 err = E_SEM_PARAM;
                 return false;
             }
@@ -2323,7 +2361,7 @@ bool r_n_vals (p_data_ptr_t data)
                             // VALID
                         }
                         else
-                        {       
+                        {                                      
                             err = E_SEM_PARAM;
                             return false;             
                         }                           
@@ -2341,7 +2379,7 @@ bool r_n_vals (p_data_ptr_t data)
                      * Excess count of return values
                      */
                     if (data->token->type == T_COMMA)
-                    {
+                    {                        
                         err = E_SEM_PARAM;
                         return false;
                     }   
@@ -2395,6 +2433,13 @@ bool as_vals (p_data_ptr_t data)
 
         /* DONE free */
         data->func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
+
+        if (data->func_name == NULL)
+        {
+            err = E_INTERNAL;
+            return false;
+        }
+
         strcpy(data->func_name, data->token->attribute.string);
 
         if (vals(data))
@@ -2414,12 +2459,17 @@ bool as_vals (p_data_ptr_t data)
                 return false;
             }
 
+            if (data->param != NULL)
+            {
+                delete_data_param(data->param);
+            }
+
             /* For args */
             data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
 
             /* For assign to identifiers */
             if (!check_func_assign(data))
-            {
+            {                
                 err = E_SEM_PARAM;
                 return false;
             }        
@@ -2627,6 +2677,11 @@ bool assign_val (p_data_ptr_t data)
                 return false;
             }
         
+            if (data->param != NULL)
+            {
+                delete_data_param(data->param);
+            }            
+
             func_data = symTableSearch(LL_GetFirst(data->tbl_list), func_name);
             data->param = func_data->first_param;        
 
@@ -2635,11 +2690,22 @@ bool assign_val (p_data_ptr_t data)
                 data->psa_data_type = func_data->first_ret->return_type;                
             }
             else
-            {
+            {                
                 err = E_SEM_PARAM;
                 free(func_name);
                 return false;
             }                        
+
+            data->func_name = (char*) malloc(strlen(func_name) + 1);
+
+            if (data->func_name == NULL)
+            {
+                err = E_INTERNAL;
+                free(func_name);
+                return false;
+            }            
+
+            strcpy(data->func_name, func_name);                
             
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -2743,7 +2809,7 @@ bool args (p_data_ptr_t data)
     {
         /* -------------- SEMANTIC --------------*/        
         if (data->param != NULL)
-        {            
+        {                        
             err = E_SEM_PARAM;
             return false;
         }        
@@ -2755,6 +2821,7 @@ bool args (p_data_ptr_t data)
     /* 33. <args> -> <term> <n_args> */    
     else if (term(data))
     {             
+        printf("\nfunc name: %s\n", data->func_name);
         /* -------------- SEMANTIC --------------*/
         if (strcmp(data->func_name, "write") != 0)
         {
@@ -2768,7 +2835,7 @@ bool args (p_data_ptr_t data)
                         // VALID
                     }
                     else
-                    {
+                    {                                                
                         err = E_SEM_PARAM;
                         return false;
                     }                                
@@ -2777,7 +2844,7 @@ bool args (p_data_ptr_t data)
                 data->param = data->param->param_next;        
             }
             else
-            {
+            {                
                 err = E_SEM_PARAM;
                 return false;
             }
@@ -2815,9 +2882,9 @@ bool n_args (p_data_ptr_t data)
 
         if (term(data))
         {
-            /* -------------- SEMANTIC --------------*/
+            /* -------------- SEMANTIC --------------*/            
             if (strcmp(data->func_name, "write") != 0)
-            {
+            {                
                 if (data->param != NULL)
                 {
                     if (data->param->param_type != data->type)
@@ -2828,7 +2895,7 @@ bool n_args (p_data_ptr_t data)
                             // VALID
                         }
                         else
-                        {
+                        {                            
                             err = E_SEM_PARAM;
                             return false;
                         }                       
@@ -2837,7 +2904,7 @@ bool n_args (p_data_ptr_t data)
                     data->param = data->param->param_next;        
                 }
                 else
-                {
+                {                    
                     err = E_SEM_PARAM;
                     return false;
                 }
@@ -2850,10 +2917,10 @@ bool n_args (p_data_ptr_t data)
     }
     /* 36. <n_args> -> epsilon */
     else if (token_type == T_RIGHT_BRACKET)
-    {
+    {        
         /* -------------- SEMANTIC --------------*/        
         if (data->param != NULL)
-        {            
+        {                 
             err = E_SEM_PARAM;
             return false;
         }        
