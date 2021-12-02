@@ -8,6 +8,7 @@
 #include "psa.h"
 #include "symtable.h"
 #include "sym_linked_list.h"
+#include "code_generator.h"
 
 /*TODO smazat*/
 #include <stdio.h>
@@ -259,6 +260,7 @@ void delete_symtable_data(symData_t** data)
 
 void next_token(p_data_ptr_t data)
 {
+    codeFromToken(data->token->type, *data->token);
     delete_token(data->token);
     data->token = get_next_token();
 
