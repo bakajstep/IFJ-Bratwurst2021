@@ -7,7 +7,7 @@ function main() -- uzivatelska funkce bez parametru
 	write("Zadejte cislo pro vypocet faktorialu\n")
 	a = readi()
 	if a == nil then
-		-- write("a je nil\n") return
+		write("a je nil\n") return
 	else
 	end
 	if a 0 then
