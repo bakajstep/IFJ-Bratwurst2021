@@ -2188,15 +2188,22 @@ bool r_vals (p_data_ptr_t data)
     }    
     else
     {
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);
-
-        if (data->token->type == T_ASSIGN)
+        if (err == E_NO_ERR)
         {
-            next_token(data);
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
 
-            ret_val = as_vals(data);
-        }        
+            if (data->token->type == T_ASSIGN)
+            {
+                next_token(data);
+
+                ret_val = as_vals(data);
+            }      
+        }
+        else
+        {
+            err = E_NO_ERR;
+        }   
     }
 
     return ret_val;
@@ -2217,11 +2224,18 @@ bool n_vals (p_data_ptr_t data)
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
 
+    token_type = data->token->type;
+
     /* 22. <n_vals> -> epsilon */
-    if (stats(data))
+    if ((token_type == T_KEYWORD) && 
+        (data->token->attribute.keyword == K_ELSE))
     {
         ret_val = true;
     }
+    else if (stats(data))
+    {
+        ret_val = true;
+    }    
     else
     {        
         VALIDATE_TOKEN(data->token);
@@ -2463,9 +2477,12 @@ bool as_vals (p_data_ptr_t data)
 bool ret_vals (p_data_ptr_t data)
 {
     bool ret_val = false;            
+    token_type_t token_type;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);    
+    
+    token_type = data->token->type;
 
     /* 25. <ret_vals> -> <vals> */ 
     if (r_vals(data))
@@ -2477,7 +2494,12 @@ bool ret_vals (p_data_ptr_t data)
     {
         if (err == E_NO_ERR)
         {
-            if (stats(data))
+            if ((token_type == T_KEYWORD) && 
+                (data->token->attribute.keyword == K_ELSE))
+            {
+                ret_val = true;
+            }            
+            else if (stats(data))
             {
                 ret_val = true;
             }        
@@ -2502,10 +2524,18 @@ bool assign (p_data_ptr_t data)
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
 
+    token_type = data->token->type;
+
     //printf("\nassign key: %s\n", data->tbl_list->lastElement->root->key);
 
     /* 28. <assign> -> epsilon */
-    if (stats(data))
+    if ((token_type == T_KEYWORD) && 
+        (data->token->attribute.keyword == K_ELSE))
+    {
+        data->psa_data_type = NIL;                
+        ret_val = true;
+    }    
+    else if (stats(data))
     {    
         data->psa_data_type = NIL;                
         ret_val = true;

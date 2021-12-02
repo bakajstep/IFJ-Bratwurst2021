@@ -15,7 +15,7 @@ function factorial(n : integer) : integer
 end
 
 function main()
-	--write("Zadejte cislo pro vypocet faktorialu: ")
+	-- write("Zadejte cislo pro vypocet faktorialu: ")
 	local a : integer = readi()
 	if a ~= nil then
 		if a < 0 then
