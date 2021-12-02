@@ -1,0 +1,2 @@
+dořešit porovnání stringů (myslím že jsme to zakazovali)
+dedělat generování pro přetypování
