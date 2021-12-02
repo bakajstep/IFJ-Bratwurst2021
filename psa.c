@@ -573,7 +573,24 @@ psa_error_t psa (p_data_ptr_t data)
                 {                    
                     err = E_INTERNAL;
                     return PSA_ERR;
-                }                  
+                }
+                //todo data
+                //generování kódu
+                switch(get_type(data)){
+                    case INT:
+                        generate_val_int(/**/);
+                    break;
+                    case NUMBER:
+                        generate_val_number(/**/);
+                    break;
+                    case STR:
+                        generate_val_string(/**/);
+                    break;
+                    case NIL:
+                        generate_val_nil();
+                    break;
+                }
+
                 //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
                 next_token(data);
                 break;
