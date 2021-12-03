@@ -86,15 +86,113 @@ void codeGen_tointeger(){
 }
 
 void codeGen_substr(){
-
+    printf("LABEL substr\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@ret_str\n");
+    printf("DEFVAR TF@err\n");
+    printf("MOVE TF@ret_str string@\n");
+    printf("MOVE TF@err int@1\n");
+    printf("DEFVAR TF@s\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@i\n");
+    printf("POPS TF@i\n");
+    printf("DEFVAR TF@n\n");
+    printf("DEFVAR TF@char\n");
+    printf("MOVE TF@char string@\n");
+    printf("DEFVAR TF@str_len\n");
+    printf("DEFVAR TF@l_limit\n");
+    printf("DEFVAR TF@r_limit\n");
+    printf("STRLEN TF@str_len TF@s\n");
+    printf("LT TF@l_limit TF@i int@0\n");
+    printf("NOT TF@l_limit TF@l_limit\n");
+    printf("GT TF@r_limit TF@i TF@str_len\n");
+    printf("NOT TF@r_limit TF@r_limit\n");
+    printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
+    printf("LT TF@r_limit TF@n int@0\n");
+    printf("NOT TF@r_limit TF@r_limit\n");
+    printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
+    printf("JUMPIFNEQ _sub_end TF@l_limit bool@true\n");
+    printf("MOVE TF@err int@0\n");
+    printf("DEFVAR TF@cnt_of_loaded\n");
+    printf("MOVE TF@cnt_of_loaded int@0\n");
+    printf("LABEL _sub_while\n");
+    printf("LT TF@l_limit TF@i TF@str_len\n");
+    printf("LT TF@r_limit TF@cnt_of_loaded TF@n\n");
+    printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
+    printf("JUMPIFNEQ _sub_end TF@l_limit bool@true\n");
+    printf("GETCHAR TF@char TF@s TF@i\n");
+    printf("CONCAT TF@ret_str TF@ret_str TF@char\n");
+    printf("ADD TF@cnt_of_loaded TF@cnt_of_loaded int@1\n");
+    printf("LABEL _sub_end\n");
+    printf("PUSHS TF@ret_str\n");
+    printf("PUSHS TF@err\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
 }
 
 void codeGen_ord(){
+    printf("LABEL ord\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@ascii\n");
+    printf("DEFVAR TF@err\n");
+    printf("MOVE TF@ascii string@\n");
+    printf("MOVE TF@err int@1\n");
+    printf("DEFVAR TF@l_limit\n");
+    printf("DEFVAR TF@r_limit\n");
+    printf("DEFVAR TF@string\n");
+    printf("DEFVAR TF@i\n");
+    printf("POPS\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@str_len\n");
+    printf("MOVE TF@str_len int@0\n");
+    printf("STRLEN TF@str_len TF@string\n");
+    printf("SUB TF@str_len TF@str_len int@1\n");
+    printf("LT TF@l_limit TF@i int@0\n");
+    printf("NOT TF@l_limit TF@l_limit\n");
+    printf("GT TF@r_limit TF@i TF@str_len\n");
+    printf("NOT TF@r_limit TF@r_limit\n");
+    printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
+    printf("JUMPIFNEQ _ord_end TF@l_limit bool@true\n");
+    printf("MOVE TF@err int@0\n");
+    printf("STRI2INT TF@ascii TF@string TF@i\n");
+    printf("LABEL _ord_end\n");
+    printf("PUSHS TF@ascii\n");
+    printf("PUSHS TF@err\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
 
 }
 
 void codeGen_chr(){
-
+    printf("LABEL chr\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@ret_str\n");
+    printf("MOVE TF@ret_str string@\n");
+    printf("DEFVAR TF@err\n");
+    printf("MOVE TF@err int@1\n");
+    printf("DEFVAR TF@l_limit\n");
+    printf("DEFVAR TF@r_limit\n");
+    printf("DEFVAR TF@i\n");
+    printf("POPS\n");
+    printf("LT TF@l_limit TF@i int@0\n");
+    printf("NOT TF@l_limit TF@l_limit\n");
+    printf("GT TF@r_limit TF@i int@255\n");
+    printf("NOT TF@r_limit TF@r_limit\n");
+    printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
+    printf("JUMPIFNEQ _chr_end TF@l_limit bool@true\n");
+    printf("MOVE TF@err int@0\n");
+    printf("INT2CHAR TF@ret_str TF@i\n");
+    printf("LABEL _chr_end\n");
+    printf("PUSHS TF@ret_str\n");
+    printf("PUSHS TF@err\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
 }
 
 
