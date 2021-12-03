@@ -62,7 +62,7 @@ void codeFromToken(token_type_t type, token_t token){
                 id = token.attribute.string;
             }
             break;
-
+        //TODO pozdeji zkontrolovat
         case T_RIGHT_BRACKET:
             params = 1;
             if(callFunc){
@@ -79,11 +79,10 @@ void codeFromToken(token_type_t type, token_t token){
                 printf("DEFVAR LF@$return\nCREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
                 defParams = false;
             }
-            //nejsem si jistej
-            /*if(assign){
+            if(assign){
                 printf("MOVE LF@%s TF@$return\n", assignId);
                 assign = false;
-            }*/
+            }
             break;
         case T_LEFT_BRACKET:
             printf("CREATEFRAME\n");
@@ -96,12 +95,29 @@ void codeFromToken(token_type_t type, token_t token){
         case T_INT:
         case T_DECIMAL:
         case T_STRING:
+            {}
+            char* str = malloc(sizeof(char) * 50);
             switch(type){
                 case T_INT:
+                    sprintf(str, "int$%i", token.attribute.integer);
+                    break;
                 case T_DECIMAL:
+                    sprintf(str, "float@%a", token.attribute.decimal);
                 case T_STRING:
+                    sprintf(str, "string@%s", convertString(token.attribute.string));
                 default:break;
             }
+            if(str == NULL) break;
+            else if(write){
+                printf("WRITE %s\n", str);
+            }else if(defParams){
+                printf("MOVE %s LF@%%%i\n", str, params);
+            }else{
+                printf("DEFVAR TF@%%%i\n", params);
+                printf("MOVE TF@%%%i %s\n", params, str);
+                params++;
+            }
+            free(str);
             break;
         case T_KEYWORD:
             switch(token.attribute.keyword){
@@ -161,7 +177,7 @@ void codeFromToken(token_type_t type, token_t token){
             break;
         default:break;
     }
-    
+    //konec radku
 }
 
 void generate_operation(psa_rules_enum operation){
@@ -230,7 +246,7 @@ void generate_operation(psa_rules_enum operation){
 char* convert_string(char* str_toconvert){
     char* string = str_toconvert;
     string_ptr_t string_res = string_init();
-    
+
     while(*string != '\0'){
         //iteruji přes vstupní string
         if(*string == 92){
@@ -258,10 +274,10 @@ char* convert_string(char* str_toconvert){
 }
 
 void generate_val_string(char* value){
-    
+
     printf("PUSHS string@");
     printf(convert_string(value));
-    
+
 }
 void generate_val_int(int value){
     printf("PUSHS int@%d",value);
