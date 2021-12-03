@@ -5,7 +5,8 @@
 #include "psa.h"
 #include "symstack.h"
 #include "data_types.h"
-#include "error.h" 
+#include "error.h"
+#include "code_generator.h"
 /* TODO smazat */
 #include <stdio.h>
 

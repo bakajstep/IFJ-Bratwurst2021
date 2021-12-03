@@ -20,6 +20,25 @@ typedef struct tableItem{
     int id;
 } *tableItem_t;
 
-void codeFromToken(token_type_t type, token_t token);
+void generate_operation(psa_rules_enum operation);
+void codeGen_init();
+void generate_build_in_function();
+void codeGen_main_start();
+void codeGen_main_end();
+void codeGen_push_var(char* name);
+void codeGen_push_string(char* value);
+void codeGen_push_int(int value);
+void codeGen_push_float(double value);
+void codeGen_new_var(char* name);
+void codeGen_assign_var(char* name);
+void codeGen_if_start();
+void codeGen_if_else();
+void codeGen_if_end();
+void codeGen_while_body_start();
+void codeGen_while_start();
+void codeGen_while_end();
+void codeGen_function_start(char* name);
+void codeGen_function_end(char* name);
+void codeGen_function_call(char* name, int parameters);
 
 #endif //IFJ_BRATWURST2021_CODE_GENERATOR_H
