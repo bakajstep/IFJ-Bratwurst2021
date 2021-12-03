@@ -576,20 +576,20 @@ psa_error_t psa (p_data_ptr_t data)
                 }
                 //todo data
                 //generování kódu
-                switch(get_type(data)){
+                /*switch(get_type(data)){
                     case INT:
-                        generate_val_int(/**/);
+                        generate_val_int);
                     break;
                     case NUMBER:
-                        generate_val_number(/**/);
+                        generate_val_number();
                     break;
                     case STR:
-                        generate_val_string(/**/);
+                        generate_val_string();
                     break;
                     case NIL:
                         generate_val_nil();
                     break;
-                }
+                }*/
 
                 //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
                 next_token(data);

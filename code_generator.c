@@ -4,6 +4,36 @@
 
 #include "code_generator.h"
 
+char* convert_string(char* str_toconvert){
+    char* string = str_toconvert;
+    string_ptr_t string_res = string_init();
+
+    while(*string != '\0'){
+        //iteruji přes vstupní string
+        if(*string == 92){
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, '9');
+            string_append_character(string_res, '2');
+        }else if(*string == 35){
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, '3');
+            string_append_character(string_res, '5');
+        }else if(*string <= 32){
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, ((*string / 10) + 48));
+            string_append_character(string_res, ((*string % 10) + 48));
+        }else{
+            string_append_character(string_res, *string);
+        }
+
+        string++;
+    }
+    return string_res->string;
+}
+
 void codeFromToken(token_type_t type, token_t token){
     static int tableLines = TABLE_SIZE;
     static tableItem_t table = NULL;
@@ -46,6 +76,16 @@ void codeFromToken(token_type_t type, token_t token){
         DLL_Init(list);
     }*/
 
+    /*if(token == NULL){
+        if(table != NULL){
+            free(table);
+            table = NULL;
+
+            printf("EXIT int@0\nLABEL $main\nCREATEFRAME\nPUSHFRAME\n");
+            printf("JUMP $main$main\n");
+        }
+    }*/
+
     switch(type){
         case T_ASSIGN:
             assign = true;
@@ -58,11 +98,11 @@ void codeFromToken(token_type_t type, token_t token){
             }else if(defTerm){
                 defId = token.attribute.string;
                 printf("JUMP %s$end\nLABEL %s$body\n", defId, defId);
+                defTerm = false;
             }else{
                 id = token.attribute.string;
             }
             break;
-        //TODO pozdeji zkontrolovat
         case T_RIGHT_BRACKET:
             params = 1;
             if(callFunc){
@@ -79,19 +119,23 @@ void codeFromToken(token_type_t type, token_t token){
                 printf("DEFVAR LF@$return\nCREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
                 defParams = false;
             }
+
             if(assign){
                 printf("MOVE LF@%s TF@$return\n", assignId);
                 assign = false;
             }
             break;
         case T_LEFT_BRACKET:
-            printf("CREATEFRAME\n");
-            if(!write){
-                callId = id;
-                write = true;
+            if(!defFunc) {
+                printf("CREATEFRAME\n");
+                if (!write) {
+                    callId = id;
+                    callFunc = true;
+                }
             }
+
             break;
-        //values to interpret
+        //pridat moznost ID
         case T_INT:
         case T_DECIMAL:
         case T_STRING:
@@ -103,8 +147,10 @@ void codeFromToken(token_type_t type, token_t token){
                     break;
                 case T_DECIMAL:
                     sprintf(str, "float@%a", token.attribute.decimal);
+                    break;
                 case T_STRING:
-                    sprintf(str, "string@%s", convertString(token.attribute.string));
+                    sprintf(str, "string@%s", convert_string(token.attribute.string));
+                    break;
                 default:break;
             }
             if(str == NULL) break;
@@ -154,9 +200,13 @@ void codeFromToken(token_type_t type, token_t token){
 
                             printf("CREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
                         }
-                    //end funkce
+                        lastItem--;
+                    }else if(defFunc){//je to end funkce
+                        printf("MOVE LF@$return TF@$return\nPOPFRAME\nRETURN\nLABEL %s\nPUSHFRAME\n", defId);
+                        //TODO uloz funkci z ktere byla volana
+                        //printf("JUMP %s$body\nLABEL %s$end\n", defId, defId);
+                        defFunc = false;
                     }
-                    lastItem--;
                     break;
                 case K_WHILE:
                     lastItem++;
@@ -239,54 +289,8 @@ void generate_operation(psa_rules_enum operation){
             printf("STRLEN GF@tmp4 GF@tmp1\n");
             printf("PUSHS GF@tmp4");
             break;
-
+        default:break;
     }
-}
-
-char* convert_string(char* str_toconvert){
-    char* string = str_toconvert;
-    string_ptr_t string_res = string_init();
-
-    while(*string != '\0'){
-        //iteruji přes vstupní string
-        if(*string == 92){
-            string_append_character(string_res, '\\');
-            string_append_character(string_res, '0');
-            string_append_character(string_res, '9');
-            string_append_character(string_res, '2');
-        }else if(*string == 35){
-            string_append_character(string_res, '\\');
-            string_append_character(string_res, '0');
-            string_append_character(string_res, '3');
-            string_append_character(string_res, '5');
-        }else if(*string <= 32){
-            string_append_character(string_res, '\\');
-            string_append_character(string_res, '0');
-            string_append_character(string_res, ((*string / 10) + 48));
-            string_append_character(string_res, ((*string % 10) + 48));
-        }else{
-            string_append_character(string_res, *string);
-        }
-
-        string++;
-    }
-    return string_res->string;
-}
-
-void generate_val_string(char* value){
-
-    printf("PUSHS string@");
-    printf(convert_string(value));
-
-}
-void generate_val_int(int value){
-    printf("PUSHS int@%d",value);
-}
-void generate_val_number(double value){
-    printf("PUSHS float@%a",value);
-}
-void generate_val_nil(){
-    printf("PUSHS nil@nil");
 }
 
     //SUB
