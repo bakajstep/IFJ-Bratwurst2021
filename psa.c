@@ -475,12 +475,14 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
         case NT_GTN_NT: ;
             *final_type = ELSE;
 
-            //chyba
-            if (op1->data == STR || op3->data == STR){
+            if ((op1->data == STR && (op3->data == INT || op3->data == NUMBER) ) || ( (op1->data == INT || op1->data == NUMBER) && op3->data == STR)){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
 
+            if (op1->data == STR && op3->data == STR){
+                break;
+            }
 
             if (op1->data == INT && op3->data == INT){
                 break;
@@ -656,7 +658,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
-                                              
+                        generate_operation(rule);
                         break;
                     case LBR_NT_RBR:
                         // rule E -> (E)
@@ -674,6 +676,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_PLUS_NT:
                         // rule E -> E + E
@@ -684,6 +687,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_MINUS_NT:
                         // rule E -> E - E
@@ -694,6 +698,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_MUL_NT:
                         // rule E -> E * E
@@ -704,6 +709,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_DIV_NT:
                         // rule E -> E / E
@@ -714,6 +720,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_IDIV_NT:
                         // rule E -> E // E
@@ -724,6 +731,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_EQ_NT:
                         // rule E -> E == E
@@ -734,6 +742,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_NEQ_NT:
                         // rule E -> E ~= E
@@ -744,6 +753,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_LEQ_NT:
                         // rule E -> E <= E
@@ -754,6 +764,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_GEQ_NT:
                         // rule E -> E >= E
@@ -764,6 +775,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_LTN_NT:
                         // rule E -> E < E
@@ -774,6 +786,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NT_GTN_NT:
                         // rule E -> E > E
@@ -784,6 +797,7 @@ psa_error_t psa (p_data_ptr_t data)
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
+                        generate_operation(rule);
                         break;
                     case NOT_A_RULE:
                         err = E_SYNTAX;
