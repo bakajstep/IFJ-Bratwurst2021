@@ -22,7 +22,7 @@ typedef struct tableItem{
 
 void generate_operation(psa_rules_enum operation);
 void codeGen_init();
-void generate_build_in_function();
+void codeGen_built_in_function();
 void codeGen_main_start();
 void codeGen_main_end();
 void codeGen_push_var(char* name);
@@ -39,6 +39,6 @@ void codeGen_while_start();
 void codeGen_while_end();
 void codeGen_function_start(char* name);
 void codeGen_function_end(char* name);
-void codeGen_function_call(char* name, int parameters);
+void codeGen_function_call(char* name, unsigned parameters);
 
 #endif //IFJ_BRATWURST2021_CODE_GENERATOR_H
