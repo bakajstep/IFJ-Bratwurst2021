@@ -117,7 +117,7 @@ void codeGen_init(){
     printf("EXIT int@9\n");
 }
 
-void generate_build_in_function(){
+void codeGen_built_in_function(){
     codeGen_reads();
     codeGen_readi();
     codeGen_readn();
@@ -221,7 +221,7 @@ void codeGen_function_end(char* name){
     printf("LABEL %s$end\nPOPFRAME\nRETURN\n", name);
 }
 
-void codeGen_function_call(char* name, int parameters){
+void codeGen_function_call(char* name, unsigned parameters){
     printf("PUSH int@%i\n", parameters);
     printf("CALL %s\n", name);
 }

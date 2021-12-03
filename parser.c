@@ -962,6 +962,12 @@ void insert_built_in_functions (LList* tbl_list)
     data = NULL;
 
     tbl_list->lastElement->root = glb_tbl; 
+
+    /* -------------- CODE GEN --------------*/
+
+    codeGen_built_in_function();
+
+    /* ----------- END OF CODE GEN ----------*/
 }
 
 /******************* PARSER MAIN *******************/
@@ -1082,6 +1088,7 @@ bool prog (p_data_ptr_t data)
 
             /* -------------- CODE GEN --------------*/
 
+            codeGen_init();
 
             /* ----------- END OF CODE GEN ----------*/
 
@@ -1119,6 +1126,9 @@ bool main_b (p_data_ptr_t data)
     token_type_t token_type;    
     symTree_t* tree = NULL;    
     symData_t* function_declaration_data = NULL;
+    symData_t* func_code_gen = NULL;
+    char* func_name = NULL;
+    unsigned params_count_code_gen = 0;
 
     /* Create tree
 
@@ -1231,6 +1241,22 @@ bool main_b (p_data_ptr_t data)
                 
                 /* ----------- END OF SEMANTIC ----------*/
 
+                func_name = (char*) malloc(strlen(data->func_name)+1);
+
+                if (func_name == NULL)
+                {
+                    err = E_INTERNAL;
+                    return false;
+                }
+                
+                strcpy(func_name, data->func_name);
+
+                /* -------------- CODE GEN --------------*/
+                 
+                codeGen_function_start(func_name);
+
+                /* ----------- END OF CODE GEN ----------*/
+
                 next_token(data);
                 VALIDATE_TOKEN(data->token);
                 TEST_EOF(data->token);
@@ -1272,6 +1298,7 @@ bool main_b (p_data_ptr_t data)
 
                         if (err != E_NO_ERR)
                         {
+                            free(func_name);
                             return false;
                         }
 
@@ -1307,6 +1334,7 @@ bool main_b (p_data_ptr_t data)
                                     {
                                         //printf("\nESD: %d\n", 4);
                                         err = E_SEM_DEF;
+                                        free(func_name);
                                         return false;
                                     }                                                                    
                                 }
@@ -1328,6 +1356,12 @@ bool main_b (p_data_ptr_t data)
 
                                         /* ----------- END OF SEMANTIC ----------*/
 
+                                        /* -------------- CODE GEN --------------*/
+                 
+                                        codeGen_function_end(func_name);
+
+                                        /* ----------- END OF CODE GEN ----------*/
+
                                         next_token(data);                                
                                         
                                         if (main_b(data))
@@ -1340,7 +1374,9 @@ bool main_b (p_data_ptr_t data)
                         }                    
                     }                
                 }            
-            }            
+            }  
+
+            free(func_name);          
         }        
         /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
         else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_GLOBAL)
@@ -1496,6 +1532,23 @@ bool main_b (p_data_ptr_t data)
 
                     if (token_type == T_RIGHT_BRACKET)
                     {
+                        /* -------------- CODE GEN --------------*/
+
+                        func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                        
+                        if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                        {
+                            params_count_code_gen = func_code_gen->params_type_count;
+                        }
+                        else
+                        {
+                            params_count_code_gen = func_code_gen->params_count;
+                        }                                                
+
+                        codeGen_function_call(data->func_name, params_count_code_gen);
+
+                        /* ----------- END OF CODE GEN ----------*/
+
                         next_token(data);
 
                         if (main_b(data))
@@ -1654,13 +1707,19 @@ bool stats (p_data_ptr_t data)
             token_type = data->token->type;            
 
             if (token_type == T_KEYWORD && data->token->attribute.keyword == K_THEN)
-            {
+            {                
                 /* -------------- SEMANTIC --------------*/                    
         
                 // Create symbol table for if block
                 create_sym_table(data->tbl_list);   
 
                 /* ----------- END OF SEMANTIC ----------*/
+
+                /* -------------- CODE GEN --------------*/
+                 
+                codeGen_if_start();
+
+                /* ----------- END OF CODE GEN ----------*/
 
                 next_token(data);
 
@@ -1671,7 +1730,7 @@ bool stats (p_data_ptr_t data)
                     token_type = data->token->type;                    
 
                     if (token_type == T_KEYWORD && data->token->attribute.keyword == K_ELSE)
-                    {
+                    {                        
                         /* -------------- SEMANTIC --------------*/
                                     
                         // Deleting the table representing if block
@@ -1681,6 +1740,12 @@ bool stats (p_data_ptr_t data)
                         create_sym_table(data->tbl_list);   
 
                         /* ----------- END OF SEMANTIC ----------*/
+
+                        /* -------------- CODE GEN --------------*/
+                 
+                        codeGen_if_else();
+
+                        /* ----------- END OF CODE GEN ----------*/
 
                         next_token(data);
 
@@ -1699,6 +1764,12 @@ bool stats (p_data_ptr_t data)
 
                                 /* ----------- END OF SEMANTIC ----------*/
 
+                                /* -------------- CODE GEN --------------*/
+                 
+                                codeGen_if_end();
+
+                                /* ----------- END OF CODE GEN ----------*/
+
                                 next_token(data);
 
                                 if (stats(data))
@@ -1715,6 +1786,12 @@ bool stats (p_data_ptr_t data)
     /* 8. <stats> -> while exp do <stats> end <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_WHILE)
     {        
+        /* -------------- CODE GEN --------------*/
+                 
+        codeGen_while_body_start();
+
+        /* ----------- END OF CODE GEN ----------*/
+
         next_token(data);
 
         if (expression(data))
@@ -1732,6 +1809,12 @@ bool stats (p_data_ptr_t data)
 
                 /* ----------- END OF SEMANTIC ----------*/
 
+                /* -------------- CODE GEN --------------*/
+                 
+                codeGen_while_start();
+
+                /* ----------- END OF CODE GEN ----------*/
+
                 next_token(data);
 
                 if (stats(data))
@@ -1748,6 +1831,12 @@ bool stats (p_data_ptr_t data)
                         LL_DeleteLast(data->tbl_list);                        
 
                         /* ----------- END OF SEMANTIC ----------*/
+
+                        /* -------------- CODE GEN --------------*/
+                 
+                        codeGen_while_start();
+
+                        /* ----------- END OF CODE GEN ----------*/
 
                         next_token(data);
                         
@@ -1864,6 +1953,8 @@ bool id_func (p_data_ptr_t data)
 {    
     bool ret_val = false;
     token_type_t token_type;
+    symData_t* func_code_gen = NULL;
+    unsigned params_count_code_gen = 0;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -1894,6 +1985,23 @@ bool id_func (p_data_ptr_t data)
 
             if (token_type == T_RIGHT_BRACKET)
             {
+                /* -------------- CODE GEN --------------*/
+
+                func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                
+                if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                {
+                    params_count_code_gen = func_code_gen->params_type_count;
+                }
+                else
+                {
+                    params_count_code_gen = func_code_gen->params_count;
+                }                                                
+
+                codeGen_function_call(data->func_name, params_count_code_gen);
+
+                /* ----------- END OF CODE GEN ----------*/
+
                 ret_val = true;
                 next_token(data);
             }                
@@ -1968,6 +2076,13 @@ bool params (p_data_ptr_t data)
 
                 /* ----------- END OF SEMANTIC ----------*/            
 
+                /* -------------- CODE GEN --------------*/
+
+                codeGen_new_var(id);
+                codeGen_assign_var(id);
+
+                /* ----------- END OF CODE GEN ----------*/
+
                 ret_val = n_params(data);
             }            
         }        
@@ -2041,6 +2156,13 @@ bool n_params (p_data_ptr_t data)
                     }                
 
                     /* ----------- END OF SEMANTIC ----------*/    
+
+                    /* -------------- CODE GEN --------------*/
+
+                    codeGen_new_var(id);
+                    codeGen_assign_var(id);
+
+                    /* ----------- END OF CODE GEN ----------*/
 
                     ret_val = n_params(data);
                 } 
@@ -2424,6 +2546,8 @@ bool as_vals (p_data_ptr_t data)
 {    
     bool ret_val = false;
     token_type_t token_type;
+    symData_t* func_code_gen = NULL;
+    unsigned params_count_code_gen = 0;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -2498,6 +2622,23 @@ bool as_vals (p_data_ptr_t data)
 
                     if (token_type == T_RIGHT_BRACKET)
                     {
+                        /* -------------- CODE GEN --------------*/
+
+                        func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                        
+                        if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                        {
+                            params_count_code_gen = func_code_gen->params_type_count;
+                        }
+                        else
+                        {
+                            params_count_code_gen = func_code_gen->params_count;
+                        }                                                
+
+                        codeGen_function_call(data->func_name, params_count_code_gen);
+
+                        /* ----------- END OF CODE GEN ----------*/
+
                         ret_val = true;
                         next_token(data);
                     }                
@@ -2626,7 +2767,9 @@ bool assign_val (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_data;
+    symData_t* func_code_gen = NULL;
     char* func_name = NULL;
+    unsigned params_count_code_gen = 0;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -2721,20 +2864,37 @@ bool assign_val (p_data_ptr_t data)
 
             //if (token_type == T_LEFT_BRACKET)
             //{
-                next_token(data);
+            next_token(data);
 
-                if (args(data))
-                {           
-                    VALIDATE_TOKEN(data->token); 
-                    TEST_EOF(data->token);    
-                    token_type = data->token->type;
+            if (args(data))
+            {           
+                VALIDATE_TOKEN(data->token); 
+                TEST_EOF(data->token);    
+                token_type = data->token->type;
 
-                    if (token_type == T_RIGHT_BRACKET)
+                if (token_type == T_RIGHT_BRACKET)
+                {
+                    /* -------------- CODE GEN --------------*/
+
+                    func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                    
+                    if (func_code_gen->params_type_count >= func_code_gen->params_count)
                     {
-                        ret_val = true;
-                        next_token(data);
-                    }                
-                }            
+                        params_count_code_gen = func_code_gen->params_type_count;
+                    }
+                    else
+                    {
+                        params_count_code_gen = func_code_gen->params_count;
+                    }                                                
+
+                    codeGen_function_call(data->func_name, params_count_code_gen);
+
+                    /* ----------- END OF CODE GEN ----------*/
+
+                    ret_val = true;
+                    next_token(data);
+                }                
+            }            
             //}
         }                        
     }    
@@ -2781,14 +2941,43 @@ bool term (p_data_ptr_t data)
         
         /* ----------- END OF SEMANTIC ----------*/
 
+        /* -------------- CODE GEN --------------*/
+
+        codeGen_push_var(data->token->attribute.string);
+
+        /* ----------- END OF CODE GEN ----------*/
+
         ret_val = true;
         next_token(data);
     }
     /* 32. <term> -> <const> */
     else if (constant(data))
     {
-        ret_val = true;        
-    }            
+        /* -------------- CODE GEN --------------*/
+
+        switch (data->type)
+        {
+        case INT:
+            codeGen_push_int(data->token->attribute.integer);
+            break;
+        
+        case NUMBER:
+            codeGen_push_float(data->token->attribute.decimal);
+            break;
+
+        case STR:
+            codeGen_push_string(data->token->attribute.string);
+            break;
+
+        default:            
+            break;
+        }
+
+        /* ----------- END OF CODE GEN ----------*/
+
+        next_token(data);
+        ret_val = true;                
+    }           
 
     return ret_val;
 }
@@ -2854,9 +3043,9 @@ bool args (p_data_ptr_t data)
                 err = E_SEM_PARAM;
                 return false;
             }
-        }                
+        }                                
         
-        /* ----------- END OF SEMANTIC ----------*/
+        /* ----------- END OF SEMANTIC ----------*/        
 
         ret_val = n_args(data);
     }    
@@ -3396,8 +3585,7 @@ bool constant (p_data_ptr_t data)
         }
         /* ----------- END OF SEMANTIC ----------*/
 
-        ret_val = true;
-        next_token(data);
+        ret_val = true;        
     }
     
     return ret_val;
