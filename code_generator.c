@@ -214,11 +214,15 @@ void codeGen_while_end(){
  */
 
 void codeGen_function_start(char* name){
-    printf("LABEL %s\nPUSHFRAME\nCREATEFRAME\n", name);
+    printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
+}
+
+void codeGen_function_return(){
+    printf("POPFRAME\nRETURN\n");
 }
 
 void codeGen_function_end(char* name){
-    printf("LABEL %s$end\nPOPFRAME\nRETURN\n", name);
+    printf("POPFRAME\nRETURN\nLABEL %s$end\n", name);
 }
 
 void codeGen_function_call(char* name, int parameters){
