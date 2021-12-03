@@ -1,8 +1,12 @@
 //
-// Created by adam on 29.11.21.
+// Created by adam on 03.12.21.
 //
 
 #include "code_generator.h"
+
+/*
+ * ----------------------USEFULL FUNCTIONS-----------------------
+ */
 
 char* convert_string(char* str_toconvert){
     char* string = str_toconvert;
@@ -34,201 +38,197 @@ char* convert_string(char* str_toconvert){
     return string_res->string;
 }
 
-void codeFromToken(token_type_t type, token_t token){
-    static int tableLines = TABLE_SIZE;
-    static tableItem_t table = NULL;
-    static int lastItem = -1;
-    //static bool move = false;
-    static bool write = false;
-    static bool defTerm = false;
-    static bool defParams = false;
-    static bool defFunc = false;
-    static bool assign = false;
-    static bool callFunc = false;
-    static char* assignId;
-    static char* defId;
-    static char* callId;
-    //static DLList list;
-    static char* id;
-    static int ifCounter = 0;
-    static int whileCounter = 0;
-    static int params = 1;
-    //static char* varType;
-    //static char* tokenVal;
+/*
+ * ----------------------BUILD IN FUNCTIONS-----------------------
+ */
 
-    //TODO smazat
-    params = params;
-    assign = assign;
-    assignId = assignId;
-    defFunc = defFunc;
-
-    if(table == NULL){
-        table = malloc(tableLines * sizeof(tableItem_t));
-    }
-
-    if(lastItem + 1 >= tableLines){
-        tableLines += tableLines;
-        table = realloc(table, tableLines * sizeof(tableItem_t));
-    }
-
-    /*if(list == NULL){
-        list = malloc(sizeof(DLList));
-        DLL_Init(list);
-    }*/
-
-    /*if(token == NULL){
-        if(table != NULL){
-            free(table);
-            table = NULL;
-
-            printf("EXIT int@0\nLABEL $main\nCREATEFRAME\nPUSHFRAME\n");
-            printf("JUMP $main$main\n");
-        }
-    }*/
-
-    switch(type){
-        case T_ASSIGN:
-            assign = true;
-            assignId = id;
-            break;
-
-        case T_IDENTIFIER:
-            if(strcmp(token.attribute.string, "write") == 0){
-                write = true;
-            }else if(defTerm){
-                defId = token.attribute.string;
-                printf("JUMP %s$end\nLABEL %s$body\n", defId, defId);
-                defTerm = false;
-            }else{
-                id = token.attribute.string;
-            }
-            break;
-        case T_RIGHT_BRACKET:
-            params = 1;
-            if(callFunc){
-                printf("CALL %s\n", callId);
-                callFunc = false;
-            }
-
-            if(write){
-                printf("DEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
-                write = false;
-            }
-
-            if(defParams){
-                printf("DEFVAR LF@$return\nCREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
-                defParams = false;
-            }
-
-            if(assign){
-                printf("MOVE LF@%s TF@$return\n", assignId);
-                assign = false;
-            }
-            break;
-        case T_LEFT_BRACKET:
-            if(!defFunc) {
-                printf("CREATEFRAME\n");
-                if (!write) {
-                    callId = id;
-                    callFunc = true;
-                }
-            }
-
-            break;
-        //pridat moznost ID
-        case T_INT:
-        case T_DECIMAL:
-        case T_STRING:
-            {}
-            char* str = malloc(sizeof(char) * 50);
-            switch(type){
-                case T_INT:
-                    sprintf(str, "int$%i", token.attribute.integer);
-                    break;
-                case T_DECIMAL:
-                    sprintf(str, "float@%a", token.attribute.decimal);
-                    break;
-                case T_STRING:
-                    sprintf(str, "string@%s", convert_string(token.attribute.string));
-                    break;
-                default:break;
-            }
-            if(str == NULL) break;
-            else if(write){
-                printf("WRITE %s\n", str);
-            }else if(defParams){
-                printf("MOVE %s LF@%%%i\n", str, params);
-            }else{
-                printf("DEFVAR TF@%%%i\n", params);
-                printf("MOVE TF@%%%i %s\n", params, str);
-                params++;
-            }
-            free(str);
-            break;
-        case T_KEYWORD:
-            switch(token.attribute.keyword){
-                //nfunc
-                case K_FUNCTION:
-                    defTerm = true;
-                    defFunc = true;
-                    defParams = true;
-                    break;
-                case K_THEN:
-                    lastItem++;
-                    if(lastItem >= tableLines){
-                        tableLines += tableLines;
-                        table = realloc(table, tableLines * sizeof(tableItem_t));
-                    }
-                    table[lastItem].id = ifCounter;
-                    table[lastItem].isIf = true;
-                    ifCounter++;
-                    //kontrola jestli podminka hodila bool
-
-                    printf("JUMPIFNEQ $if$%i$else TF@$return bool@true\nMOVE TF@$return nil@nil", table[tableLines].id);
-                    break;
-                case K_ELSE:
-                    printf("JUMP $if$%i$end\n", table[lastItem].id);
-                    printf("LABEL $if$%i$else\nMOVE TF@$return nil@nil\n", table[lastItem].id);
-                    break;
-                case K_END:
-                    if(lastItem >= 0){
-                        if(table[lastItem].isIf){
-                            printf("LABEL $if$%i$end\n", table[lastItem].id);
-                        }else{
-                            printf("JUMP $while$%i$start\n", table[lastItem].id);
-                            printf("LABEL $while$%i$end\n", table[lastItem].id);
-
-                            printf("CREATEFRAME\nDEFVAR TF@$return\nMOVE TF@$return nil@nil\n");
-                        }
-                        lastItem--;
-                    }else if(defFunc){//je to end funkce
-                        printf("MOVE LF@$return TF@$return\nPOPFRAME\nRETURN\nLABEL %s\nPUSHFRAME\n", defId);
-                        //TODO uloz funkci z ktere byla volana
-                        //printf("JUMP %s$body\nLABEL %s$end\n", defId, defId);
-                        defFunc = false;
-                    }
-                    break;
-                case K_WHILE:
-                    lastItem++;
-                    if(lastItem >= tableLines){
-                        tableLines += tableLines;
-                        table = realloc(table, tableLines * sizeof(tableItem_t));
-                    }
-                    table[lastItem].id = whileCounter;
-                    table[lastItem].isIf = false;
-                    whileCounter++;
-                    printf("LABEL $while$%i$start\n", table[lastItem].id);
-                    break;
-                case K_DO:
-                    printf("JUMPIFNEQ $while$%i$end TF@$return bool@true\n", table[lastItem].id);
-                    break;
-                default:break;
-            }
-            break;
-        default:break;
-    }
-    //konec radku
+void codeGen_reads(){
+    printf("LABEL reads\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@out\n");
+    printf("READ TF@out string\n");
+    printf("PUSHS TF@out\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
 }
+
+void codeGen_readi(){
+    printf("LABEL readi\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@out\n");
+    printf("READ TF@out int\n");
+    printf("PUSHS TF@out\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+}
+
+void codeGen_readn(){
+    printf("LABEL readn\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("POPS\n");
+    printf("DEFVAR TF@out\n");
+    printf("READ TF@out float\n");
+    printf("PUSHS TF@out\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+}
+
+void codeGen_tointeger(){
+    printf("LABEL toiteger\n");
+    printf("POPS\n");
+    printf("FLOAT2INTS\n");
+    printf("RETURN\n");
+}
+
+void codeGen_substr(){
+
+}
+
+void codeGen_ord(){
+
+}
+
+void codeGen_chr(){
+
+}
+
+
+/*
+ * ----------------------GENERATOR START-----------------------
+ */
+
+static int ifCounter = -1;
+static int whileCounter = -1;
+
+void codeGen_init(){
+    printf(".IFJcode20\n");
+    printf("DEFVAR GF@expr\n");
+    printf("DEFVAR GF@tmp1\n");
+    printf("DEFVAR GF@tmp2\n");
+    printf("DEFVAR GF@tmp3\n");
+    printf("DEFVAR GF@tmp4\n");
+    printf("JUMP main\n");
+    printf("LABEL _div_0\n");
+    printf("EXIT int@9\n");
+}
+
+void generate_build_in_function(){
+    codeGen_reads();
+    codeGen_readi();
+    codeGen_readn();
+    codeGen_tointeger();
+    codeGen_substr();
+    codeGen_ord();
+    codeGen_chr();
+}
+
+/*
+ * ----------------------MAIN-----------------------
+ */
+
+void codeGen_main_start(){
+    printf("LABEL main\nCREATEFRAME\n");
+}
+
+void codeGen_main_end(){
+    printf("LABEL main$end");
+    printf("CLEARS");
+}
+
+
+/*
+ * ----------------------VAR-----------------------
+ */
+
+void codeGen_push_var(char* name){
+    printf("PUSH TF@%s\n", name);
+}
+
+void codeGen_push_string(char* value){
+    printf("PUSH string@%s\n", convert_string(value));
+}
+
+void codeGen_push_int(int value){
+    printf("PUSH int@%d\n", value);
+}
+
+void codeGen_push_float(double value){
+    printf("PUSH float@%a\n", value);
+}
+
+void codeGen_new_var(char* name){
+    printf("DEFVAR TF@%s\n", name);
+}
+
+void codeGen_assign_var(char* name){
+    printf("POPS TF@%s", name);
+}
+
+/*
+ * ----------------------IF-----------------------
+ */
+
+void codeGen_if_start(){
+    ifCounter++;
+    printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", ifCounter);
+
+}
+
+void codeGen_if_else(){
+    printf("JUMP if$%d$end\n", ifCounter);
+    printf("LABEL if$%d$else\n", ifCounter);
+}
+
+void codeGen_if_end(){
+    printf("LABEL if$%d$end\n", ifCounter);
+    ifCounter--;
+}
+
+/*
+ * ----------------------WHILE-----------------------
+ */
+
+void codeGen_while_body_start(){
+    whileCounter++;
+    printf("LABEL while$%d$start\n", whileCounter);
+}
+
+void codeGen_while_start(){
+    printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", whileCounter);
+}
+
+void codeGen_while_end(){
+    printf("JUMP while$%d$start\n", whileCounter);
+    printf("LABEL while$%d$end\n", whileCounter);
+    whileCounter--;
+}
+
+
+/*
+ * ----------------------FUNC-----------------------
+ */
+
+void codeGen_function_start(char* name){
+    printf("LABEL %s\nPUSHFRAME\nCREATEFRAME\n", name);
+}
+
+void codeGen_function_end(char* name){
+    printf("LABEL %s$end\nPOPFRAME\nRETURN\n", name);
+}
+
+void codeGen_function_call(char* name, int parameters){
+    printf("PUSH int@%i\n", parameters);
+    printf("CALL %s\n", name);
+}
+
+/*
+ * ----------------------STACK OPERATION-----------------------
+ */
 
 void generate_operation(psa_rules_enum operation){
     switch (operation){
@@ -292,8 +292,3 @@ void generate_operation(psa_rules_enum operation){
         default:break;
     }
 }
-
-    //SUB
-    //DIV
-    //MUL
-    //honecna funkce na freecka

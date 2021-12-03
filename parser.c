@@ -260,7 +260,6 @@ void delete_symtable_data(symData_t** data)
 
 void next_token(p_data_ptr_t data)
 {
-    codeFromToken(data->token->type, *data->token);
     delete_token(data->token);
     data->token = get_next_token();
 
@@ -1081,10 +1080,15 @@ bool prog (p_data_ptr_t data)
             
             /* ----------- END OF SEMANTIC ----------*/
 
+            /* -------------- CODE GEN --------------*/
+
+
+            /* ----------- END OF CODE GEN ----------*/
+
             if (main_b(data))
             {                                
                 ret_val = true;
-            }
+            }            
 
             /* -------------- SEMANTIC --------------*/
 
