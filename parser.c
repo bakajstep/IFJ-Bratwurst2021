@@ -1637,6 +1637,29 @@ bool stats (p_data_ptr_t data)
                 
             /* ----------- END OF SEMANTIC ----------*/
 
+            /* -------------- CODE GEN --------------*/
+
+            codeGen_new_var(id);            
+            //codeGen_assign_var(id);
+
+            /* ----------- END OF CODE GEN ----------*/
+
+            if (data->func_name != NULL)
+            {
+                free(data->func_name);
+            }
+
+            /* DONE free */
+            data->func_name = (char *) malloc(strlen(id) + 1);
+
+            if (data->func_name == NULL)
+            {
+                err = E_INTERNAL;
+                return false;
+            }
+
+            strcpy(data->func_name, id);
+
             next_token(data);
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
@@ -1851,7 +1874,7 @@ bool stats (p_data_ptr_t data)
     }    
     /* 9. <stats> -> return <ret_vals> <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_RETURN)
-    {
+    {        
         next_token(data);
 
         if (ret_vals(data))
@@ -2008,19 +2031,28 @@ bool id_func (p_data_ptr_t data)
         }            
     }
     /* 12. <id_func> -> <n_ids> = <as_vals> */
-    else if (n_ids(data))
+    else
     {
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);
-        token_type = data->token->type;
+        /* -------------- CODE GEN --------------*/
 
-        if (token_type == T_ASSIGN)
+        codeGen_assign_var(data->func_name);
+
+        /* ----------- END OF CODE GEN ----------*/
+
+        if (n_ids(data))
         {
-            next_token(data);
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+            token_type = data->token->type;
 
-            ret_val = as_vals(data);
-        }        
-    }           
+            if (token_type == T_ASSIGN)
+            {
+                next_token(data);
+
+                ret_val = as_vals(data);
+            }        
+        }           
+    }    
 
     return ret_val;
 }
@@ -2229,6 +2261,12 @@ bool n_ids (p_data_ptr_t data)
 
             /* ----------- END OF SEMANTIC ----------*/
 
+            /* -------------- CODE GEN --------------*/
+
+            codeGen_assign_var(data->token->attribute.string);
+
+            /* ----------- END OF CODE GEN ----------*/
+
             next_token(data);
             ret_val = n_ids(data);
         }                
@@ -2254,8 +2292,9 @@ bool vals (p_data_ptr_t data)
 
     /* 20. <vals> -> exp <n_vals> */
     if (expression(data))
-    {
+    {        
         /* -------------- SEMANTIC --------------*/    
+        
         if (data->ids_list != NULL)
         {
             if (data->psa_data_type != data->ids_list->type)
@@ -2275,6 +2314,12 @@ bool vals (p_data_ptr_t data)
             set_identifier_defined(data->tbl_list, data->ids_list->id);
             //symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id)->defined = true;
 
+            /* -------------- CODE GEN --------------*/
+
+            codeGen_assign_var(data->ids_list->id);
+
+            /* ----------- END OF CODE GEN ----------*/
+
             data->ids_list = data->ids_list->next;
         }                        
         else
@@ -2283,7 +2328,7 @@ bool vals (p_data_ptr_t data)
             return false;
         }        
         
-        /* ----------- END OF SEMANTIC ----------*/
+        /* ----------- END OF SEMANTIC ----------*/        
 
         ret_val = n_vals(data);
     }        
@@ -2432,6 +2477,14 @@ bool n_vals (p_data_ptr_t data)
                             return false;
                         }
                     }
+
+                    set_identifier_defined(data->tbl_list, data->ids_list->id);
+
+                    /* -------------- CODE GEN --------------*/
+
+                    codeGen_assign_var(data->ids_list->id);
+
+                    /* ----------- END OF CODE GEN ----------*/
 
                     data->ids_list = data->ids_list->next;
                 }                        
@@ -2637,6 +2690,12 @@ bool as_vals (p_data_ptr_t data)
 
                         codeGen_function_call(data->func_name, params_count_code_gen);
 
+                        while (data->ids_list != NULL)
+                        {
+                            codeGen_assign_var(data->ids_list->id);
+                            data->ids_list = data->ids_list->next;
+                        }                                                
+
                         /* ----------- END OF CODE GEN ----------*/
 
                         ret_val = true;
@@ -2790,6 +2849,12 @@ bool assign_val (p_data_ptr_t data)
 
         if (expression(data))
         {
+            /* -------------- CODE GEN --------------*/
+
+            codeGen_assign_var(data->func_name);
+
+            /* ----------- END OF CODE GEN ----------*/
+
             ret_val = true;
         }
         else
@@ -2888,7 +2953,9 @@ bool assign_val (p_data_ptr_t data)
                     }                                                
 
                     codeGen_function_call(data->func_name, params_count_code_gen);
-
+                                            
+                    codeGen_assign_var(data->ids_list->id);
+                                            
                     /* ----------- END OF CODE GEN ----------*/
 
                     ret_val = true;
@@ -2900,7 +2967,13 @@ bool assign_val (p_data_ptr_t data)
     }    
     /* 29. <assign_val> -> exp */
     else if (expression(data))
-    {        
+    {     
+        /* -------------- CODE GEN --------------*/
+
+        codeGen_assign_var(data->func_name);
+
+        /* ----------- END OF CODE GEN ----------*/
+
         ret_val = true;
     }        
 
