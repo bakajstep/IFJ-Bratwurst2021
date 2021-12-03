@@ -475,12 +475,14 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
         case NT_GTN_NT: ;
             *final_type = ELSE;
 
-            //chyba
-            if (op1->data == STR || op3->data == STR){
+            if ((op1->data == STR && (op3->data == INT || op3->data == NUMBER) ) || ( (op1->data == INT || op1->data == NUMBER) && op3->data == STR)){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
 
+            if (op1->data == STR && op3->data == STR){
+                break;
+            }
 
             if (op1->data == INT && op3->data == INT){
                 break;
