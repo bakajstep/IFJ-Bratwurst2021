@@ -1081,10 +1081,15 @@ bool prog (p_data_ptr_t data)
             
             /* ----------- END OF SEMANTIC ----------*/
 
+            /* -------------- CODE GEN --------------*/
+
+
+            /* ----------- END OF CODE GEN ----------*/
+
             if (main_b(data))
             {                                
                 ret_val = true;
-            }
+            }            
 
             /* -------------- SEMANTIC --------------*/
 
