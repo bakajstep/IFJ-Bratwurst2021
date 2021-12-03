@@ -10,6 +10,8 @@
 #include "scanner.h"
 #include "symtable.h"
 #include "dll.h"
+#include "string.h"
+#include "psa.h"
 
 #define TABLE_SIZE 10
 
