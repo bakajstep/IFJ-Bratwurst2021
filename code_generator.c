@@ -255,6 +255,7 @@ void codeGen_built_in_function(){
     codeGen_readi();
     codeGen_readn();
     codeGen_tointeger();
+    codeGen_write();
     codeGen_substr();
     codeGen_ord();
     codeGen_chr();*/
@@ -298,6 +299,7 @@ void codeGen_assign_var(char* name){
 
 void codeGen_if_start(){
     ifCounter++;
+    printf("POPS GF@expr");
     printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", ifCounter);
 
 }
@@ -322,6 +324,7 @@ void codeGen_while_body_start(){
 }
 
 void codeGen_while_start(){
+    printf("POPS GF@expr");
     printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", whileCounter);
 }
 
@@ -357,11 +360,21 @@ void codeGen_function_call(char* name, unsigned parameters){
  * ----------------------STACK OPERATION-----------------------
  */
 
+void generate_IntToFloat1(){
+    printf("INT2FLOATS\n");
+}
+
+void generate_IntToFloat2(){
+    printf("POPS GF@tmp3\n");
+    printf("INT2FLOATS\n");
+    printf("PUSHS GF@tmp3")
+}
+
 void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
-            printf("ADDS\n");
+            printf("ADDS\n");FLOAT2INTS
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
@@ -383,8 +396,8 @@ void generate_operation(psa_rules_enum operation){
             // rule E -> E .. E
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
-            printf("CONCAT GF@tmp3 GF@tmp1 GF@tmp2\n");
-            printf("PUSHS GF@tmp3\n");
+            printf("CONCAT GF@tmp1 GF@tmp1 GF@tmp2\n");
+            printf("PUSHS GF@tmp1\n");
             break;
         case NT_EQ_NT:
             // rule E -> E == E
