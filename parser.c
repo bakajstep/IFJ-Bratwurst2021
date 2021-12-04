@@ -1825,6 +1825,7 @@ bool stats (p_data_ptr_t data)
                     data->tbl_list->lastElement->root = tree;                    
                     /* TODO uncomment */
                     delete_ids_list(data->ids_list);  
+                    data->ids_list = NULL;
                     
                     /* Insert id to ids_list */
                     //printf("\ndata func name: %s\n", data->func_name);
@@ -2086,6 +2087,7 @@ bool stats (p_data_ptr_t data)
             }                          
             
             delete_ids_list(data->ids_list);  
+            data->ids_list = NULL;
 
             idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name), data->func_name);                                    
             //printf("\ndata ids list: %s\n", data->ids_list->id);

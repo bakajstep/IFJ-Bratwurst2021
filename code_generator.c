@@ -23,6 +23,10 @@ char* convert_string(char* str_toconvert){
                 string_append_character(string_res, '0');
                 string++;
             }
+            else if (*(string+1) == '0')
+            {
+                string_append_character(string_res, *string);
+            }            
             else
             {
                 string_append_character(string_res, '\\');
@@ -144,10 +148,11 @@ void codeGen_substr(){
     printf("MOVE TF@ret_str string@\n");
     printf("MOVE TF@err int@1\n");
     printf("DEFVAR TF@s\n");
-    printf("POPS TF@i\n");
+    printf("POPS TF@s\n");
     printf("DEFVAR TF@i\n");
-    printf("POPS TF@n\n");
-    printf("DEFVAR TF@n\n");
+    printf("POPS TF@i\n");
+    printf("DEFVAR TF@n\n");    
+    printf("POPS TF@n\n");    
     printf("DEFVAR TF@char\n");
     printf("MOVE TF@char string@\n");
     printf("DEFVAR TF@str_len\n");
@@ -465,7 +470,7 @@ void generate_operation(psa_rules_enum operation){
             // rule E -> #E
             printf("POPS GF@tmp1\n");
             printf("STRLEN GF@tmp4 GF@tmp1\n");
-            printf("PUSHS GF@tmp4");
+            printf("PUSHS GF@tmp4\n");
             break;
         default:break;
     }

@@ -455,7 +455,7 @@ $(GEN)-test:
 	$(CC) $(CFLAGS) -o $(GENPATH)$@ $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c
 
 	@echo "\n------------------------------------ 'example1' ------------------------------------\n"
-	./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG53).tl > $(GENPATH)$(GENTEST)$(PROG53).code
+	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG53).tl > $(GENPATH)$(GENTEST)$(PROG53).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG53).code < $(GENPATH)$(PROG53).in > $(GENPATH)$(GENTEST)$(PROG53).out
 	@echo "\nTest case 'example1' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG53).out $(GENPATH)$(PROG53).out || exit 0
@@ -467,7 +467,7 @@ $(GEN)-test:
 	@diff -su $(GENPATH)$(GENTEST)$(PROG54).out $(GENPATH)$(PROG54).out || exit 0
 
 	@echo "\n------------------------------------ 'example3' ------------------------------------\n"
-	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG55).tl > $(GENPATH)$(GENTEST)$(PROG55).code
+	./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG55).tl > $(GENPATH)$(GENTEST)$(PROG55).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG55).code < $(GENPATH)$(PROG55).in > $(GENPATH)$(GENTEST)$(PROG55).out
 	@echo "\nTest case 'example3' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG55).out $(GENPATH)$(PROG55).out || exit 0
