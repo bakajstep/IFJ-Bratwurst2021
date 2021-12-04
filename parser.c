@@ -831,6 +831,7 @@ bool check_func_assign (p_data_ptr_t data)
 
 void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
 {
+    //printf("\nid insert: %s\n", id);
     /* DONE free */
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
 
@@ -1088,7 +1089,7 @@ parser_error_t parser ()
     //print(data);
     
     if (!valid_token(data->token))
-    {                        
+    {                                            
         err = E_SYNTAX; 
         delete_data(data);
 
@@ -1120,7 +1121,7 @@ parser_error_t parser ()
     if (!prog(data))
     {
         if (err == E_NO_ERR)
-        {                                   
+        {                                                              
             err = E_SYNTAX;
         }
         
@@ -1821,11 +1822,15 @@ bool stats (p_data_ptr_t data)
                 
                     /* ----------- END OF SEMANTIC ----------*/
 
-                    data->tbl_list->lastElement->root = tree;
-
+                    data->tbl_list->lastElement->root = tree;                    
+                    /* TODO uncomment */
+                    delete_ids_list(data->ids_list);  
+                    
                     /* Insert id to ids_list */
-                    idInsert(&(data->ids_list), data->type, data->func_name);
-
+                    //printf("\ndata func name: %s\n", data->func_name);
+                    /* TODO uncomment */
+                    idInsert(&(data->ids_list), data->type, data->func_name);                    
+                    
                     if (assign(data))
                     {
                         /* -------------- SEMANTIC --------------*/
@@ -2080,6 +2085,8 @@ bool stats (p_data_ptr_t data)
                 return false;
             }                          
             
+            delete_ids_list(data->ids_list);  
+
             idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name), data->func_name);                                    
             //printf("\ndata ids list: %s\n", data->ids_list->id);
         }
@@ -2216,7 +2223,7 @@ bool id_func (p_data_ptr_t data)
             if (token_type == T_ASSIGN)
             {
                 next_token(data);
-
+   
                 ret_val = as_vals(data);
             }        
         }           
@@ -2736,8 +2743,8 @@ bool r_n_vals (p_data_ptr_t data)
 
             if (data->token->type == T_ASSIGN)
             {
-                next_token(data);
-                
+                next_token(data);    
+                         
                 ret_val = as_vals(data);
             }        
         }  
@@ -2815,7 +2822,7 @@ bool as_vals (p_data_ptr_t data)
              */       
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
-                //printf("\nESD: %d\n", 11);
+                printf("\nESD: %d\n", 11);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -2980,7 +2987,7 @@ bool ret_vals (p_data_ptr_t data)
  * 28. <assign> -> epsilon
  */
 bool assign (p_data_ptr_t data)
-{    
+{        
     bool ret_val = false;
     token_type_t token_type;    
 
@@ -3029,7 +3036,7 @@ bool assign (p_data_ptr_t data)
  * 30. <assign_val> -> id (<args>)
  */
 bool assign_val (p_data_ptr_t data)
-{
+{    
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_data;
@@ -3065,16 +3072,16 @@ bool assign_val (p_data_ptr_t data)
             ret_val = true;
         }
         else
-        {                 
+        {            
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
-            token_type = data->token->type;
+            token_type = data->token->type;            
 
             if (token_type != T_LEFT_BRACKET)
             {
                 /* Not function call */
                 if (err == E_INTERNAL)
-                {                                        
+                {                                                            
                     err = E_SYNTAX;
                 }
                                 
@@ -3082,7 +3089,7 @@ bool assign_val (p_data_ptr_t data)
                 return false;
             }
             else
-            {
+            {                                
                 err = E_NO_ERR;
             }            
              
@@ -3177,7 +3184,8 @@ bool assign_val (p_data_ptr_t data)
                     }
 
                     codeGen_function_call(data->func_name, params_count_code_gen);
-                                                                                        
+                            
+                    //printf("\nto pop: %s\n", data->ids_list->id);                                                           
                     codeGen_assign_var(data->ids_list->id);
 
                     data->ids_list = data->ids_list->next;
