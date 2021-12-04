@@ -353,8 +353,8 @@ data_type_t get_type(p_data_ptr_t data){
 
 static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_item* op2, sym_stack_item* op3, data_type_t* final_type){
 
-    //bool op1_to_number = false;
-    //bool op3_to_number = false;
+    bool op1_to_number = false;
+    bool op3_to_number = false;
 
     switch (rule) {
         //TODO - asi nepotrebuju
@@ -416,7 +416,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
-/*
+
             //pretypovani
             if (op1->data == INT){
                 op1_to_number = true;
@@ -424,7 +424,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op3->data == INT){
                 op3_to_number = true;
             }
-*/
+
             break;
         case NT_IDIV_NT: ;
             *final_type = INT;
@@ -460,7 +460,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op1->data == NUMBER && op3->data == NUMBER){
                 break;
             }
-/*
+
             //pretypovani
             if (op1->data == INT){
                 op1_to_number = true;
@@ -468,7 +468,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op3->data == INT){
                 op3_to_number = true;
             }
-*/          
+          
             break;
         case NT_LEQ_NT: ;
         case NT_GEQ_NT: ;
@@ -491,14 +491,22 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
             if (op1->data == NUMBER && op3->data == NUMBER){
                 break;
             }
-/*
+
             //pretypovani
             if (op1->data == INT){
                 op1_to_number = true;
             }
             if (op3->data == INT){
                 op3_to_number = true;
-            }*/
+            }
+
+            if(op1_to_number == true){
+                //generovani kodu pro pretypovani (prvni na zasobniku)
+                
+            }
+            if(op3_to_number == true){
+                //generovani kodu pro pretypovani (druhy na zasobniku)
+            }
             break;
         default: ;
 
@@ -577,22 +585,27 @@ psa_error_t psa (p_data_ptr_t data)
                     err = E_INTERNAL;
                     return PSA_ERR;
                 }
-                //todo data
+
                 //generování kódu
-                /*switch(get_type(data)){
-                    case INT:
-                        codeGen_push_int(data);
-                    break;
-                    case NUMBER:
-                        codeGen_push_float(data);
-                    break;
-                    case STR:
-                        codeGen_push_string(data);
-                    break;
-                    case NIL:
-                        codeGen_push_nil(data);
-                    break;
-                }*/
+                if(data->token->type == T_IDENTIFIER){
+                    codeGen_push_var(data->token->attribute->string);
+                }else{
+                    switch(get_type(data)){
+                        case INT:
+                            codeGen_push_int(data->token->attribute->integer);
+                        break;
+                        case NUMBER:
+                            codeGen_push_float(data->token->attribute->decimal);
+                        break;
+                        case STR:
+                            codeGen_push_string(data->token->attribute->string);
+                        break;
+                        case NIL:
+                            codeGen_push_nil();
+                        break;
+                    }
+                }
+                
 
                 //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
                 next_token(data);
