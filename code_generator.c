@@ -57,7 +57,7 @@ void codeGen_write(){
     printf("LT GF@expr TF@cnt TF@cnt_of_parameter\n");
     printf("JUMPIFNEQ _print_while_end GF@expr bool@true\n");
     printf("POPS TF@to_print\n");
-    printf("PWRITE TF@to_print\n");
+    printf("WRITE TF@to_print\n");
     printf("ADD TF@cnt TF@cnt int@1\n");
     printf("JUMP _print_while_start\n");
     printf("LABEL _print_while_end\n");
@@ -114,7 +114,7 @@ void codeGen_readn(){
 void codeGen_tointeger(){
     printf("#----FUN-tointeger----\n");
     printf("JUMP tointeger$end\n");
-    printf("LABEL toiteger\n");
+    printf("LABEL tointeger\n");
     printf("POPS GF@trash\n");
     printf("FLOAT2INTS\n");
     printf("RETURN\n");
@@ -260,20 +260,18 @@ void codeGen_init(){
     printf("DEFVAR GF@tmp3\n");
     printf("DEFVAR GF@tmp4\n");
     printf("DEFVAR GF@trash\n");
+    printf("CREATEFRAME\n");
 }
 
 void codeGen_built_in_function(){
-    /*
     codeGen_write();
     codeGen_reads();
     codeGen_readi();
     codeGen_readn();
     codeGen_tointeger();
-    codeGen_write();
     codeGen_substr();
     codeGen_ord();
     codeGen_chr();
-    */
 }
 
 /*
@@ -368,7 +366,7 @@ void codeGen_while_end(){
 
 void codeGen_function_start(char* name){
     printf("#----FUN-%s----\n", name);
-    printf("JUMP %s$end\nLABEL %s\nCREATEFRAME\nPUSHFRAME\n", name, name);
+    printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
     printf("POPS GF@trash\n");
 }
 
