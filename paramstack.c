@@ -2,6 +2,9 @@
 #include <stdbool.h>
 #include <string.h>
 
+/* TODO smazat */
+#include <stdio.h>
+
 #include "paramstack.h"
 
 void param_stack_init (param_stack* stack)
@@ -10,7 +13,7 @@ void param_stack_init (param_stack* stack)
 }
 
 bool param_stack_push (param_stack* stack, param_type_t param_type, param_attribute_t param_attr)
-{
+{    
     param_stack_item* new_item = (param_stack_item*) malloc(sizeof(param_stack_item));
 
     if (!new_item)
@@ -22,7 +25,7 @@ bool param_stack_push (param_stack* stack, param_type_t param_type, param_attrib
 
     switch (param_type)
     {
-    case P_ID:
+    case P_ID:        
         new_item->attribute.id = (char*) malloc(strlen(param_attr.id) + 1);
 
         if (!(new_item->attribute.id))
@@ -32,6 +35,8 @@ bool param_stack_push (param_stack* stack, param_type_t param_type, param_attrib
         }
         
         strcpy(new_item->attribute.id, param_attr.id);
+
+
 
         break;
     
@@ -61,6 +66,7 @@ bool param_stack_push (param_stack* stack, param_type_t param_type, param_attrib
     }
 
     new_item->next = stack->top;
+    stack->top = new_item;
 
     return true;    
 }
@@ -73,7 +79,7 @@ bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attrib
         param_attr == NULL &&
         stack != NULL &&
         stack->top != NULL)
-    {
+    {        
         tmp = stack->top;
 
         if (tmp->type == P_ID)
@@ -90,11 +96,11 @@ bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attrib
         free(tmp);     
 
         return true;
-    }        
+    }            
 
     if (stack != NULL && 
         stack->top != NULL)
-    {
+    {        
         tmp = stack->top; 
         stack->top = tmp->next;
 

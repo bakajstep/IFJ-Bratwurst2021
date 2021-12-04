@@ -9,6 +9,7 @@
 #include "symtable.h"
 #include "sym_linked_list.h"
 #include "code_generator.h"
+#include "paramstack.h"
 
 /*TODO smazat*/
 #include <stdio.h>
@@ -26,6 +27,13 @@
             return false;                    \
         }                                    \
         
+#define PUSH_PARAMS(data)                             \
+        if (!push_params_code_gen(data))              \
+        {                                             \
+            return false;                             \
+        }                                             \
+
+
 /*
     NON-TERMINALS
     <prog>
@@ -883,6 +891,77 @@ void create_tbl_list_mem (LList** tbl_list)
     }    
 }
 
+bool push_params_code_gen(p_data_ptr_t data)
+{    
+    param_type_t* param_type = NULL;
+    param_attribute_t* param_attr = NULL;
+
+    param_type = (param_type_t*) malloc(sizeof(param_type_t));
+
+    if (param_type == NULL)
+    {
+        err = E_INTERNAL;                            
+        return false;
+    }
+    
+
+    param_attr = (param_attribute_t*) malloc(sizeof(union param_attribute));
+
+
+    if (param_attr == NULL)
+    {                            
+        free(param_type);
+        err = E_INTERNAL;
+        return false;
+    }                        
+                                                    
+    while (param_stack_pop(data->stack, param_type, param_attr))
+    {        
+        switch (*param_type)
+        {
+        case P_ID:            
+            codeGen_push_var(param_attr->id);
+            break;
+        
+        case P_INT:
+            codeGen_push_int(param_attr->integer);
+            break;
+
+        case P_NUMBER:
+            codeGen_push_float(param_attr->number);
+            break;
+
+        case P_STR:            
+            //printf("\npush string: %s\n", param_attr->str);
+            codeGen_push_string(param_attr->str);
+            break;
+
+        case P_NIL:
+            codeGen_push_nil();
+            break;
+
+        default:
+            break;
+        }
+    }
+
+    param_stack_dispose(data->stack);
+
+    if (*param_type == P_ID)
+    {
+        free(param_attr->id);
+    }
+    else if (*param_type == P_STR)
+    {
+        free(param_attr->str);
+    }
+
+    free(param_attr);                        
+    free(param_type);    
+
+    return true;
+}
+
 void insert_built_in_functions (LList* tbl_list)
 {    
     tbl_list = tbl_list;    
@@ -1094,13 +1173,21 @@ bool prog (p_data_ptr_t data)
             data->body_func_name = NULL;
             data->param = NULL;
             data->ret = NULL;
-            data->ids_list = NULL;
-
-            data->write_params_cnt = 0;
+            data->ids_list = NULL;                        
             
             /* ----------- END OF SEMANTIC ----------*/
 
             /* -------------- CODE GEN --------------*/
+
+            data->write_params_cnt = 0;
+
+            data->stack = (param_stack*) malloc(sizeof(param_stack));
+
+            if (data->stack == NULL)
+            {
+                err = E_INTERNAL;
+                return false;
+            }
 
             codeGen_init();
 
@@ -1116,7 +1203,9 @@ bool prog (p_data_ptr_t data)
             if (main_b(data))
             {                                
                 ret_val = true;
-            }            
+            }
+
+            free(data->stack);            
 
             /* -------------- SEMANTIC --------------*/
 
@@ -1562,6 +1651,8 @@ bool main_b (p_data_ptr_t data)
 
                 data->write_params_cnt = 0;
 
+                param_stack_init(data->stack);
+
                 if (args(data))
                 {
                     VALIDATE_TOKEN(data->token);
@@ -1571,6 +1662,12 @@ bool main_b (p_data_ptr_t data)
                     if (token_type == T_RIGHT_BRACKET)
                     {
                         /* -------------- CODE GEN --------------*/
+
+                        /* Push function call params */
+
+                        PUSH_PARAMS(data);                                                                    
+                        
+                        /* End of push function call params */
 
                         if (strcmp(data->func_name, "write") != 0)
                         {
@@ -2052,6 +2149,8 @@ bool id_func (p_data_ptr_t data)
 
         data->write_params_cnt = 0;
 
+        param_stack_init(data->stack);
+
         if (args(data))
         {              
             VALIDATE_TOKEN(data->token); 
@@ -2061,6 +2160,12 @@ bool id_func (p_data_ptr_t data)
             if (token_type == T_RIGHT_BRACKET)
             {
                 /* -------------- CODE GEN --------------*/
+
+                /* Push function call params */
+
+                PUSH_PARAMS(data);                                                                    
+                        
+                /* End of push function call params */
 
                 if (strcmp(data->func_name, "write") != 0)
                 {
@@ -2745,6 +2850,8 @@ bool as_vals (p_data_ptr_t data)
 
                 data->write_params_cnt = 0;
 
+                param_stack_init(data->stack);
+
                 if (args(data))
                 {                                   
                     VALIDATE_TOKEN(data->token);
@@ -2754,6 +2861,12 @@ bool as_vals (p_data_ptr_t data)
                     if (token_type == T_RIGHT_BRACKET)
                     {                        
                         /* -------------- CODE GEN --------------*/
+
+                        /* Push function call params */
+
+                        PUSH_PARAMS(data);                                                                    
+                        
+                        /* End of push function call params */
 
                         if (strcmp(data->func_name, "write") != 0)
                         {
@@ -3024,6 +3137,8 @@ bool assign_val (p_data_ptr_t data)
 
             data->write_params_cnt = 0;
 
+            param_stack_init(data->stack);
+
             if (args(data))
             {           
                 VALIDATE_TOKEN(data->token); 
@@ -3033,6 +3148,12 @@ bool assign_val (p_data_ptr_t data)
                 if (token_type == T_RIGHT_BRACKET)
                 {
                     /* -------------- CODE GEN --------------*/
+
+                    /* Push function call params */
+
+                    PUSH_PARAMS(data);                                                                    
+                       
+                    /* End of push function call params */
 
                     if (strcmp(data->func_name, "write") != 0)
                     {
@@ -3093,6 +3214,7 @@ bool term (p_data_ptr_t data)
 {
     bool ret_val = false;
     token_type_t token_type;
+    param_attribute_t* attribute = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -3118,7 +3240,21 @@ bool term (p_data_ptr_t data)
 
         //printf("\npushing: %s\n", data->token->attribute.string);
 
-        codeGen_push_var(data->token->attribute.string);
+        //codeGen_push_var(data->token->attribute.string);
+        
+        attribute = (param_attribute_t*) malloc(sizeof(param_attribute_t));
+
+        if (attribute == NULL)
+        {
+            err = E_INTERNAL;
+            return false;
+        }
+        
+        attribute->id = data->token->attribute.string;
+
+        param_stack_push(data->stack, P_ID, *attribute);
+
+        free(attribute);
 
         /* ----------- END OF CODE GEN ----------*/
 
@@ -3130,23 +3266,39 @@ bool term (p_data_ptr_t data)
     {
         /* -------------- CODE GEN --------------*/
 
+        attribute = (param_attribute_t*) malloc(sizeof(param_attribute_t));
+
+        if (attribute == NULL)
+        {
+            err = E_INTERNAL;
+            return false;
+        }
+                        
         switch (data->type)
         {
         case INT:
-            codeGen_push_int(data->token->attribute.integer);
+            attribute->integer = data->token->attribute.integer;
+            param_stack_push(data->stack, P_INT, *attribute);
+
             break;
         
         case NUMBER:
-            codeGen_push_float(data->token->attribute.decimal);
+            attribute->number = data->token->attribute.decimal;
+            param_stack_push(data->stack, P_NUMBER, *attribute);
+
             break;
 
         case STR:
-            codeGen_push_string(data->token->attribute.string);
+            attribute->str = data->token->attribute.string;
+            param_stack_push(data->stack, P_STR, *attribute);
+
             break;
 
         default:            
             break;
         }
+
+        free(attribute);
 
         /* ----------- END OF CODE GEN ----------*/
 
