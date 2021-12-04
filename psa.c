@@ -588,20 +588,22 @@ psa_error_t psa (p_data_ptr_t data)
 
                 //generování kódu
                 if(data->token->type == T_IDENTIFIER){
-                    codeGen_push_var(data->token->attribute->string);
+                    codeGen_push_var(data->token->attribute.string);
                 }else{
                     switch(get_type(data)){
                         case INT:
-                            codeGen_push_int(data->token->attribute->integer);
+                            codeGen_push_int(data->token->attribute.integer);
                         break;
                         case NUMBER:
-                            codeGen_push_float(data->token->attribute->decimal);
+                            codeGen_push_float(data->token->attribute.decimal);
                         break;
                         case STR:
-                            codeGen_push_string(data->token->attribute->string);
+                            codeGen_push_string(data->token->attribute.string);
                         break;
                         case NIL:
                             codeGen_push_nil();
+                        break;
+                        default:
                         break;
                     }
                 }

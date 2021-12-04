@@ -367,14 +367,14 @@ void generate_IntToFloat1(){
 void generate_IntToFloat2(){
     printf("POPS GF@tmp3\n");
     printf("INT2FLOATS\n");
-    printf("PUSHS GF@tmp3")
+    printf("PUSHS GF@tmp3");
 }
 
 void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
-            printf("ADDS\n");FLOAT2INTS
+            printf("ADDS\n");
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
