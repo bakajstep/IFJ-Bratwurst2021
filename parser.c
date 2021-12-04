@@ -1082,6 +1082,8 @@ bool prog (p_data_ptr_t data)
             data->param = NULL;
             data->ret = NULL;
             data->ids_list = NULL;
+
+            data->write_params_cnt = 0;
             
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -1545,6 +1547,8 @@ bool main_b (p_data_ptr_t data)
             {
                 next_token(data);
 
+                data->write_params_cnt = 0;
+
                 if (args(data))
                 {
                     VALIDATE_TOKEN(data->token);
@@ -1555,16 +1559,25 @@ bool main_b (p_data_ptr_t data)
                     {
                         /* -------------- CODE GEN --------------*/
 
-                        func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
-                        
-                        if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                        if (strcmp(data->func_name, "write") != 0)
                         {
-                            params_count_code_gen = func_code_gen->params_type_count;
+                            func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                        
+                            if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                            {
+                                params_count_code_gen = func_code_gen->params_type_count;
+                            }
+                            else
+                            {
+                                params_count_code_gen = func_code_gen->params_count;
+                            }                                                
                         }
                         else
                         {
-                            params_count_code_gen = func_code_gen->params_count;
-                        }                                                
+                            params_count_code_gen = data->write_params_cnt;
+                        }                                        
+
+                        // printf("\nhodnota parametru: %d\n", params_count_code_gen);
 
                         codeGen_function_call(data->func_name, params_count_code_gen);
 
@@ -2021,6 +2034,8 @@ bool id_func (p_data_ptr_t data)
 
         next_token(data);
 
+        data->write_params_cnt = 0;
+
         if (args(data))
         {              
             VALIDATE_TOKEN(data->token); 
@@ -2031,17 +2046,25 @@ bool id_func (p_data_ptr_t data)
             {
                 /* -------------- CODE GEN --------------*/
 
-                func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
-                
-                if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                if (strcmp(data->func_name, "write") != 0)
                 {
-                    params_count_code_gen = func_code_gen->params_type_count;
-                }
+                    func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                
+                    if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                    {
+                        params_count_code_gen = func_code_gen->params_type_count;
+                    }
+                    else
+                    {
+                        params_count_code_gen = func_code_gen->params_count;
+                    }                                                
+                }                
                 else
                 {
-                    params_count_code_gen = func_code_gen->params_count;
-                }                                                
+                    params_count_code_gen = data->write_params_cnt;
+                }
 
+                //printf("\nhodnota parametru: %d\n", params_count_code_gen);
                 codeGen_function_call(data->func_name, params_count_code_gen);
 
                 /* ----------- END OF CODE GEN ----------*/
@@ -2056,7 +2079,7 @@ bool id_func (p_data_ptr_t data)
     {
         /* -------------- CODE GEN --------------*/
 
-        codeGen_assign_var(data->func_name);
+        codeGen_assign_var(data->func_name);        
 
         /* ----------- END OF CODE GEN ----------*/
 
@@ -2697,6 +2720,8 @@ bool as_vals (p_data_ptr_t data)
             {
                 next_token(data);
 
+                data->write_params_cnt = 0;
+
                 if (args(data))
                 {                
                     VALIDATE_TOKEN(data->token);
@@ -2707,17 +2732,24 @@ bool as_vals (p_data_ptr_t data)
                     {
                         /* -------------- CODE GEN --------------*/
 
-                        func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
-                        
-                        if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                        if (strcmp(data->func_name, "write") != 0)
                         {
-                            params_count_code_gen = func_code_gen->params_type_count;
+                            func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                        
+                            if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                            {
+                                params_count_code_gen = func_code_gen->params_type_count;
+                            }
+                            else
+                            {
+                                params_count_code_gen = func_code_gen->params_count;
+                            }        
                         }
                         else
                         {
-                            params_count_code_gen = func_code_gen->params_count;
-                        }                                                
-
+                            params_count_code_gen = data->write_params_cnt;
+                        }                                                                                    
+                        
                         codeGen_function_call(data->func_name, params_count_code_gen);
 
                         while (data->ids_list != NULL)
@@ -2967,6 +2999,8 @@ bool assign_val (p_data_ptr_t data)
             //{
             next_token(data);
 
+            data->write_params_cnt = 0;
+
             if (args(data))
             {           
                 VALIDATE_TOKEN(data->token); 
@@ -2977,16 +3011,23 @@ bool assign_val (p_data_ptr_t data)
                 {
                     /* -------------- CODE GEN --------------*/
 
-                    func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
-                    
-                    if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                    if (strcmp(data->func_name, "write") != 0)
                     {
-                        params_count_code_gen = func_code_gen->params_type_count;
+                        func_code_gen = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name);                        
+                    
+                        if (func_code_gen->params_type_count >= func_code_gen->params_count)
+                        {
+                            params_count_code_gen = func_code_gen->params_type_count;
+                        }
+                        else
+                        {
+                            params_count_code_gen = func_code_gen->params_count;
+                        }                                                
                     }
                     else
                     {
-                        params_count_code_gen = func_code_gen->params_count;
-                    }                                                
+                        params_count_code_gen = data->write_params_cnt;
+                    }
 
                     codeGen_function_call(data->func_name, params_count_code_gen);
                                             
@@ -3051,6 +3092,8 @@ bool term (p_data_ptr_t data)
         /* ----------- END OF SEMANTIC ----------*/
 
         /* -------------- CODE GEN --------------*/
+
+        //printf("\npushing: %s\n", data->token->attribute.string);
 
         codeGen_push_var(data->token->attribute.string);
 
@@ -3152,7 +3195,11 @@ bool args (p_data_ptr_t data)
                 err = E_SEM_PARAM;
                 return false;
             }
-        }                                
+        }   
+        else
+        {
+            (data->write_params_cnt)++;
+        }                             
         
         /* ----------- END OF SEMANTIC ----------*/        
 
@@ -3212,6 +3259,10 @@ bool n_args (p_data_ptr_t data)
                     err = E_SEM_PARAM;
                     return false;
                 }
+            }
+            else
+            {
+                (data->write_params_cnt)++;
             }                                                            
             
             /* ----------- END OF SEMANTIC ----------*/
