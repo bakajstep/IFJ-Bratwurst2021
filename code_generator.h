@@ -15,11 +15,6 @@
 
 #define TABLE_SIZE 10
 
-typedef struct tableItem{
-    bool isIf;
-    int id;
-} *tableItem_t;
-
 void generate_operation(psa_rules_enum operation);
 void codeGen_init();
 void codeGen_built_in_function();

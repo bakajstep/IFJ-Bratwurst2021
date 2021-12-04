@@ -245,10 +245,14 @@ void codeGen_chr(){
  * ----------------------GENERATOR START-----------------------
  */
 
-static int ifCounter = -1;
-static int whileCounter = -1;
+static int ifCounter = 0;
+static int whileCounter = 0;
+static int stackTop = -1;
+static int stackSize = TABLE_SIZE;
+static int* stack;
 
 void codeGen_init(){
+    stack = malloc(sizeof(int) * stackSize);
     printf(".IFJcode20\n");
     printf("DEFVAR GF@expr\n");
     printf("DEFVAR GF@tmp1\n");
@@ -307,19 +311,25 @@ void codeGen_assign_var(char* name){
  */
 
 void codeGen_if_start(){
+    stackTop++;
+    if(stackTop >= stackSize){
+        stackSize += stackSize;
+        stack = realloc(stack, sizeof(int) * stackSize);
+    }
+    stack[stackTop] = ifCounter;
     ifCounter++;
     printf("POPS GF@expr\n");
-    printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", ifCounter);
+    printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", stack[stackTop]);
 
 }
 
 void codeGen_if_else(){
-    printf("JUMP if$%d$end\n", ifCounter);
-    printf("LABEL if$%d$else\n", ifCounter);
+    printf("JUMP if$%d$end\n", stack[stackTop]);
+    printf("LABEL if$%d$else\n", stack[stackTop]);
 }
 
 void codeGen_if_end(){
-    printf("LABEL if$%d$end\n", ifCounter);
+    printf("LABEL if$%d$end\n", stack[stackTop]);
     ifCounter--;
 }
 
@@ -328,19 +338,25 @@ void codeGen_if_end(){
  */
 
 void codeGen_while_body_start(){
+    stackTop++;
+    if(stackTop >= stackSize){
+        stackSize += stackSize;
+        stack = realloc(stack, sizeof(int) * stackSize);
+    }
+    stack[stackTop] = whileCounter;
     whileCounter++;
-    printf("LABEL while$%d$start\n", whileCounter);
+    printf("LABEL while$%d$start\n", stack[stackTop]);
 }
 
 void codeGen_while_start(){
     printf("POPS GF@expr\n");
-    printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", whileCounter);
+    printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", stack[stackTop]);
 }
 
 void codeGen_while_end(){
-    printf("JUMP while$%d$start\n", whileCounter);
-    printf("LABEL while$%d$end\n", whileCounter);
-    whileCounter--;
+    printf("JUMP while$%d$start\n", stack[stackTop]);
+    printf("LABEL while$%d$end\n", stack[stackTop]);
+    stackTop--;
 }
 
 
