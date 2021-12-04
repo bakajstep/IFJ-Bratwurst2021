@@ -255,6 +255,7 @@ void codeGen_built_in_function(){
     codeGen_readi();
     codeGen_readn();
     codeGen_tointeger();
+    codeGen_write();
     codeGen_substr();
     codeGen_ord();
     codeGen_chr();*/
@@ -298,6 +299,7 @@ void codeGen_assign_var(char* name){
 
 void codeGen_if_start(){
     ifCounter++;
+    printf("POPS GF@expr");
     printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", ifCounter);
 
 }
@@ -322,6 +324,7 @@ void codeGen_while_body_start(){
 }
 
 void codeGen_while_start(){
+    printf("POPS GF@expr");
     printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", whileCounter);
 }
 
@@ -361,7 +364,7 @@ void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
-            printf("ADDS\n");
+            printf("ADDS\n");FLOAT2INTS
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
