@@ -2574,19 +2574,24 @@ bool r_n_vals (p_data_ptr_t data)
             }        
         }  
     } 
+    /* 22. <n_vals> -> epsilon */
     else
     {
         /* -------------- CODE GEN --------------*/
 
-        
+        codeGen_function_return();
 
         /* ----------- END OF CODE GEN ----------*/
-
-        /* 22. <n_vals> -> epsilon */
-        if (stats(data))
-        {        
+       
+        if ((token_type == T_KEYWORD) && 
+            (data->token->attribute.keyword == K_ELSE))
+        {                
             ret_val = true;
-        }   
+        }            
+        else if (stats(data))
+        {
+            ret_val = true;
+        }                    
     }     
     
     return ret_val;
@@ -2754,9 +2759,15 @@ bool ret_vals (p_data_ptr_t data)
     {
         if (err == E_NO_ERR)
         {
+            /* -------------- CODE GEN --------------*/
+
+            codeGen_function_return();
+
+            /* ----------- END OF CODE GEN ----------*/
+
             if ((token_type == T_KEYWORD) && 
                 (data->token->attribute.keyword == K_ELSE))
-            {
+            {                
                 ret_val = true;
             }            
             else if (stats(data))

@@ -38,6 +38,7 @@ void codeGen_while_body_start();
 void codeGen_while_start();
 void codeGen_while_end();
 void codeGen_function_start(char* name);
+void codeGen_function_return();
 void codeGen_function_end(char* name);
 void codeGen_function_call(char* name, unsigned parameters);
 
