@@ -361,7 +361,7 @@ void codeGen_while_body_start(){
 
 void codeGen_while_start(){
     printf("POPS GF@expr\n");
-    printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", stack[stackTop]);
+    printf("JUMPIFNEQ while$%d$end GF@expr bool@true\n", stack[stackTop]);
 }
 
 void codeGen_while_end(){
@@ -443,7 +443,7 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_NEQ_NT:
             // rule E -> E ~= E
-            printf("NOT EQS\n");
+            printf("EQS\nNOTS\n");
             break;
         case NT_LEQ_NT:
             // rule E -> E <= E

@@ -1802,7 +1802,7 @@ bool stats (p_data_ptr_t data)
                 return false;
             }
 
-            strcpy(data->func_name, id);
+            strcpy(data->func_name, id);            
 
             next_token(data);
             VALIDATE_TOKEN(data->token);
@@ -1822,6 +1822,9 @@ bool stats (p_data_ptr_t data)
                     /* ----------- END OF SEMANTIC ----------*/
 
                     data->tbl_list->lastElement->root = tree;
+
+                    /* Insert id to ids_list */
+                    idInsert(&(data->ids_list), data->type, data->func_name);
 
                     if (assign(data))
                     {
@@ -3174,8 +3177,10 @@ bool assign_val (p_data_ptr_t data)
                     }
 
                     codeGen_function_call(data->func_name, params_count_code_gen);
-                                            
+                                                                                        
                     codeGen_assign_var(data->ids_list->id);
+
+                    data->ids_list = data->ids_list->next;
                                             
                     /* ----------- END OF CODE GEN ----------*/
 
