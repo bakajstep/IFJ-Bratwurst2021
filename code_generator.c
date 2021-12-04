@@ -259,6 +259,7 @@ void codeGen_init(){
 }
 
 void codeGen_built_in_function(){
+    codeGen_write();
     codeGen_reads();
     codeGen_readi();
     codeGen_readn();
@@ -307,7 +308,7 @@ void codeGen_assign_var(char* name){
 
 void codeGen_if_start(){
     ifCounter++;
-    printf("POPS GF@expr");
+    printf("POPS GF@expr\n");
     printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", ifCounter);
 
 }
@@ -332,7 +333,7 @@ void codeGen_while_body_start(){
 }
 
 void codeGen_while_start(){
-    printf("POPS GF@expr");
+    printf("POPS GF@expr\n");
     printf("JUMPIFNEQ while$%d$end GF@expr bool@false\n", whileCounter);
 }
 
