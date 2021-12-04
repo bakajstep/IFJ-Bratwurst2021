@@ -43,6 +43,7 @@ char* convert_string(char* str_toconvert){
  */
 
 void codeGen_write(){
+    printf("#----FUN-write----\n");
     printf("JUMP write$end\n");
     printf("LABEL write\n");
     printf("PUSHFRAME\n");
@@ -66,6 +67,7 @@ void codeGen_write(){
 }
 
 void codeGen_reads(){
+    printf("#----FUN-reads----\n");
     printf("JUMP reads$end\n");
     printf("LABEL reads\n");
     printf("PUSHFRAME\n");
@@ -80,6 +82,7 @@ void codeGen_reads(){
 }
 
 void codeGen_readi(){
+    printf("#----FUN-readi----\n");
     printf("JUMP readi$end\n");
     printf("LABEL readi\n");
     printf("PUSHFRAME\n");
@@ -94,6 +97,7 @@ void codeGen_readi(){
 }
 
 void codeGen_readn(){
+    printf("#----FUN-readn----\n");
     printf("JUMP readn$end\n");
     printf("LABEL readn\n");
     printf("PUSHFRAME\n");
@@ -108,6 +112,7 @@ void codeGen_readn(){
 }
 
 void codeGen_tointeger(){
+    printf("#----FUN-tointeger----\n");
     printf("JUMP tointeger$end\n");
     printf("LABEL toiteger\n");
     printf("POPS GF@trash\n");
@@ -117,6 +122,7 @@ void codeGen_tointeger(){
 }
 
 void codeGen_substr(){
+    printf("#----FUN-substr----\n");
     printf("JUMP substr$end\n");
     printf("LABEL substr\n");
     printf("PUSHFRAME\n");
@@ -166,6 +172,7 @@ void codeGen_substr(){
 }
 
 void codeGen_ord(){
+    printf("#----FUN-ord----\n");
     printf("JUMP ord$end\n");
     printf("LABEL ord\n");
     printf("PUSHFRAME\n");
@@ -203,6 +210,7 @@ void codeGen_ord(){
 }
 
 void codeGen_chr(){
+    printf("#----FUN-chr----\n");
     printf("JUMP chr$end\n");
     printf("LABEL chr\n");
     printf("PUSHFRAME\n");
@@ -340,6 +348,7 @@ void codeGen_while_end(){
  */
 
 void codeGen_function_start(char* name){
+    printf("#----FUN-%s----\n", name);
     printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
 }
 
