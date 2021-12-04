@@ -1904,7 +1904,7 @@ bool stats (p_data_ptr_t data)
 
                         /* -------------- CODE GEN --------------*/
                  
-                        codeGen_while_start();
+                        codeGen_while_end();
 
                         /* ----------- END OF CODE GEN ----------*/
 

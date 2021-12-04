@@ -253,7 +253,7 @@ static int* stack;
 
 void codeGen_init(){
     stack = malloc(sizeof(int) * stackSize);
-    printf(".IFJcode20\n");
+    printf(".IFJcode21\n");
     printf("DEFVAR GF@expr\n");
     printf("DEFVAR GF@tmp1\n");
     printf("DEFVAR GF@tmp2\n");
@@ -263,6 +263,7 @@ void codeGen_init(){
 }
 
 void codeGen_built_in_function(){
+    /*
     codeGen_write();
     codeGen_reads();
     codeGen_readi();
@@ -272,6 +273,7 @@ void codeGen_built_in_function(){
     codeGen_substr();
     codeGen_ord();
     codeGen_chr();
+    */
 }
 
 /*
@@ -330,7 +332,7 @@ void codeGen_if_else(){
 
 void codeGen_if_end(){
     printf("LABEL if$%d$end\n", stack[stackTop]);
-    ifCounter--;
+    stackTop--;
 }
 
 /*
@@ -366,7 +368,8 @@ void codeGen_while_end(){
 
 void codeGen_function_start(char* name){
     printf("#----FUN-%s----\n", name);
-    printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
+    printf("JUMP %s$end\nLABEL %s\nCREATEFRAME\nPUSHFRAME\n", name, name);
+    printf("POPS GF@trash\n");
 }
 
 void codeGen_function_return(){
