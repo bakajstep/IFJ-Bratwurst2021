@@ -14,11 +14,22 @@ char* convert_string(char* str_toconvert){
 
     while(*string != '\0'){
         //iteruji přes vstupní string
-        if(*string == 92){
-            string_append_character(string_res, '\\');
-            string_append_character(string_res, '0');
-            string_append_character(string_res, '9');
-            string_append_character(string_res, '2');
+        if(*string == 92){                        
+            if (*(string+1) == 'n')
+            {
+                string_append_character(string_res, '\\');
+                string_append_character(string_res, '0');
+                string_append_character(string_res, '1');
+                string_append_character(string_res, '0');
+                string++;
+            }
+            else
+            {
+                string_append_character(string_res, '\\');
+                string_append_character(string_res, '0');
+                string_append_character(string_res, '9');
+                string_append_character(string_res, '2');
+            }            
         }else if(*string == 35){
             string_append_character(string_res, '\\');
             string_append_character(string_res, '0');
