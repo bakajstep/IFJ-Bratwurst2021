@@ -77,7 +77,7 @@ PROG57=hello
 PROG58=multiassign
 PROG59=substr
 PROG60=visibility
-PROG61=whitespace
+PROG61=whitespaces
 
 CURTEST=_test_cur_
 REFTEST=_test_ref_
@@ -484,7 +484,7 @@ $(GEN)-test:
 	@diff -su $(GENPATH)$(GENTEST)$(PROG57).out $(GENPATH)$(PROG57).out || exit 0
 
 	@echo "\n------------------------------------ 'multiassign' ------------------------------------\n"
-	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG53).tl > $(GENPATH)$(GENTEST)$(PROG53).code
+	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG58).tl > $(GENPATH)$(GENTEST)$(PROG58).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG58).code < $(GENPATH)$(PROG58).in > $(GENPATH)$(GENTEST)$(PROG58).out
 	@echo "\nTest case 'multiassign' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG58).out $(GENPATH)$(PROG58).out || exit 0
@@ -501,11 +501,11 @@ $(GEN)-test:
 	@echo "\nTest case 'visibility' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG60).out $(GENPATH)$(PROG60).out || exit 0
 
-	@echo "\n------------------------------------ 'whitespace' ------------------------------------\n"
-	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG61).tl > $(GENPATH)$(GENTEST)$(PROG61).code
-	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG61).code < $(GENPATH)$(PROG61).in > $(GENPATH)$(GENTEST)$(PROG61).out
-	@echo "\nTest case 'whitespace' output differences:"
-	@diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0
+	#@echo "\n------------------------------------ 'whitespaces' ------------------------------------\n"
+	#@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG61).tl > $(GENPATH)$(GENTEST)$(PROG61).code
+	#@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG61).code < $(GENPATH)$(PROG61).in > $(GENPATH)$(GENTEST)$(PROG61).out
+	#@echo "\nTest case 'whitespaces' output differences:"
+	#@diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0
 
 $(GEN)-clean:
 	cd $(GENPATH) && rm -f \
