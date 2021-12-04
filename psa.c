@@ -664,7 +664,6 @@ psa_error_t psa (p_data_ptr_t data)
                 //printf("\npushnul jsem nonterm s int\n");  
                         if(symbol1.data != STR){
                             err = E_SEM_INCOMPATIBLE;
-                            printf("motherfucker here");
                             return PSA_ERR;
                         }
                         if(!symbol_stack_push(&stack,NON_TERM,INT)){    
