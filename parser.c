@@ -233,6 +233,7 @@ void delete_data (p_data_ptr_t data)
 {
     delete_token(data->token);
     free(data->func_name);
+    free(data->body_func_name);
     delete_data_param(data->param);
     delete_data_ret(data->ret);
     delete_ids_list(data->ids_list);    
@@ -975,7 +976,7 @@ void insert_built_in_functions (LList* tbl_list)
  * Parser main function
  */
 parser_error_t parser ()
-{
+{    
     err = E_NO_ERR;
     p_data_ptr_t data;    
 
@@ -995,7 +996,7 @@ parser_error_t parser ()
     //print(data);
     
     if (!valid_token(data->token))
-    {
+    {                        
         err = E_SYNTAX; 
         delete_data(data);
 
@@ -1030,7 +1031,7 @@ parser_error_t parser ()
     if (!prog(data))
     {
         if (err == E_NO_ERR)
-        {            
+        {                                   
             err = E_SYNTAX;
         }
         
@@ -1080,6 +1081,7 @@ bool prog (p_data_ptr_t data)
             /* -------------- SEMANTIC --------------*/
             
             data->func_name = NULL;
+            data->body_func_name = NULL;
             data->param = NULL;
             data->ret = NULL;
             data->ids_list = NULL;
@@ -1199,7 +1201,22 @@ bool main_b (p_data_ptr_t data)
                     return false;
                 }                
 
-                strcpy(data->func_name, data->token->attribute.string);                
+                strcpy(data->func_name, data->token->attribute.string);         
+
+                if (data->body_func_name != NULL)
+                {
+                    free(data->body_func_name);
+                }
+
+                data->body_func_name = (char*) malloc(strlen(data->func_name) + 1);
+
+                if (data->body_func_name == NULL)
+                {
+                    err = E_INTERNAL;
+                    return false;
+                }              
+
+                strcpy(data->body_func_name, data->func_name);
 
                 /*
                  * Check multiple definition of function
@@ -2348,14 +2365,14 @@ bool r_vals (p_data_ptr_t data)
         /* -------------- SEMANTIC --------------*/
         
         glb_tbl = LL_GetFirst(data->tbl_list);
-        func_data = symTableSearch(glb_tbl, data->func_name);
+        func_data = symTableSearch(glb_tbl, data->body_func_name);
 
-        //printf("\ndata func name: %s\n", data->func_name);
+        printf("\ndata func name: %s\n", data->body_func_name);
 
         if (data->ret != NULL)
         {
             delete_data_ret(data->ret);
-        }                
+        }
 
         data->ret = func_data->first_ret;
 
@@ -2882,7 +2899,7 @@ bool assign_val (p_data_ptr_t data)
             {
                 /* Not function call */
                 if (err == E_INTERNAL)
-                {
+                {                                        
                     err = E_SYNTAX;
                 }
                                 

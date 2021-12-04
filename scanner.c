@@ -104,10 +104,10 @@ void delete_token (token_t* token)
 token_t* get_next_token ()
 {
     char symbol; //readed character from stdin    
-    token_t* token;    
-    bool f_state = false;
+    token_t* token;        
     string_ptr_t str = NULL;
     state_t state = S_INIT;    
+    bool f_state = true;
     
     err = E_NO_ERR;
     token = create_token();
@@ -147,8 +147,7 @@ token_t* get_next_token ()
                     return token;
                 }
                 else if (symbol == '/')
-                {
-                    f_state = true;
+                {                    
                     state = S_DIV;
                 }
                 else if (symbol == '+')
@@ -159,31 +158,29 @@ token_t* get_next_token ()
                     return token;
                 }
                 else if (symbol == '-')
-                {
-                    f_state = true;
+                {                    
                     state = S_MINUS;
                 }
                 else if (symbol == '.')
                 {
+                    f_state = false;
                     state = S_DOT;
                 }
                 else if (symbol == '<')
-                {
-                    f_state = true;
+                {                    
                     state = S_LESS_THAN;
                 }
                 else if (symbol == '>')
-                {
-                    f_state = true;
+                {                    
                     state = S_GTR_THAN;
                 }
                 else if (symbol == '~')
                 {
+                    f_state = false;
                     state = S_TILDE;
                 }
                 else if (symbol == '=')
-                {
-                    f_state = true;
+                {                    
                     state = S_ASSIGN;
                 }
                 else if (symbol == ':')
@@ -215,8 +212,7 @@ token_t* get_next_token ()
                     return token;
                 }
                 else if (isdigit(symbol))
-                {
-                    f_state = true;
+                {                    
                     state = S_INT;
 
                     if (!string_append_character(str, symbol))
@@ -229,8 +225,7 @@ token_t* get_next_token ()
                     }                                        
                 }
                 else if (isalpha(symbol) || symbol == '_')
-                {
-                    f_state = true;
+                {                    
                     state = S_IDENTIFIER_KEYWORD;
                     
                     if (!string_append_character(str, symbol))
@@ -244,6 +239,7 @@ token_t* get_next_token ()
                 }
                 else if (symbol == '"')
                 {
+                    f_state = false;
                     state = S_STRING_CONTENT;
                 }                            
                 else if (symbol != '\n' && symbol != '\t' && symbol != ' ')
@@ -273,6 +269,7 @@ token_t* get_next_token ()
             case (S_ONE_LINE_COMMENT_CONTENT):                                   
                 if (symbol == '\n')
                 {
+                    f_state = true;
                     state = S_INIT;
                 }                
 
@@ -1009,7 +1006,7 @@ token_t* get_next_token ()
         }
     }
 
-    if (state != S_INIT && f_state == false)
+    if (f_state == false && state != S_ONE_LINE_COMMENT_CONTENT)
     {
         err = E_LEX;   
     }    
