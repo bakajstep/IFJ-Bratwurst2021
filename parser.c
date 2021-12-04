@@ -2367,7 +2367,7 @@ bool r_vals (p_data_ptr_t data)
         glb_tbl = LL_GetFirst(data->tbl_list);
         func_data = symTableSearch(glb_tbl, data->body_func_name);
 
-        printf("\ndata func name: %s\n", data->body_func_name);
+        //printf("\ndata func name: %s\n", data->body_func_name);
 
         if (data->ret != NULL)
         {
