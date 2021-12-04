@@ -28,6 +28,8 @@ typedef struct p_data {
     char* func_name; 
     char* body_func_name;   
 
+    unsigned write_params_cnt;
+
     arg_ret_t arg_ret;    
     data_type_t type;
     data_type_t psa_data_type; // psa data type
