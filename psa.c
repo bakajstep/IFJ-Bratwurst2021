@@ -581,16 +581,16 @@ psa_error_t psa (p_data_ptr_t data)
                 //generování kódu
                 /*switch(get_type(data)){
                     case INT:
-                        generate_val_int);
+                        codeGen_push_int(data);
                     break;
                     case NUMBER:
-                        generate_val_number();
+                        codeGen_push_float(data);
                     break;
                     case STR:
-                        generate_val_string();
+                        codeGen_push_string(data);
                     break;
                     case NIL:
-                        generate_val_nil();
+                        codeGen_push_nil(data);
                     break;
                 }*/
 

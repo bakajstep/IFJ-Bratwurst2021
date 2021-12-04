@@ -29,6 +29,7 @@ void codeGen_push_var(char* name);
 void codeGen_push_string(char* value);
 void codeGen_push_int(int value);
 void codeGen_push_float(double value);
+void codeGen_push_nil();
 void codeGen_new_var(char* name);
 void codeGen_assign_var(char* name);
 void codeGen_if_start();
