@@ -975,7 +975,7 @@ void insert_built_in_functions (LList* tbl_list)
  * Parser main function
  */
 parser_error_t parser ()
-{
+{    
     err = E_NO_ERR;
     p_data_ptr_t data;    
 
@@ -995,7 +995,7 @@ parser_error_t parser ()
     //print(data);
     
     if (!valid_token(data->token))
-    {
+    {                        
         err = E_SYNTAX; 
         delete_data(data);
 
@@ -1030,7 +1030,7 @@ parser_error_t parser ()
     if (!prog(data))
     {
         if (err == E_NO_ERR)
-        {            
+        {                                   
             err = E_SYNTAX;
         }
         
@@ -2355,7 +2355,7 @@ bool r_vals (p_data_ptr_t data)
         if (data->ret != NULL)
         {
             delete_data_ret(data->ret);
-        }                
+        }
 
         data->ret = func_data->first_ret;
 
@@ -2882,7 +2882,7 @@ bool assign_val (p_data_ptr_t data)
             {
                 /* Not function call */
                 if (err == E_INTERNAL)
-                {
+                {                                        
                     err = E_SYNTAX;
                 }
                                 
