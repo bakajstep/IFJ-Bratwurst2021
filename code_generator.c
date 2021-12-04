@@ -43,6 +43,7 @@ char* convert_string(char* str_toconvert){
  */
 
 void codeGen_reads(){
+    printf("JUMP reads$end\n");
     printf("LABEL reads\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
@@ -52,9 +53,11 @@ void codeGen_reads(){
     printf("PUSHS TF@out\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL reads$end\n");
 }
 
 void codeGen_readi(){
+    printf("JUMP readi$end\n");
     printf("LABEL readi\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
@@ -64,9 +67,11 @@ void codeGen_readi(){
     printf("PUSHS TF@out\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL readi$end\n");
 }
 
 void codeGen_readn(){
+    printf("JUMP readn$end\n");
     printf("LABEL readn\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
@@ -76,13 +81,16 @@ void codeGen_readn(){
     printf("PUSHS TF@out\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
+    printf("LABEL readn$end\n");
 }
 
 void codeGen_tointeger(){
+    printf("JUMP tointeger$end\n");
     printf("LABEL toiteger\n");
     printf("POPS\n");
     printf("FLOAT2INTS\n");
     printf("RETURN\n");
+    printf("LABEL tointeger$end\n");
 }
 
 void codeGen_substr(){
@@ -112,34 +120,17 @@ void codeGen_init(){
     printf("DEFVAR GF@tmp2\n");
     printf("DEFVAR GF@tmp3\n");
     printf("DEFVAR GF@tmp4\n");
-    printf("JUMP main\n");
-    printf("LABEL _div_0\n");
-    printf("EXIT int@9\n");
 }
 
 void codeGen_built_in_function(){
-    codeGen_reads();
+    /*codeGen_reads();
     codeGen_readi();
     codeGen_readn();
     codeGen_tointeger();
     codeGen_substr();
     codeGen_ord();
-    codeGen_chr();
+    codeGen_chr();*/
 }
-
-/*
- * ----------------------MAIN-----------------------
- */
-
-void codeGen_main_start(){
-    printf("LABEL main\nCREATEFRAME\n");
-}
-
-void codeGen_main_end(){
-    printf("LABEL main$end");
-    printf("CLEARS");
-}
-
 
 /*
  * ----------------------VAR-----------------------
@@ -166,7 +157,7 @@ void codeGen_new_var(char* name){
 }
 
 void codeGen_assign_var(char* name){
-    printf("POPS TF@%s", name);
+    printf("POPS TF@%s\n", name);
 }
 
 /*
@@ -214,11 +205,15 @@ void codeGen_while_end(){
  */
 
 void codeGen_function_start(char* name){
-    printf("LABEL %s\nPUSHFRAME\nCREATEFRAME\n", name);
+    printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
+}
+
+void codeGen_function_return(){
+    printf("POPFRAME\nRETURN\n");
 }
 
 void codeGen_function_end(char* name){
-    printf("LABEL %s$end\nPOPFRAME\nRETURN\n", name);
+    printf("POPFRAME\nRETURN\nLABEL %s$end\n", name);
 }
 
 void codeGen_function_call(char* name, unsigned parameters){
