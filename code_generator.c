@@ -42,12 +42,35 @@ char* convert_string(char* str_toconvert){
  * ----------------------BUILD IN FUNCTIONS-----------------------
  */
 
+void codeGen_write(){
+    printf("JUMP write$end\n");
+    printf("LABEL write\n");
+    printf("PUSHFRAME\n");
+    printf("CREATEFRAME\n");
+    printf("DEFVAR TF@cnt_of_parameter\n");
+    printf("DEFVAR TF@to_print\n");
+    printf("DEFVAR TF@cnt\n");
+    printf("POPS TF@cnt_of_parameter\n");
+    printf("MOVE TF@cnt int@0\n");
+    printf("LABEL _print_while_start\n");
+    printf("LT GF@expr TF@cnt TF@cnt_of_parameter\n");
+    printf("JUMPIFNEQ _print_while_end GF@expr bool@true\n");
+    printf("POPS TF@to_print\n");
+    printf("PWRITE TF@to_print\n");
+    printf("ADD TF@cnt TF@cnt int@1\n");
+    printf("JUMP _print_while_start\n");
+    printf("LABEL _print_while_end\n");
+    printf("POPFRAME\n");
+    printf("RETURN\n");
+    printf("LABEL write$end\n");
+}
+
 void codeGen_reads(){
     printf("JUMP reads$end\n");
     printf("LABEL reads\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("DEFVAR TF@out\n");
     printf("READ TF@out string\n");
     printf("PUSHS TF@out\n");
@@ -61,7 +84,7 @@ void codeGen_readi(){
     printf("LABEL readi\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("DEFVAR TF@out\n");
     printf("READ TF@out int\n");
     printf("PUSHS TF@out\n");
@@ -75,7 +98,7 @@ void codeGen_readn(){
     printf("LABEL readn\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("DEFVAR TF@out\n");
     printf("READ TF@out float\n");
     printf("PUSHS TF@out\n");
@@ -87,7 +110,7 @@ void codeGen_readn(){
 void codeGen_tointeger(){
     printf("JUMP tointeger$end\n");
     printf("LABEL toiteger\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("FLOAT2INTS\n");
     printf("RETURN\n");
     printf("LABEL tointeger$end\n");
@@ -98,15 +121,15 @@ void codeGen_substr(){
     printf("LABEL substr\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("DEFVAR TF@ret_str\n");
     printf("DEFVAR TF@err\n");
     printf("MOVE TF@ret_str string@\n");
     printf("MOVE TF@err int@1\n");
     printf("DEFVAR TF@s\n");
-    printf("POPS\n");
-    printf("DEFVAR TF@i\n");
     printf("POPS TF@i\n");
+    printf("DEFVAR TF@i\n");
+    printf("POPS TF@n\n");
     printf("DEFVAR TF@n\n");
     printf("DEFVAR TF@char\n");
     printf("MOVE TF@char string@\n");
@@ -147,7 +170,7 @@ void codeGen_ord(){
     printf("LABEL ord\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("DEFVAR TF@ascii\n");
     printf("DEFVAR TF@err\n");
     printf("MOVE TF@ascii string@\n");
@@ -156,8 +179,8 @@ void codeGen_ord(){
     printf("DEFVAR TF@r_limit\n");
     printf("DEFVAR TF@string\n");
     printf("DEFVAR TF@i\n");
-    printf("POPS\n");
-    printf("POPS\n");
+    printf("POPS TF@string\n");
+    printf("POPS TF@i\n");
     printf("DEFVAR TF@str_len\n");
     printf("MOVE TF@str_len int@0\n");
     printf("STRLEN TF@str_len TF@string\n");
@@ -184,7 +207,7 @@ void codeGen_chr(){
     printf("LABEL chr\n");
     printf("PUSHFRAME\n");
     printf("CREATEFRAME\n");
-    printf("POPS\n");
+    printf("POPS GF@trash\n");
     printf("DEFVAR TF@ret_str\n");
     printf("MOVE TF@ret_str string@\n");
     printf("DEFVAR TF@err\n");
@@ -192,7 +215,7 @@ void codeGen_chr(){
     printf("DEFVAR TF@l_limit\n");
     printf("DEFVAR TF@r_limit\n");
     printf("DEFVAR TF@i\n");
-    printf("POPS\n");
+    printf("POPS TF@i\n");
     printf("LT TF@l_limit TF@i int@0\n");
     printf("NOT TF@l_limit TF@l_limit\n");
     printf("GT TF@r_limit TF@i int@255\n");
@@ -224,6 +247,7 @@ void codeGen_init(){
     printf("DEFVAR GF@tmp2\n");
     printf("DEFVAR GF@tmp3\n");
     printf("DEFVAR GF@tmp4\n");
+    printf("DEFVAR GF@trash\n");
 }
 
 void codeGen_built_in_function(){
