@@ -25,7 +25,8 @@ typedef struct ids_list {
 typedef struct p_data {
     token_t* token;
     LList* tbl_list;
-    char* func_name;    
+    char* func_name; 
+    char* body_func_name;   
 
     arg_ret_t arg_ret;    
     data_type_t type;
