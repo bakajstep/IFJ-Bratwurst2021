@@ -2511,79 +2511,88 @@ bool r_n_vals (p_data_ptr_t data)
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
+    
+    token_type = data->token->type;
 
-    /* 22. <n_vals> -> epsilon */
-    if (stats(data))
-    {        
-        ret_val = true;
-    }
-    else
-    {        
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);
-        token_type = data->token->type;
+    /* 21. <n_vals> -> , exp <n_vals> */    
+    if (token_type == T_COMMA)
+    {
+        next_token(data);        
 
-        /* 21. <n_vals> -> , exp <n_vals> */    
-        if (token_type == T_COMMA)
+        if (expression(data))
         {
-            next_token(data);        
+            /* -------------- SEMANTIC --------------*/                   
 
-            if (expression(data))
+            if (data->ret != NULL)
             {
-                /* -------------- SEMANTIC --------------*/                   
-
-                if (data->ret != NULL)
+                if (data->psa_data_type != data->ret->return_type)
                 {
-                    if (data->psa_data_type != data->ret->return_type)
+                    if (data->psa_data_type == NIL || 
+                        (data->ret->return_type == NUMBER && data->psa_data_type == INT))
                     {
-                        if (data->psa_data_type == NIL || 
-                            (data->ret->return_type == NUMBER && data->psa_data_type == INT))
-                        {
-                            // VALID
-                        }
-                        else
-                        {                                      
-                            err = E_SEM_PARAM;
-                            return false;             
-                        }                           
-                    }   
-
-                    data->ret  = data->ret->ret_next;
-                }             
-                else
-                {
-                    // data->param == NULL
-                    VALIDATE_TOKEN(data->token);
-                    TEST_EOF(data->token);
-
-                    /*
-                     * Excess count of return values
-                     */
-                    if (data->token->type == T_COMMA)
-                    {                        
+                        // VALID
+                    }
+                    else
+                    {                                      
                         err = E_SEM_PARAM;
-                        return false;
-                    }   
-                }                                            
+                        return false;             
+                    }                           
+                }   
 
-                /* ----------- END OF SEMANTIC ----------*/
-
-                ret_val = r_n_vals(data);
-            }      
+                data->ret  = data->ret->ret_next;
+            }             
             else
             {
+                // data->param == NULL
                 VALIDATE_TOKEN(data->token);
                 TEST_EOF(data->token);
 
-                if (data->token->type == T_ASSIGN)
-                {
-                    next_token(data);
-                    
-                    ret_val = as_vals(data);
-                }        
-            }  
-        }           
-    }
+                /*
+                    * Excess count of return values
+                    */
+                if (data->token->type == T_COMMA)
+                {                        
+                    err = E_SEM_PARAM;
+                    return false;
+                }   
+            }                                            
+
+            /* ----------- END OF SEMANTIC ----------*/
+
+            ret_val = r_n_vals(data);
+        }      
+        else
+        {
+            VALIDATE_TOKEN(data->token);
+            TEST_EOF(data->token);
+
+            if (data->token->type == T_ASSIGN)
+            {
+                next_token(data);
+                
+                ret_val = as_vals(data);
+            }        
+        }  
+    } 
+    /* 22. <n_vals> -> epsilon */
+    else
+    {
+        /* -------------- CODE GEN --------------*/
+
+        codeGen_function_return();
+
+        /* ----------- END OF CODE GEN ----------*/
+       
+        if ((token_type == T_KEYWORD) && 
+            (data->token->attribute.keyword == K_ELSE))
+        {                
+            ret_val = true;
+        }            
+        else if (stats(data))
+        {
+            ret_val = true;
+        }                    
+    }     
     
     return ret_val;
 }
@@ -2750,9 +2759,15 @@ bool ret_vals (p_data_ptr_t data)
     {
         if (err == E_NO_ERR)
         {
+            /* -------------- CODE GEN --------------*/
+
+            codeGen_function_return();
+
+            /* ----------- END OF CODE GEN ----------*/
+
             if ((token_type == T_KEYWORD) && 
                 (data->token->attribute.keyword == K_ELSE))
-            {
+            {                
                 ret_val = true;
             }            
             else if (stats(data))
