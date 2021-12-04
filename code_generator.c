@@ -251,14 +251,14 @@ void codeGen_init(){
 }
 
 void codeGen_built_in_function(){
-    /*codeGen_reads();
+    codeGen_reads();
     codeGen_readi();
     codeGen_readn();
     codeGen_tointeger();
     codeGen_write();
     codeGen_substr();
     codeGen_ord();
-    codeGen_chr();*/
+    codeGen_chr();
 }
 
 /*

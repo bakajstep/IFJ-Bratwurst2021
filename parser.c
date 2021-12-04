@@ -1021,10 +1021,7 @@ parser_error_t parser ()
     }    
 
     // Create global symbol table
-    create_sym_table(data->tbl_list);
-    
-    // Insert built in functions
-    insert_built_in_functions(data->tbl_list);    
+    create_sym_table(data->tbl_list);        
 
     /* ----------- END OF SEMANTIC ----------*/    
 
@@ -1093,6 +1090,13 @@ bool prog (p_data_ptr_t data)
             codeGen_init();
 
             /* ----------- END OF CODE GEN ----------*/
+
+            /* -------------- SEMANTIC --------------*/
+
+            // Insert built in functions
+            insert_built_in_functions(data->tbl_list); 
+
+            /* ----------- END OF SEMANTIC ----------*/    
 
             if (main_b(data))
             {                                
