@@ -266,23 +266,23 @@ void codeGen_built_in_function(){
  */
 
 void codeGen_push_var(char* name){
-    printf("PUSH TF@%s\n", name);
+    printf("PUSHS TF@%s\n", name);
 }
 
 void codeGen_push_string(char* value){
-    printf("PUSH string@%s\n", convert_string(value));
+    printf("PUSHS string@%s\n", convert_string(value));
 }
 
 void codeGen_push_int(int value){
-    printf("PUSH int@%d\n", value);
+    printf("PUSHS int@%d\n", value);
 }
 
 void codeGen_push_float(double value){
-    printf("PUSH float@%a\n", value);
+    printf("PUSHS float@%a\n", value);
 }
 
 void codeGen_push_nil(){
-    printf("PUSH nil@nil\n");
+    printf("PUSHS nil@nil\n");
 }
 
 void codeGen_new_var(char* name){
@@ -352,7 +352,7 @@ void codeGen_function_end(char* name){
 }
 
 void codeGen_function_call(char* name, unsigned parameters){
-    printf("PUSH int@%i\n", parameters);
+    printf("PUSHS int@%i\n", parameters);
     printf("CALL %s\n", name);
 }
 
