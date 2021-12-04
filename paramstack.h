@@ -1,6 +1,8 @@
 #ifndef IFJ_BRATWURST2021_PARAMSTACK_H
 #define IFJ_BRATWURST2021_PARAMSTACK_H
 
+#include <stdbool.h>
+
 typedef union param_attribute
 {
     char* id;
@@ -33,10 +35,13 @@ typedef struct stack_param
  */
 typedef struct
 {
-    sym_stack_item *top;
+    param_stack_item *top;
 } param_stack;
 
-
+void param_stack_init (param_stack* stack);
+bool param_stack_push (param_stack* stack, param_type_t param_type, param_attribute_t param_attr);
+bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attribute_t* param_attr);
+void param_stack_dispose (param_stack* stack);
 
 #endif //IFJ_BRATWURST2021_PARAMSTACK_H
 
