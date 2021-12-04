@@ -786,7 +786,7 @@ bool check_func_assign (p_data_ptr_t data)
 {
     bool ret_val = true;
     function_returns_t* func_returns = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_ret;            
-
+    
     while (func_returns != NULL && data->ids_list != NULL)
     {                
         if (func_returns->return_type != data->ids_list->type)
@@ -857,6 +857,19 @@ void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
         current = newId;
         current->next = NULL;
     }
+}
+
+void save_ids_list(ids_list_t* orig, ids_list_t** dest)
+{
+    ids_list_t* current = orig;
+
+    while (current != NULL)
+    {
+        //printf("\ncurrent id: %s\n", current->id);
+        idInsert(dest, current->type, current->id);
+
+        current = current->next;
+    }    
 }
 
 void create_tbl_list_mem (LList** tbl_list)
@@ -1918,7 +1931,7 @@ bool stats (p_data_ptr_t data)
     }    
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
-    {
+    {        
         if (data->func_name != NULL)
         {
             free(data->func_name);
@@ -1966,8 +1979,9 @@ bool stats (p_data_ptr_t data)
                 err = E_SEM_DEF;
                 return false;
             }                          
-
-            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name), data->func_name);
+            
+            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name), data->func_name);                                    
+            //printf("\ndata ids list: %s\n", data->ids_list->id);
         }
         /*else
         {
@@ -1979,7 +1993,9 @@ bool stats (p_data_ptr_t data)
             return false;
         }        
 
-        /* ----------- END OF SEMANTIC ----------*/
+        /* ----------- END OF SEMANTIC ----------*/                
+
+        //printf("\ndata ids list: %s\n", data->ids_list->id);
 
         if (id_func(data))
         {                        
@@ -2007,7 +2023,7 @@ bool stats (p_data_ptr_t data)
  * 13. <id_func> -> (<args>)
  */
 bool id_func (p_data_ptr_t data)
-{    
+{                        
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_code_gen = NULL;
@@ -2076,15 +2092,15 @@ bool id_func (p_data_ptr_t data)
     }
     /* 12. <id_func> -> <n_ids> = <as_vals> */
     else
-    {
+    {        
         /* -------------- CODE GEN --------------*/
 
-        codeGen_assign_var(data->func_name);        
+        //codeGen_assign_var(data->func_name);        
 
         /* ----------- END OF CODE GEN ----------*/
 
         if (n_ids(data))
-        {
+        {            
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;
@@ -2307,7 +2323,7 @@ bool n_ids (p_data_ptr_t data)
 
             /* -------------- CODE GEN --------------*/
 
-            codeGen_assign_var(data->token->attribute.string);
+            //codeGen_assign_var(data->token->attribute.string);
 
             /* ----------- END OF CODE GEN ----------*/
 
@@ -2649,11 +2665,12 @@ bool r_n_vals (p_data_ptr_t data)
  * 24. <as_vals> -> id (<args>)
  */
 bool as_vals (p_data_ptr_t data)
-{    
+{                
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_code_gen = NULL;
     unsigned params_count_code_gen = 0;
+    ids_list_t* ids_list_copy = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -2683,7 +2700,7 @@ bool as_vals (p_data_ptr_t data)
             ret_val = true;
         }
         else
-        {
+        {            
             /* -------------- SEMANTIC --------------*/ 
             /*
              * Check if called function is declared
@@ -2702,6 +2719,12 @@ bool as_vals (p_data_ptr_t data)
 
             /* For args */
             data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+
+            /* Saving ids list */
+            
+            save_ids_list(data->ids_list, &ids_list_copy);
+
+            /* End of saving ids list */
 
             /* For assign to identifiers */
             if (!check_func_assign(data))
@@ -2723,13 +2746,13 @@ bool as_vals (p_data_ptr_t data)
                 data->write_params_cnt = 0;
 
                 if (args(data))
-                {                
+                {                                   
                     VALIDATE_TOKEN(data->token);
                     TEST_EOF(data->token);
                     token_type = data->token->type;
 
                     if (token_type == T_RIGHT_BRACKET)
-                    {
+                    {                        
                         /* -------------- CODE GEN --------------*/
 
                         if (strcmp(data->func_name, "write") != 0)
@@ -2750,14 +2773,14 @@ bool as_vals (p_data_ptr_t data)
                             params_count_code_gen = data->write_params_cnt;
                         }                                                                                    
                         
-                        codeGen_function_call(data->func_name, params_count_code_gen);
-
-                        while (data->ids_list != NULL)
-                        {
-                            codeGen_assign_var(data->ids_list->id);
-                            data->ids_list = data->ids_list->next;
-                        }                                                
-
+                        codeGen_function_call(data->func_name, params_count_code_gen);                                                                                                
+                        
+                        while (ids_list_copy != NULL)
+                        {                            
+                            codeGen_assign_var(ids_list_copy->id);
+                            ids_list_copy = ids_list_copy->next;
+                        }       
+                        
                         /* ----------- END OF CODE GEN ----------*/
 
                         ret_val = true;

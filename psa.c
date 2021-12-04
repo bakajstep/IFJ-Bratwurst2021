@@ -588,7 +588,28 @@ psa_error_t psa (p_data_ptr_t data)
 
                 //generování kódu
                 if(data->token->type == T_IDENTIFIER){
-                    codeGen_push_var(data->token->attribute.string);
+                    char* id = (char*) malloc(strlen(data->token->attribute.string) + 1);
+
+                    if (id == NULL)
+                    {
+                        err = E_INTERNAL;
+                        return PSA_ERR;
+                    }
+                    
+                    strcpy(id, data->token->attribute.string);
+
+                    next_token(data);
+
+                    if (data->token->type == T_LEFT_BRACKET)
+                    {
+                        free(id);                        
+                        return PSA_ERR;
+                    }
+                    else
+                    {
+                        codeGen_push_var(id);  
+                        free(id);
+                    }                                                          
                 }else{
                     switch(get_type(data)){
                         case INT:
@@ -606,11 +627,13 @@ psa_error_t psa (p_data_ptr_t data)
                         default:
                         break;
                     }
+
+                    next_token(data);
                 }
                 
 
                 //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
-                next_token(data);
+                
                 break;
             case '>': ;
                 //zjistím kolik mám symbolů na stack do <
