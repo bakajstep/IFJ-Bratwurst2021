@@ -1,2 +1,248 @@
+.IFJcode21
+DEFVAR GF@expr
+DEFVAR GF@tmp1
+DEFVAR GF@tmp2
+DEFVAR GF@tmp3
+DEFVAR GF@tmp4
+DEFVAR GF@trash
+CREATEFRAME
+#----FUN-write----
+JUMP write$end
+LABEL write
+PUSHFRAME
+CREATEFRAME
+DEFVAR TF@cnt_of_parameter
+DEFVAR TF@to_print
+DEFVAR TF@cnt
+POPS TF@cnt_of_parameter
+MOVE TF@cnt int@0
+LABEL _print_while_start
+LT GF@expr TF@cnt TF@cnt_of_parameter
+JUMPIFNEQ _print_while_end GF@expr bool@true
+POPS TF@to_print
+WRITE TF@to_print
+ADD TF@cnt TF@cnt int@1
+JUMP _print_while_start
+LABEL _print_while_end
+POPFRAME
+RETURN
+LABEL write$end
+#----FUN-reads----
+JUMP reads$end
+LABEL reads
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@out
+READ TF@out string
+PUSHS TF@out
+POPFRAME
+RETURN
+LABEL reads$end
+#----FUN-readi----
+JUMP readi$end
+LABEL readi
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@out
+READ TF@out int
+PUSHS TF@out
+POPFRAME
+RETURN
+LABEL readi$end
+#----FUN-readn----
+JUMP readn$end
+LABEL readn
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@out
+READ TF@out float
+PUSHS TF@out
+POPFRAME
+RETURN
+LABEL readn$end
+#----FUN-tointeger----
+JUMP tointeger$end
+LABEL tointeger
+POPS GF@trash
+FLOAT2INTS
+RETURN
+LABEL tointeger$end
+#----FUN-substr----
+JUMP substr$end
+LABEL substr
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@ret_str
+MOVE TF@ret_str string@
+DEFVAR TF@s
+POPS TF@s
+DEFVAR TF@i
+POPS TF@i
+SUB TF@i TF@i int@1
+DEFVAR TF@n
+POPS TF@n
+DEFVAR TF@char
+MOVE TF@char string@
+DEFVAR TF@str_len
+DEFVAR TF@l_limit
+DEFVAR TF@r_limit
+STRLEN TF@str_len TF@s
+LT TF@l_limit TF@i int@0
+NOT TF@l_limit TF@l_limit
+GT TF@r_limit TF@i TF@str_len
+NOT TF@r_limit TF@r_limit
+AND TF@l_limit TF@l_limit TF@r_limit
+LT TF@r_limit TF@n int@0
+NOT TF@r_limit TF@r_limit
+AND TF@l_limit TF@l_limit TF@r_limit
+JUMPIFNEQ _sub_end TF@l_limit bool@true
+DEFVAR TF@cnt_of_loaded
+MOVE TF@cnt_of_loaded TF@i
+LABEL _sub_while
+LT TF@l_limit TF@i TF@str_len
+LT TF@r_limit TF@cnt_of_loaded TF@n
+AND TF@l_limit TF@l_limit TF@r_limit
+JUMPIFNEQ _sub_end TF@l_limit bool@true
+GETCHAR TF@char TF@s TF@i
+CONCAT TF@ret_str TF@ret_str TF@char
+ADD TF@cnt_of_loaded TF@cnt_of_loaded int@1
+ADD TF@i TF@i int@1
+JUMP _sub_while
+LABEL _sub_end
+PUSHS TF@ret_str
+POPFRAME
+RETURN
+LABEL substr$end
+#----FUN-ord----
+JUMP ord$end
+LABEL ord
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@ascii
+DEFVAR TF@err
+MOVE TF@ascii string@
+MOVE TF@err int@1
+DEFVAR TF@l_limit
+DEFVAR TF@r_limit
+DEFVAR TF@string
+DEFVAR TF@i
+POPS TF@string
+POPS TF@i
+DEFVAR TF@str_len
+MOVE TF@str_len int@0
+STRLEN TF@str_len TF@string
+SUB TF@str_len TF@str_len int@1
+LT TF@l_limit TF@i int@0
+NOT TF@l_limit TF@l_limit
+GT TF@r_limit TF@i TF@str_len
+NOT TF@r_limit TF@r_limit
+AND TF@l_limit TF@l_limit TF@r_limit
+JUMPIFNEQ _ord_end TF@l_limit bool@true
+MOVE TF@err int@0
+STRI2INT TF@ascii TF@string TF@i
+LABEL _ord_end
+PUSHS TF@ascii
+PUSHS TF@err
+POPFRAME
+RETURN
+LABEL ord$end
+#----FUN-chr----
+JUMP chr$end
+LABEL chr
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@ret_str
+MOVE TF@ret_str string@
+DEFVAR TF@err
+MOVE TF@err int@1
+DEFVAR TF@l_limit
+DEFVAR TF@r_limit
+DEFVAR TF@i
+POPS TF@i
+LT TF@l_limit TF@i int@0
+NOT TF@l_limit TF@l_limit
+GT TF@r_limit TF@i int@255
+NOT TF@r_limit TF@r_limit
+AND TF@l_limit TF@l_limit TF@r_limit
+JUMPIFNEQ _chr_end TF@l_limit bool@true
+MOVE TF@err int@0
+INT2CHAR TF@ret_str TF@i
+LABEL _chr_end
+PUSHS TF@ret_str
+PUSHS TF@err
+POPFRAME
+RETURN
+LABEL chr$end
+#----FUN-main----
+JUMP main$end
+LABEL main
+PUSHFRAME
+CREATEFRAME
+POPS GF@trash
+DEFVAR TF@a
+DEFVAR TF@vysl
+PUSHS int@0
+POPS TF@vysl
+PUSHS string@Zadejte\032cislo\032pro\032vypocet\032faktorialu\010
+PUSHS int@1
+CALL write
+PUSHS int@0
+CALL readi
+POPS TF@a
+PUSHS TF@a
+PUSHS nil@nil
+EQS
+POPS GF@expr
+JUMPIFNEQ if$0$else GF@expr bool@true
+PUSHS string@a\032je\032nil\010
+PUSHS int@1
+CALL write
+POPFRAME
+RETURN
+JUMP if$0$end
+LABEL if$0$else
+LABEL if$0$end
+PUSHS TF@a
+PUSHS int@0
+LTS
+POPS GF@expr
+JUMPIFNEQ if$1$else GF@expr bool@true
+PUSHS string@Faktorial\032nelze\032spocitat\010
+PUSHS int@1
+CALL write
+JUMP if$1$end
+LABEL if$1$else
+PUSHS int@1
+POPS TF@vysl
+LABEL while$0$start
+PUSHS TF@a
+PUSHS int@0
+GTS
+POPS GF@expr
+JUMPIFNEQ while$0$end GF@expr bool@true
+PUSHS TF@vysl
+PUSHS TF@a
+MULS
+POPS TF@vysl
+PUSHS TF@a
+PUSHS int@1
+SUBS
+POPS TF@a
+JUMP while$0$start
+LABEL while$0$end
+PUSHS string@\010
+PUSHS TF@vysl
+PUSHS string@Vysledek\032je:\032
+PUSHS int@3
+CALL write
+LABEL if$1$end
+PUSHS int@0
+CALL main
 SYNTAX ERROR
 Err code: 2
