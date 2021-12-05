@@ -31,6 +31,7 @@ bool param_stack_push (param_stack* stack, param_type_t param_type, param_attrib
         if (!(new_item->attribute.id))
         {
             free(new_item);
+            new_item = NULL;
             return false;
         }
         
@@ -54,6 +55,7 @@ bool param_stack_push (param_stack* stack, param_type_t param_type, param_attrib
         if (!(new_item->attribute.id))
         {
             free(new_item);
+            new_item = NULL;
             return false;
         }
 
@@ -85,15 +87,18 @@ bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attrib
         if (tmp->type == P_ID)
         {
             free(tmp->attribute.id);
+            tmp->attribute.id = NULL;
         }
         else if(tmp->type == P_STR)
         {
             free(tmp->attribute.str);
+            tmp->attribute.str = NULL;
         }
 
         stack->top = tmp->next;
 
         free(tmp);     
+        tmp = NULL;
 
         return true;
     }            
@@ -114,13 +119,16 @@ bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attrib
             if (!(param_attr->id))
             {   
                 free(tmp->attribute.id);  
+                tmp->attribute.id = NULL;
                 free(tmp);                         
+                tmp = NULL;
                 return false;
             }
             
             strcpy(param_attr->id , tmp->attribute.id);
 
             free(tmp->attribute.id);
+            tmp->attribute.id = NULL;
 
             break;
         
@@ -138,13 +146,16 @@ bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attrib
             if (!(param_attr->str))
             {
                 free(tmp->attribute.str);
+                tmp->attribute.str = NULL;
                 free(tmp);
+                tmp = NULL;
                 return false;
             }
 
             strcpy(param_attr->str, tmp->attribute.str);
 
             free(tmp->attribute.str);
+            tmp->attribute.str = NULL;
 
             break;
 
@@ -153,6 +164,7 @@ bool param_stack_pop (param_stack* stack, param_type_t* param_type, param_attrib
         }
 
         free(tmp);
+        tmp = NULL;
 
         return true;
     }

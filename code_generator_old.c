@@ -164,6 +164,7 @@ void codeFromToken(token_type_t type, token_t token){
                 params++;
             }
             free(str);
+            str = NULL;
             break;
         case T_KEYWORD:
             switch(token.attribute.keyword){

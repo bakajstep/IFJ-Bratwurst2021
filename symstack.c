@@ -84,6 +84,7 @@ bool symbol_stack_pop(sym_stack* stack){
         sym_stack_item* tmp = stack->top;
         stack->top = tmp->next;
         free(tmp);
+        tmp = NULL;
 
         return true;
     }

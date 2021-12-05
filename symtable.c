@@ -303,6 +303,7 @@ void paramDispose(function_params_t* param){
     if(param != NULL){
         if(param->param_next != NULL) paramDispose(param->param_next);
         free(param->param_name);
+        param->param_name = NULL;
         free(param);
         param = NULL;
     }
@@ -344,9 +345,11 @@ void symTableDispose(symTree_t **tree){
             returnDefDispose((*tree)->data->first_def_ret);
             returnDispose((*tree)->data->first_ret);
             free((*tree)->data);
+            (*tree)->data = NULL;
         }
 
         free((*tree)->key);                        
+        (*tree)->key = NULL;
         free((*tree));
         (*tree) = NULL;
     }

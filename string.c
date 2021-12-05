@@ -28,7 +28,9 @@ string_ptr_t string_init(){
 
 void string_free(string_ptr_t string){
     free(string->string);
+    string->string = NULL;
     free(string);
+    string = NULL;
 }
 
 bool string_append_character(string_ptr_t string, char a){

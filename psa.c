@@ -608,13 +608,15 @@ psa_error_t psa (p_data_ptr_t data)
 
                     if (data->token->type == T_LEFT_BRACKET)
                     {
-                        free(id);                        
+                        free(id);
+                        id = NULL;                        
                         return PSA_ERR;
                     }
                     else
                     {
                         codeGen_push_var(id);  
                         free(id);
+                        id = NULL;
                     }                                                          
                 }else{
                     switch(get_type(data)){

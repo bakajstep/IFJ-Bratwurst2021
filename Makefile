@@ -79,6 +79,7 @@ PROG58=multiassign
 PROG59=substr
 PROG60=visibility
 PROG61=whitespaces
+DISCTEST=program
 
 CURTEST=_test_cur_
 REFTEST=_test_ref_
@@ -94,7 +95,7 @@ EXPLPATH=$(TESTSDIR)/$(EXPLDIR)/
 
 CC=gcc
 # TODO smazat -g
-CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
+CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11
 
 .PHONY: all $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean $(GEN)-test $(GEN)-clean
 
@@ -510,6 +511,13 @@ $(GEN)-test:
 	@echo "\nTest case 'whitespaces' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0
 
+	@echo "\n------------------------------------ 'disc_test' ------------------------------------\n"
+	./$(GENPATH)$(GEN)-test < $(GENPATH)$(DISCTEST).tl > $(GENPATH)$(GENTEST)$(DISCTEST).code
+	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(DISCTEST).code < $(GENPATH)input > $(GENPATH)$(GENTEST)$(DISCTEST).out
+	@echo "\nTest case 'whitespaces' output differences:"
+	@diff -su $(GENPATH)$(GENTEST)$(DISCTEST).out $(GENPATH)output || exit 0	
+
+	
 $(GEN)-clean:
 	cd $(GENPATH) && rm -f \
 	$(GENTEST)$(PROG53).code \
@@ -529,6 +537,8 @@ $(GEN)-clean:
 	$(GENTEST)$(PROG58).out \
 	$(GENTEST)$(PROG59).out \
 	$(GENTEST)$(PROG60).out \
-	$(GENTEST)$(PROG61).out \
+	$(GENTEST)$(PROG61).out \	
+	$(GENTEST)$(DISCTEST).out \
+	$(GENTEST)$(DISCTEST).code \
 	$(GEN)-test
 	

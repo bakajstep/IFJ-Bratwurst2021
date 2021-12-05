@@ -94,6 +94,7 @@ void delete_token (token_t* token)
             token->type == T_STRING)
         {
             free(token->attribute.string);                        
+            token->attribute.string = NULL;
         }        
     }
     
@@ -135,7 +136,7 @@ token_t* get_next_token ()
                 if (symbol == '#')
                 {
                     token->type = T_CHAR_CNT;
-                    string_free(str);
+                    string_free(str);                    
 
                     return token;
                 }

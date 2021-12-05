@@ -27,7 +27,9 @@ void DLL_Dispose( DLList *list ) {
     while (list->firstElement != NULL){
         list->firstElement = list->firstElement->nextElement;
         free(tmp->data);
+        tmp->data = NULL;
         free(tmp);
+        tmp = NULL;
         tmp = list->firstElement;
     }
     list->activeElement = NULL;

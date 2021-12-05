@@ -34,6 +34,7 @@ void LL_Dispose( LList* list ) {
         to_delete = current;
         current = current->nextElement;
         free(to_delete);
+        to_delete = NULL;
     }
 
     list->lastElement = NULL;

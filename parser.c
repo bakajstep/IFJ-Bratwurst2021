@@ -199,8 +199,14 @@ void delete_data_param(function_params_t* param)
         current = param;
         param = param->param_next;
 
-        free(current->param_name);
+        if (current->param_name != NULL)
+        {
+            //free(current->param_name);
+            current->param_name = NULL;
+        }
+                
         free(current);
+        current = NULL;
     }    
 }
 
@@ -213,7 +219,8 @@ void delete_data_ret(function_returns_t* ret)
         current = ret;
         ret = ret->ret_next;
 
-        free(current);   
+        free(current);
+        current = NULL;   
     }    
 }
 
@@ -227,7 +234,9 @@ void delete_ids_list(ids_list_t* ids_list)
         ids_list = ids_list->next;   
 
         free(current->id);
+        current->id = NULL;
         free(current);
+        current = NULL;
     }
 }
 
@@ -241,7 +250,9 @@ void delete_data (p_data_ptr_t data)
 {
     delete_token(data->token);
     free(data->func_name);
+    data->func_name = NULL;
     free(data->body_func_name);
+    data->body_func_name = NULL;
     delete_data_param(data->param);
     delete_data_ret(data->ret);
     delete_ids_list(data->ids_list);    
@@ -263,6 +274,7 @@ void delete_symtable_data(symData_t** data)
     (*data)->first_ret = NULL;
 
     free(*data);
+    *data = NULL;
 }
 
 /**************** BACKEND FUNCTIONS ****************/
@@ -858,6 +870,7 @@ void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
     if (newId->id == NULL)
     {
         free(newId);
+        newId = NULL;
         err = E_INTERNAL;
         return;
     }
@@ -924,6 +937,7 @@ bool push_params_code_gen(p_data_ptr_t data)
     if (param_attr == NULL)
     {                            
         free(param_type);
+        param_type = NULL;
         err = E_INTERNAL;
         return false;
     }                        
@@ -963,14 +977,18 @@ bool push_params_code_gen(p_data_ptr_t data)
     if (*param_type == P_ID)
     {
         free(param_attr->id);
+        param_attr->id = NULL;
     }
     else if (*param_type == P_STR)
     {
         free(param_attr->str);
+        param_attr->str = NULL;
     }
 
     free(param_attr);                        
+    param_attr = NULL;
     free(param_type);    
+    param_type = NULL;
 
     return true;
 }
@@ -1219,6 +1237,7 @@ bool prog (p_data_ptr_t data)
             }
 
             free(data->stack);            
+            data->stack = NULL;
 
             /* -------------- SEMANTIC --------------*/
 
@@ -1312,6 +1331,7 @@ bool main_b (p_data_ptr_t data)
                 if (data->func_name != NULL)
                 {
                     free(data->func_name);
+                    data->func_name = NULL;
                 }
                 
                 /* DONE free */
@@ -1328,6 +1348,7 @@ bool main_b (p_data_ptr_t data)
                 if (data->body_func_name != NULL)
                 {
                     free(data->body_func_name);
+                    data->body_func_name = NULL;
                 }
 
                 data->body_func_name = (char*) malloc(strlen(data->func_name) + 1);
@@ -1438,6 +1459,7 @@ bool main_b (p_data_ptr_t data)
                         if (err != E_NO_ERR)
                         {
                             free(func_name);
+                            func_name = NULL;
                             return false;
                         }
 
@@ -1474,6 +1496,7 @@ bool main_b (p_data_ptr_t data)
                                         //printf("\nESD: %d\n", 4);
                                         err = E_SEM_DEF;
                                         free(func_name);
+                                        func_name = NULL;
                                         return false;
                                     }                                                                    
                                 }
@@ -1516,6 +1539,7 @@ bool main_b (p_data_ptr_t data)
             }  
 
             free(func_name);          
+            func_name = NULL;
         }        
         /* 3. <main_b> -> global id : function (<arg_def_types>) <ret_def_types> <main_b> */
         else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_GLOBAL)
@@ -1555,6 +1579,7 @@ bool main_b (p_data_ptr_t data)
                 if (data->func_name != NULL)
                 {
                     free(data->func_name);
+                    data->func_name = NULL;
                 }
 
                 /* DONE free */
@@ -1620,6 +1645,7 @@ bool main_b (p_data_ptr_t data)
             if (data->func_name != NULL)
             {
                 free(data->func_name);
+                data->func_name = NULL;
             }
 
             /* DONE free */
@@ -1648,6 +1674,7 @@ bool main_b (p_data_ptr_t data)
             if (data->param != NULL)
             {
                 delete_data_param(data->param);
+                data->param = NULL;
             }            
 
             if ((param_val = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_type_param) != NULL)
@@ -1779,6 +1806,7 @@ bool stats (p_data_ptr_t data)
                 //printf("\nESD: %d\n", 7);
                 err = E_SEM_DEF;
                 free(id);
+                id = NULL;
                 return false;
             }
 
@@ -1787,6 +1815,7 @@ bool stats (p_data_ptr_t data)
                 //printf("\nESD: %d\n", 8);
                 err = E_SEM_DEF;
                 free(id);
+                id = NULL;
                 return false;
             }
                         
@@ -1797,6 +1826,7 @@ bool stats (p_data_ptr_t data)
             if (err != E_NO_ERR)
             {
                 free(id);
+                id = NULL;
                 return false;
             }
                 
@@ -1812,6 +1842,7 @@ bool stats (p_data_ptr_t data)
             if (data->func_name != NULL)
             {
                 free(data->func_name);
+                data->func_name = NULL;
             }
 
             /* DONE free */
@@ -1872,6 +1903,7 @@ bool stats (p_data_ptr_t data)
                                 //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                                                                                            
                                 err = E_SEM_ASSIGN;
                                 free(id);
+                                id = NULL;
                                 return false;
                             }                                                        
                         }                                                
@@ -1888,7 +1920,8 @@ bool stats (p_data_ptr_t data)
                 }                            
             }
 
-            free(id);         
+            free(id);     
+            id = NULL;   
         } // if (token_type == T_IDENTIFIER)       
     }    
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
@@ -2061,6 +2094,7 @@ bool stats (p_data_ptr_t data)
         if (data->func_name != NULL)
         {
             free(data->func_name);
+            data->func_name = NULL;
         }
 
         /* DONE free */
@@ -2174,6 +2208,7 @@ bool id_func (p_data_ptr_t data)
         if (data->param != NULL)
         {
             delete_data_param(data->param);
+            data->param = NULL;
         }
 
         //data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
@@ -2311,6 +2346,7 @@ bool params (p_data_ptr_t data)
                 if (err != E_NO_ERR)
                 {
                     free(id);
+                    id = NULL;
                     return false;
                 }                
 
@@ -2334,6 +2370,7 @@ bool params (p_data_ptr_t data)
     }    
 
     free(id);
+    id = NULL;
 
     return ret_val;
 }
@@ -2392,6 +2429,7 @@ bool n_params (p_data_ptr_t data)
                     if (err != E_NO_ERR)
                     {
                         free(id);
+                        id = NULL;
                         return false;
                     }                
 
@@ -2408,7 +2446,8 @@ bool n_params (p_data_ptr_t data)
                 } 
             } 
 
-            free(id);              
+            free(id);        
+            id = NULL;      
         } // if (token_type == T_IDENTIFIER)                     
     }    
     /* 17. <n_params> -> epsilon */
@@ -2836,6 +2875,7 @@ bool as_vals (p_data_ptr_t data)
         if (data->func_name != NULL)
         {
             free(data->func_name);
+            data->func_name = NULL;
         }
 
         /* DONE free */
@@ -2873,6 +2913,7 @@ bool as_vals (p_data_ptr_t data)
             if (data->param != NULL)
             {
                 delete_data_param(data->param);
+                data->param = NULL;
             }
 
             /* For args */
@@ -3150,6 +3191,7 @@ bool assign_val (p_data_ptr_t data)
                 }
                                 
                 free(func_name);
+                func_name = NULL;
                 return false;
             }
             else
@@ -3167,12 +3209,14 @@ bool assign_val (p_data_ptr_t data)
                 //printf("\nESD: %d\n", 12);
                 err = E_SEM_DEF;
                 free(func_name);
+                func_name = NULL;
                 return false;
             }
         
             if (data->param != NULL)
             {
                 delete_data_param(data->param);
+                data->param = NULL;
             }                        
 
             func_data = symTableSearch(LL_GetFirst(data->tbl_list), func_name);
@@ -3202,6 +3246,7 @@ bool assign_val (p_data_ptr_t data)
                     //printf("here E_SEM_PARAM");     
                     err = E_SEM_PARAM;
                     free(func_name);
+                    func_name = NULL;
                     return false;
                 }                
             }                        
@@ -3212,6 +3257,7 @@ bool assign_val (p_data_ptr_t data)
             {
                 err = E_INTERNAL;
                 free(func_name);
+                func_name = NULL;
                 return false;
             }            
 
@@ -3296,6 +3342,7 @@ bool assign_val (p_data_ptr_t data)
     }        
 
     free(func_name);
+    func_name = NULL;
 
     return ret_val;
 }
@@ -3353,6 +3400,7 @@ bool term (p_data_ptr_t data)
         param_stack_push(data->stack, P_ID, *attribute);
 
         free(attribute);
+        attribute = NULL;
 
         /* ----------- END OF CODE GEN ----------*/
 
@@ -3397,6 +3445,7 @@ bool term (p_data_ptr_t data)
         }
 
         free(attribute);
+        attribute = NULL;
 
         /* ----------- END OF CODE GEN ----------*/
 
