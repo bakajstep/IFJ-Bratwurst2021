@@ -403,11 +403,11 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
 
             //pretypovani
             if (op1->data == INT){
-                //op1_to_number = true;
+                op1_to_number = true;
                 *final_type = NUMBER;
             }
             if (op3->data == INT){
-                //op3_to_number = true;
+                op3_to_number = true;
                 *final_type = NUMBER;
             }
             break;
@@ -505,10 +505,11 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
 
             if(op1_to_number == true){
                 //generovani kodu pro pretypovani (prvni na zasobniku)
-                
+                generate_IntToFloat1();
             }
             if(op3_to_number == true){
                 //generovani kodu pro pretypovani (druhy na zasobniku)
+                generate_IntToFloat2();
             }
             break;
         default: ;
