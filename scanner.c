@@ -442,19 +442,28 @@ token_t* get_next_token ()
                 {                    
                     token->type = T_STRING;
                     /* DONE free */
-                    token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
 
-                    if (token->attribute.string == NULL)
+                    if (str->lenght != 0)
                     {
-                        err = E_INTERNAL;
-                        delete_token(token);
-                        string_free(str);
+                        token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
 
-                        return NULL;
-                    }                    
+                        if (token->attribute.string == NULL)
+                        {
+                            err = E_INTERNAL;
+                            delete_token(token);
+                            string_free(str);
 
-                    strcpy(token->attribute.string, get_char_arr(str));
-                    string_free(str);
+                            return NULL;
+                        }                    
+
+                        strcpy(token->attribute.string, get_char_arr(str));
+                        string_free(str);   
+                    }
+                    else
+                    {
+                        token->attribute.string = (char*) malloc(1);
+                        strcpy(token->attribute.string, "");
+                    }
 
                     return token;                 
                 }
