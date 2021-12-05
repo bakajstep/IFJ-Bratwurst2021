@@ -3963,6 +3963,7 @@ bool r_n_func_def_types (p_data_ptr_t data)
  * 49. <type> -> integer
  * 50. <type> -> number
  * 51. <type> -> string
+ * 52. <type> -> nil
  */
 bool type (p_data_ptr_t data)
 {
@@ -3981,7 +3982,8 @@ bool type (p_data_ptr_t data)
 
         if (keyword == K_INTEGER ||
             keyword == K_NUMBER ||
-            keyword == K_STRING)
+            keyword == K_STRING ||
+            keyword == K_NIL)
         {                  
             switch (keyword)
             {
@@ -3996,6 +3998,9 @@ bool type (p_data_ptr_t data)
             case K_STRING:
                 data->type = STR;
                 break;
+
+            case K_NIL:
+                data->type = NIL;
 
             default:                
                 break;
@@ -4013,10 +4018,10 @@ bool type (p_data_ptr_t data)
  * NON-TERMINAL: <const>
  * 
  * RULES:       
- * 52. <const> -> int_value
- * 53. <const> -> double_value
- * 54. <const> -> string_value
- * 55. <const> -> nil
+ * 53. <const> -> int_value
+ * 54. <const> -> double_value
+ * 55. <const> -> string_value
+ * 56. <const> -> nil
  */
 bool constant (p_data_ptr_t data)
 {

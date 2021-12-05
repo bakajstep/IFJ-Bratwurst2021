@@ -537,8 +537,10 @@ $(GEN)-clean:
 	$(GENTEST)$(PROG58).out \
 	$(GENTEST)$(PROG59).out \
 	$(GENTEST)$(PROG60).out \
-	$(GENTEST)$(PROG61).out \	
+	$(GENTEST)$(PROG61).out \
 	$(GENTEST)$(DISCTEST).out \
 	$(GENTEST)$(DISCTEST).code \
-	$(GEN)-test
-	
+	input \
+	output \
+	program.tl \
+	$(GEN)-test	
