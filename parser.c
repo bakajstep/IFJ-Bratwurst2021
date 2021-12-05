@@ -754,6 +754,19 @@ bool func_is_not_def (symTree_t* tree)
     return true;    
 }
 
+bool is_func(LList* tbl_list, char* id)
+{
+    bool ret_val = false;
+    symTree_t* glb_tbl = LL_GetFirst(tbl_list);  
+    
+    if (symTableSearch(glb_tbl, id) != NULL)
+    {
+        ret_val = true;
+    }
+    
+    return ret_val;
+}
+
 void copy_params_to_func_table (LList* tbl_list, char* func_name)
 {    
     //symTree_t* func_tbl = LL_GetLast(tbl_list);
@@ -805,7 +818,7 @@ bool check_func_assign (p_data_ptr_t data)
                 // VALID
             }
             else
-            {                         
+            {                                     
                 err = E_SEM_PARAM;
                 ret_val = false;
                 break;
@@ -821,7 +834,7 @@ bool check_func_assign (p_data_ptr_t data)
     }
     /* The function returns fewer values ​​than the variables expect */
     if (func_returns == NULL && data->ids_list != NULL)
-    {                             
+    {          
         err = E_SEM_PARAM;
         ret_val = false;
     }    
@@ -1238,6 +1251,7 @@ bool main_b (p_data_ptr_t data)
     symTree_t* tree = NULL;    
     symData_t* function_declaration_data = NULL;
     symData_t* func_code_gen = NULL;
+    function_params_t* param_val = NULL;
     char* func_name = NULL;
     unsigned params_count_code_gen = 0;
 
@@ -1635,9 +1649,16 @@ bool main_b (p_data_ptr_t data)
             if (data->param != NULL)
             {
                 delete_data_param(data->param);
-            }
+            }            
 
-            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+            if ((param_val = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_type_param) != NULL)
+            {
+                data->param = param_val;
+            }
+            else
+            {
+                data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+            }                        
 
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -2136,6 +2157,7 @@ bool id_func (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_code_gen = NULL;
+    function_params_t* param_val = NULL;
     unsigned params_count_code_gen = 0;
 
     VALIDATE_TOKEN(data->token);
@@ -2153,7 +2175,15 @@ bool id_func (p_data_ptr_t data)
             delete_data_param(data->param);
         }
 
-        data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+        //data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+        if ((param_val = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_type_param) != NULL)
+        {
+            data->param = param_val;
+        }
+        else
+        {
+            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+        }         
 
         /* ----------- END OF SEMANTIC ----------*/
 
@@ -2546,7 +2576,7 @@ bool r_vals (p_data_ptr_t data)
                     // VALID
                 }
                 else
-                {                         
+                {                                                
                     err = E_SEM_PARAM;
                     return false;             
                 }                       
@@ -2564,7 +2594,7 @@ bool r_vals (p_data_ptr_t data)
              * Excess count of return values
              */
             if (data->token->type == T_COMMA)
-            {                
+            {                                
                 err = E_SEM_PARAM;
                 return false;
             }
@@ -2710,7 +2740,7 @@ bool r_n_vals (p_data_ptr_t data)
                         // VALID
                     }
                     else
-                    {                                      
+                    {                                                          
                         err = E_SEM_PARAM;
                         return false;             
                     }                           
@@ -2728,7 +2758,7 @@ bool r_n_vals (p_data_ptr_t data)
                     * Excess count of return values
                     */
                 if (data->token->type == T_COMMA)
-                {                        
+                {                                              
                     err = E_SEM_PARAM;
                     return false;
                 }   
@@ -2788,6 +2818,7 @@ bool as_vals (p_data_ptr_t data)
     symData_t* func_code_gen = NULL;
     unsigned params_count_code_gen = 0;
     ids_list_t* ids_list_copy = NULL;
+    function_params_t* param_val = NULL;
 
     VALIDATE_TOKEN(data->token);
     TEST_EOF(data->token);
@@ -2811,11 +2842,15 @@ bool as_vals (p_data_ptr_t data)
         }
 
         strcpy(data->func_name, data->token->attribute.string);
-
-        if (vals(data))
+        
+        if (!is_func(data->tbl_list, data->func_name))
         {
-            ret_val = true;
-        }
+            /* Identifier is not function name and is a part of expression */
+            if (vals(data))
+            {
+                ret_val = true;
+            }
+        }                
         else
         {            
             /* -------------- SEMANTIC --------------*/ 
@@ -2824,7 +2859,7 @@ bool as_vals (p_data_ptr_t data)
              */       
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
-                printf("\nESD: %d\n", 11);
+                //printf("\nESD: %d\n", 11);
                 err = E_SEM_DEF;
                 return false;
             }
@@ -2835,7 +2870,15 @@ bool as_vals (p_data_ptr_t data)
             }
 
             /* For args */
-            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+            //data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+            if ((param_val = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_type_param) != NULL)
+            {
+                data->param = param_val;
+            }
+            else
+            {
+                data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+            }   
 
             /* Saving ids list */
             
@@ -2845,13 +2888,15 @@ bool as_vals (p_data_ptr_t data)
 
             /* For assign to identifiers */
             if (!check_func_assign(data))
-            {                
+            {                                   
                 err = E_SEM_PARAM;
                 return false;
             }        
 
             /* ----------- END OF SEMANTIC ----------*/
 
+            /* Is added */
+            next_token(data);
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;                
@@ -3044,6 +3089,7 @@ bool assign_val (p_data_ptr_t data)
     symData_t* func_data;
     symData_t* func_code_gen = NULL;
     char* func_name = NULL;
+    function_params_t* param_val = NULL;
     unsigned params_count_code_gen = 0;
 
     VALIDATE_TOKEN(data->token);
@@ -3063,18 +3109,23 @@ bool assign_val (p_data_ptr_t data)
         func_name = (char *) malloc(strlen(data->token->attribute.string) + 1);
         strcpy(func_name, data->token->attribute.string);
 
-        if (expression(data))
+        if (!is_func(data->tbl_list, func_name))
         {
-            /* -------------- CODE GEN --------------*/
+            if (expression(data))
+            {
+                /* -------------- CODE GEN --------------*/
 
-            codeGen_assign_var(data->func_name);
+                codeGen_assign_var(data->func_name);
 
-            /* ----------- END OF CODE GEN ----------*/
+                /* ----------- END OF CODE GEN ----------*/
 
-            ret_val = true;
-        }
+                ret_val = true;
+            }
+        }                
         else
-        {            
+        {   
+            /* Is added */
+            next_token(data);         
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;            
@@ -3082,6 +3133,7 @@ bool assign_val (p_data_ptr_t data)
             if (token_type != T_LEFT_BRACKET)
             {
                 /* Not function call */
+                /* TODO mozna smazat */
                 if (err == E_INTERNAL)
                 {                                                            
                     err = E_SYNTAX;
@@ -3091,7 +3143,8 @@ bool assign_val (p_data_ptr_t data)
                 return false;
             }
             else
-            {                                
+            {                 
+                /* TODO mozna smazat */               
                 err = E_NO_ERR;
             }            
              
@@ -3110,20 +3163,37 @@ bool assign_val (p_data_ptr_t data)
             if (data->param != NULL)
             {
                 delete_data_param(data->param);
-            }            
+            }                        
 
             func_data = symTableSearch(LL_GetFirst(data->tbl_list), func_name);
-            data->param = func_data->first_param;        
+            //data->param = func_data->first_param;    
+
+            if ((param_val = func_data->first_type_param) != NULL)
+            {
+                data->param = param_val;
+            }
+            else
+            {
+                data->param = func_data->first_param;
+            }    
 
             if (func_data->first_ret != NULL)
             {
                 data->psa_data_type = func_data->first_ret->return_type;                
             }
             else
-            {                
-                err = E_SEM_PARAM;
-                free(func_name);
-                return false;
+            {        
+                if (func_data->first_def_ret != NULL)
+                {
+                    data->psa_data_type = func_data->first_def_ret->return_type;                
+                }
+                else
+                {
+                    //printf("here E_SEM_PARAM");     
+                    err = E_SEM_PARAM;
+                    free(func_name);
+                    return false;
+                }                
             }                        
 
             data->func_name = (char*) malloc(strlen(func_name) + 1);
@@ -3346,7 +3416,7 @@ bool args (p_data_ptr_t data)
     {
         /* -------------- SEMANTIC --------------*/        
         if (data->param != NULL)
-        {                        
+        {                                
             err = E_SEM_PARAM;
             return false;
         }        
@@ -3372,7 +3442,7 @@ bool args (p_data_ptr_t data)
                         // VALID
                     }
                     else
-                    {                                                
+                    {                                                                           
                         err = E_SEM_PARAM;
                         return false;
                     }                                
@@ -3381,8 +3451,8 @@ bool args (p_data_ptr_t data)
                 data->param = data->param->param_next;        
             }
             else
-            {                
-                err = E_SEM_PARAM;
+            {                                                
+                //printf("\nhere\n"); 
                 return false;
             }
         }   

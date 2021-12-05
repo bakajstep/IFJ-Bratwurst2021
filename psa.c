@@ -239,6 +239,8 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
     {
         case T_CHAR_CNT:
             return HASHTAG;
+        case T_CONCAT:
+            return CONCAT;
         case T_PLUS:
             return PLUS;
         case T_MINUS:
@@ -675,8 +677,14 @@ psa_error_t psa (p_data_ptr_t data)
                 psa_rules_enum rule = test_rule(num,&symbol1,&symbol2,&symbol3);
 		//printf("\nnumber for testing rule: %d\n",num);
                 //podle pravidla zpustím redukci
+/*
+                printf("\nhere psa symbol1: %d\n", symbol1.symbol);
+                printf("\nhere psa symbol2: %d\n", symbol2.symbol);
+                printf("\nhere psa symbol3: %d\n", symbol3.symbol);
 
-                switch (rule) {
+                printf("\nhere psa rule: %d\n", rule);
+*/
+                switch (rule) {                    
                     case OPERAND:
                         // rule E -> i
                         if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){    
@@ -715,7 +723,7 @@ psa_error_t psa (p_data_ptr_t data)
                         if(!symbol_stack_push(&stack,NON_TERM,final_type)){                            
                             err = E_INTERNAL;
                             return PSA_ERR;
-                        }
+                        }                        
                         generate_operation(rule);
                         break;
                     case NT_PLUS_NT:

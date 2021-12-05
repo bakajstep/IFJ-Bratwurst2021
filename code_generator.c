@@ -2,6 +2,8 @@
 // Created by adam on 03.12.21.
 //
 
+#include <ctype.h>
+
 #include "code_generator.h"
 
 /*
@@ -10,11 +12,120 @@
 
 char* convert_string(char* str_toconvert){
     char* string = str_toconvert;
+    //char digits_buf[DIGITS_CNT];
     string_ptr_t string_res = string_init();
+
 
     while(*string != '\0'){
         //iteruji přes vstupní string
+/*
+        if (*string == '#' ||
+            *string == '\\' ||            
+            !isprint(*string))
+        {
+            if (*(string+1) != 0)
+            {
+                string_append_character(string_res, '\\');
+                sprintf(digits_buf, "%03d", *(string));            
+                
+                for (int i = 0; i < DIGITS_CNT - 1; i++)
+                {
+                    string_append_character(string_res, digits_buf[i]);
+                }                                            
+            }
+            else
+            {
+                string_append_character(string_res, *string);
+            }                                          
+        }
+        else if (*string <= 32)
+        {
+            string_append_character(string_res, '\\');
+            string_append_character(string_res, '0');
+            string_append_character(string_res, ((*string / 10) + 48));
+            string_append_character(string_res, ((*string % 10) + 48));
+        }        
+        else
+        {
+            string_append_character(string_res, *string);
+        }
+  */      
+        
         if(*string == 92){                        
+            string_append_character(string_res, '\\');
+            
+            if (!isdigit(*(string+1)))
+            {
+                string++;
+
+                switch (*string)
+                {
+                case 'a':                    
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '7');
+                    break;
+
+                case 'b':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '8');
+                    break;
+                
+                case 'f':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '1');
+                    string_append_character(string_res, '2');
+                    break;
+                
+                case 'n':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '1');
+                    string_append_character(string_res, '0');
+                    break;
+
+                case 'r':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '1');
+                    string_append_character(string_res, '3');
+                    break;
+
+                case 't':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '9');
+                    break;
+
+                case 'v':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '1');
+                    string_append_character(string_res, '1');
+                    break;
+
+                case '\\':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '9');
+                    string_append_character(string_res, '2');
+                    break;
+
+                case '"':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '3');
+                    string_append_character(string_res, '4');
+                    break;
+
+                case '\'':
+                    string_append_character(string_res, '0');
+                    string_append_character(string_res, '3');
+                    string_append_character(string_res, '9');
+                    break;                
+
+                default:
+                    break;
+                }                                       
+            }
+            
+            /*
             if (*(string+1) == 'n')
             {
                 string_append_character(string_res, '\\');
@@ -26,14 +137,15 @@ char* convert_string(char* str_toconvert){
             else if (*(string+1) == '0')
             {
                 string_append_character(string_res, *string);
-            }            
+            }                
             else
             {
-                string_append_character(string_res, '\\');
+                
                 string_append_character(string_res, '0');
                 string_append_character(string_res, '9');
                 string_append_character(string_res, '2');
-            }            
+            }     
+            */       
         }else if(*string == 35){
             string_append_character(string_res, '\\');
             string_append_character(string_res, '0');
@@ -439,7 +551,7 @@ void generate_operation(psa_rules_enum operation){
             // rule E -> E .. E
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
-            printf("CONCAT GF@tmp1 GF@tmp1 GF@tmp2\n");
+            printf("CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
             printf("PUSHS GF@tmp1\n");
             break;
         case NT_EQ_NT:
