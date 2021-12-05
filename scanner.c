@@ -921,7 +921,7 @@ token_t* get_next_token ()
                 break;
 
             case (S_IDENTIFIER_KEYWORD):
-                if (isalpha(symbol) || isdigit(symbol))
+                if (isalpha(symbol) || isdigit(symbol) || symbol == '_')
                 {
                     if (!string_append_character(str, symbol))
                     {

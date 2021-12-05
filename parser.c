@@ -535,7 +535,7 @@ bool check_identifier_is_declared (LList* tbl_list, char* id)
                 ret_val = true;                
             }
 
-            break;            
+            //break;            
         }        
 
         elem = elem->nextElement;        
@@ -571,7 +571,7 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
                 ret_val = true;                
             }
 
-            break;            
+            //break;            
         }        
 
         elem = elem->nextElement;        
@@ -1102,7 +1102,7 @@ parser_error_t parser ()
     //print(data);
     
     if (!valid_token(data->token))
-    {                                            
+    {                         
         err = E_SYNTAX; 
         delete_data(data);
 
@@ -1134,7 +1134,7 @@ parser_error_t parser ()
     if (!prog(data))
     {
         if (err == E_NO_ERR)
-        {                                                              
+        {                                                                                 
             err = E_SYNTAX;
         }
         
@@ -3135,7 +3135,7 @@ bool assign_val (p_data_ptr_t data)
                 /* Not function call */
                 /* TODO mozna smazat */
                 if (err == E_INTERNAL)
-                {                                                            
+                {                                                                                
                     err = E_SYNTAX;
                 }
                                 
@@ -3312,7 +3312,8 @@ bool term (p_data_ptr_t data)
         /* -------------- SEMANTIC --------------*/        
         if (!check_identifier_is_defined(data->tbl_list, data->token->attribute.string))
         {            
-            //printf("\nESD: %d\n", 13);
+
+            printf("\nESD: %d\n", 13);
             err = E_SEM_DEF;
             return false;
         }

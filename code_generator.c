@@ -264,6 +264,9 @@ void codeGen_substr(){
     printf("SUB TF@i TF@i int@1\n");
     printf("DEFVAR TF@n\n");
     printf("POPS TF@n\n");
+    //
+    printf("SUB TF@n TF@n int@1\n");
+    //
     printf("DEFVAR TF@char\n");
     printf("MOVE TF@char string@\n");
     printf("DEFVAR TF@str_len\n");

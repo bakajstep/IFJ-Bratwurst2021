@@ -560,7 +560,7 @@ psa_error_t psa (p_data_ptr_t data)
 
         switch (tbl_data) {
             case '=': ;
-                if(get_type(data) == DERR){                             
+                if(get_type(data) == DERR){                                                 
                     err = E_SEM_DEF;
                     //next_token(data);
                     return PSA_ERR;
@@ -579,7 +579,7 @@ psa_error_t psa (p_data_ptr_t data)
                 }
                 //printf("\nsymbol on top: %d\n",(symbol_stack_top(&stack))->symbol);
                 //printf("\nsymbol to push:%d\n",get_symbol_from_token(data->token));
-                if(get_type(data) == DERR){                                                                           
+                if(get_type(data) == DERR){                                                                                           
                     err = E_SEM_DEF;
                     //next_token(data);
                     return PSA_ERR;
@@ -847,7 +847,7 @@ psa_error_t psa (p_data_ptr_t data)
                         }
                         generate_operation(rule);
                         break;
-                    case NOT_A_RULE:                        
+                    case NOT_A_RULE:                                        
                         err = E_SYNTAX;
                         return PSA_ERR;
                         break;
