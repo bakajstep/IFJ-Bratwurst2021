@@ -1889,14 +1889,14 @@ bool stats (p_data_ptr_t data)
 
                         data_type = symTableSearch(tree, id)->data_type;
 
-                        //printf("\n psa_data_type: %d\n", data->psa_data_type);
+                        //printf("\n psa_data_type: %d\n", data->psa_data_type);                                                
 
                         if (data_type != data->psa_data_type)
-                        {
+                        {                               
                             if (data->psa_data_type == NIL || 
                                 (data_type == NUMBER && data->psa_data_type == INT))
                             {
-                                // VALID                                
+                                // VALID                                                            
                             }
                             else
                             {                          
@@ -1913,7 +1913,7 @@ bool stats (p_data_ptr_t data)
                         /* ----------- END OF SEMANTIC ----------*/
 
                         if (stats(data))
-                        {                            
+                        {                                                        
                             ret_val = true;    
                         }                        
                     }                    
@@ -1926,11 +1926,11 @@ bool stats (p_data_ptr_t data)
     }    
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_IF)
-    {        
+    {             
         next_token(data);
         
         if (expression(data))
-        {
+        {            
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
             token_type = data->token->type;            
