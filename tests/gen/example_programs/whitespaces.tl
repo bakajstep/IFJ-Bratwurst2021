@@ -6,8 +6,8 @@ s
 : 
 string 
 = 
-"\x3A0"write(s, "\n")
-s = "a\255b"
+"\035"write(s, "\n")
+s = "a\092b"
 write(s
 , 
 "\n")local x:integer=0

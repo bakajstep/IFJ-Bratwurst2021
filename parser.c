@@ -273,7 +273,7 @@ void next_token(p_data_ptr_t data)
     data->token = get_next_token();
 
     /* TODO smazat */
-    //print(data);
+    // print(data);
 }
 
 bool valid_token (token_t* token)
@@ -1755,7 +1755,7 @@ bool stats (p_data_ptr_t data)
 
     /* 6. <stats> -> local id : <type> <assign> <stats> */
     if (token_type == T_KEYWORD && data->token->attribute.keyword == K_LOCAL)
-    {                                             
+    {                                                 
         next_token(data);
         VALIDATE_TOKEN(data->token);
         TEST_EOF(data->token);
@@ -1869,7 +1869,7 @@ bool stats (p_data_ptr_t data)
                             }
                             else
                             {                          
-                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                                                            
+                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                                                                                            
                                 err = E_SEM_ASSIGN;
                                 free(id);
                                 return false;
@@ -2517,7 +2517,7 @@ bool vals (p_data_ptr_t data)
                     // VALID                    
                 }
                 else
-                {                                        
+                {                    
                     err = E_SEM_ASSIGN;
                     return false;
                 }
@@ -2535,7 +2535,7 @@ bool vals (p_data_ptr_t data)
             data->ids_list = data->ids_list->next;
         }                        
         else
-        {                      
+        {                                                                   
             err = E_SEM_ASSIGN;
             return false;
         }        
@@ -2684,7 +2684,7 @@ bool n_vals (p_data_ptr_t data)
                             // VALID
                         }
                         else
-                        {                                                       
+                        {                                                                                     
                             err = E_SEM_ASSIGN;
                             return false;
                         }
@@ -2702,7 +2702,7 @@ bool n_vals (p_data_ptr_t data)
                 }                        
                 else
                 {     
-                    //printf("\nhere error 4\n");                  
+                    //printf("\nhere error 4\n");                                          
                     err = E_SEM_ASSIGN;
                     return false;
                 }        
@@ -2973,6 +2973,8 @@ bool as_vals (p_data_ptr_t data)
         
         if (data->ids_list != NULL)
         {            
+            //printf("\nhere chyba e sem assign\n"); 
+            //printf("\ndata ids list id: %s\n", data->ids_list->id);
             err = E_SEM_ASSIGN;
             return false;
         }
@@ -3040,7 +3042,7 @@ bool ret_vals (p_data_ptr_t data)
  * 28. <assign> -> epsilon
  */
 bool assign (p_data_ptr_t data)
-{        
+{            
     bool ret_val = false;
     token_type_t token_type;    
 
@@ -3089,7 +3091,7 @@ bool assign (p_data_ptr_t data)
  * 30. <assign_val> -> id (<args>)
  */
 bool assign_val (p_data_ptr_t data)
-{    
+{         
     bool ret_val = false;
     token_type_t token_type;
     symData_t* func_data;
@@ -3124,6 +3126,8 @@ bool assign_val (p_data_ptr_t data)
                 codeGen_assign_var(data->func_name);
 
                 /* ----------- END OF CODE GEN ----------*/
+
+                data->ids_list = data->ids_list->next;
 
                 ret_val = true;
             }
@@ -3285,6 +3289,8 @@ bool assign_val (p_data_ptr_t data)
         codeGen_assign_var(data->func_name);
 
         /* ----------- END OF CODE GEN ----------*/
+
+        data->ids_list = data->ids_list->next;
 
         ret_val = true;
     }        
