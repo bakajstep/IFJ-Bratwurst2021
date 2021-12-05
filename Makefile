@@ -466,26 +466,26 @@ $(GEN)-test:
 	#@echo "\nTest case 'example2' output differences:"
 	#@diff -su $(GENPATH)$(GENTEST)$(PROG54).out $(GENPATH)$(PROG54).out || exit 0
 
-	@echo "\n------------------------------------ 'example3' ------------------------------------\n"
-	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG55).tl > $(GENPATH)$(GENTEST)$(PROG55).code
-	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG55).code < $(GENPATH)$(PROG55).in > $(GENPATH)$(GENTEST)$(PROG55).out
-	@echo "\nTest case 'example3' output differences:"
-	@diff -su $(GENPATH)$(GENTEST)$(PROG55).out $(GENPATH)$(PROG55).out || exit 0
+	#@echo "\n------------------------------------ 'example3' ------------------------------------\n"
+	#@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG55).tl > $(GENPATH)$(GENTEST)$(PROG55).code
+	#@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG55).code < $(GENPATH)$(PROG55).in > $(GENPATH)$(GENTEST)$(PROG55).out
+	#@echo "\nTest case 'example3' output differences:"
+	#@diff -su $(GENPATH)$(GENTEST)$(PROG55).out $(GENPATH)$(PROG55).out || exit 0
 
-	@echo "\n------------------------------------ 'fun' ------------------------------------\n"
-	./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG56).tl > $(GENPATH)$(GENTEST)$(PROG56).code
-	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG56).code < $(GENPATH)$(PROG56).in > $(GENPATH)$(GENTEST)$(PROG56).out
-	@echo "\nTest case 'fun' output differences:"
-	@diff -su $(GENPATH)$(GENTEST)$(PROG56).out $(GENPATH)$(PROG56).out || exit 0
+	#@echo "\n------------------------------------ 'fun' ------------------------------------\n"
+	#@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG56).tl > $(GENPATH)$(GENTEST)$(PROG56).code
+	#@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG56).code < $(GENPATH)$(PROG56).in > $(GENPATH)$(GENTEST)$(PROG56).out
+	#@echo "\nTest case 'fun' output differences:"
+	#@diff -su $(GENPATH)$(GENTEST)$(PROG56).out $(GENPATH)$(PROG56).out || exit 0
 
-	@echo "\n------------------------------------ 'hello' ------------------------------------\n"
-	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG57).tl > $(GENPATH)$(GENTEST)$(PROG57).code
-	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG57).code < $(GENPATH)$(PROG57).in > $(GENPATH)$(GENTEST)$(PROG57).out
-	@echo "\nTest case 'hello' output differences:"
-	@diff -su $(GENPATH)$(GENTEST)$(PROG57).out $(GENPATH)$(PROG57).out || exit 0
+	#@echo "\n------------------------------------ 'hello' ------------------------------------\n"
+	#./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG57).tl > $(GENPATH)$(GENTEST)$(PROG57).code
+	#@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG57).code < $(GENPATH)$(PROG57).in > $(GENPATH)$(GENTEST)$(PROG57).out
+	#@echo "\nTest case 'hello' output differences:"
+	#@diff -su $(GENPATH)$(GENTEST)$(PROG57).out $(GENPATH)$(PROG57).out || exit 0
 
 	@echo "\n------------------------------------ 'multiassign' ------------------------------------\n"
-	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG58).tl > $(GENPATH)$(GENTEST)$(PROG58).code
+	./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG58).tl > $(GENPATH)$(GENTEST)$(PROG58).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG58).code < $(GENPATH)$(PROG58).in > $(GENPATH)$(GENTEST)$(PROG58).out
 	@echo "\nTest case 'multiassign' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG58).out $(GENPATH)$(PROG58).out || exit 0
