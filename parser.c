@@ -843,8 +843,7 @@ bool check_func_assign (p_data_ptr_t data)
 }
 
 void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
-{
-    //printf("\nid insert: %s\n", id);
+{    
     /* DONE free */
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
 
@@ -869,16 +868,16 @@ void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
     if(*ids_list == NULL){
         *ids_list = newId;
         (*ids_list)->next = NULL;
-    }else{
+    }else{        
         ids_list_t* current;
         current = (*ids_list);
 
-        while(current != NULL){
+        while(current->next != NULL){
             current = current->next;
         }
-        current = newId;
-        current->next = NULL;
-    }
+        newId->next = NULL;        
+        current->next = newId;
+    }    
 }
 
 void save_ids_list(ids_list_t* orig, ids_list_t** dest)
@@ -1870,7 +1869,7 @@ bool stats (p_data_ptr_t data)
                             }
                             else
                             {                          
-                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                            
+                                //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                                                            
                                 err = E_SEM_ASSIGN;
                                 free(id);
                                 return false;
@@ -2109,6 +2108,8 @@ bool stats (p_data_ptr_t data)
             
             delete_ids_list(data->ids_list);  
             data->ids_list = NULL;
+
+            // printf("\ninserting id : %s\n", data->func_name);
 
             idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->func_name), data->func_name);                                    
             //printf("\ndata ids list: %s\n", data->ids_list->id);
@@ -2459,7 +2460,11 @@ bool n_ids (p_data_ptr_t data)
                 return false;
             }
 
-            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->token->attribute.string), data->token->attribute.string);
+            // printf("\ninserting id : %s\n", data->token->attribute.string);
+
+            //printf("\nfirst id: %s\n", data->ids_list->id);
+
+            idInsert(&(data->ids_list), identifier_type(data->tbl_list, data->token->attribute.string), data->token->attribute.string);            
 
             if (err != E_NO_ERR)
             {
@@ -2512,7 +2517,7 @@ bool vals (p_data_ptr_t data)
                     // VALID                    
                 }
                 else
-                {                    
+                {                                        
                     err = E_SEM_ASSIGN;
                     return false;
                 }
@@ -2530,7 +2535,7 @@ bool vals (p_data_ptr_t data)
             data->ids_list = data->ids_list->next;
         }                        
         else
-        {            
+        {                      
             err = E_SEM_ASSIGN;
             return false;
         }        
@@ -2679,7 +2684,7 @@ bool n_vals (p_data_ptr_t data)
                             // VALID
                         }
                         else
-                        {                            
+                        {                                                       
                             err = E_SEM_ASSIGN;
                             return false;
                         }
@@ -2696,7 +2701,8 @@ bool n_vals (p_data_ptr_t data)
                     data->ids_list = data->ids_list->next;
                 }                        
                 else
-                {                    
+                {     
+                    //printf("\nhere error 4\n");                  
                     err = E_SEM_ASSIGN;
                     return false;
                 }        
@@ -3313,7 +3319,7 @@ bool term (p_data_ptr_t data)
         if (!check_identifier_is_defined(data->tbl_list, data->token->attribute.string))
         {            
 
-            printf("\nESD: %d\n", 13);
+            //printf("\nESD: %d\n", 13);
             err = E_SEM_DEF;
             return false;
         }

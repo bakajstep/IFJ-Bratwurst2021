@@ -485,7 +485,7 @@ $(GEN)-test:
 	#@diff -su $(GENPATH)$(GENTEST)$(PROG57).out $(GENPATH)$(PROG57).out || exit 0
 
 	@echo "\n------------------------------------ 'multiassign' ------------------------------------\n"
-	./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG58).tl > $(GENPATH)$(GENTEST)$(PROG58).code
+	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG58).tl > $(GENPATH)$(GENTEST)$(PROG58).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG58).code < $(GENPATH)$(PROG58).in > $(GENPATH)$(GENTEST)$(PROG58).out
 	@echo "\nTest case 'multiassign' output differences:"
 	@diff -su $(GENPATH)$(GENTEST)$(PROG58).out $(GENPATH)$(PROG58).out || exit 0
