@@ -256,15 +256,14 @@ void codeGen_substr(){
     printf("CREATEFRAME\n");
     printf("POPS GF@trash\n");
     printf("DEFVAR TF@ret_str\n");
-    printf("DEFVAR TF@err\n");
     printf("MOVE TF@ret_str string@\n");
-    printf("MOVE TF@err int@1\n");
     printf("DEFVAR TF@s\n");
     printf("POPS TF@s\n");
     printf("DEFVAR TF@i\n");
     printf("POPS TF@i\n");
-    printf("DEFVAR TF@n\n");    
-    printf("POPS TF@n\n");    
+    printf("SUB TF@i TF@i int@1\n");
+    printf("DEFVAR TF@n\n");
+    printf("POPS TF@n\n");
     printf("DEFVAR TF@char\n");
     printf("MOVE TF@char string@\n");
     printf("DEFVAR TF@str_len\n");
@@ -280,7 +279,6 @@ void codeGen_substr(){
     printf("NOT TF@r_limit TF@r_limit\n");
     printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
     printf("JUMPIFNEQ _sub_end TF@l_limit bool@true\n");
-    printf("MOVE TF@err int@0\n");
     printf("DEFVAR TF@cnt_of_loaded\n");
     printf("MOVE TF@cnt_of_loaded int@0\n");
     printf("LABEL _sub_while\n");
@@ -291,9 +289,10 @@ void codeGen_substr(){
     printf("GETCHAR TF@char TF@s TF@i\n");
     printf("CONCAT TF@ret_str TF@ret_str TF@char\n");
     printf("ADD TF@cnt_of_loaded TF@cnt_of_loaded int@1\n");
+    printf("ADD TF@i TF@i int@1\n");
+    printf("JUMP _sub_while\n");
     printf("LABEL _sub_end\n");
     printf("PUSHS TF@ret_str\n");
-    printf("PUSHS TF@err\n");
     printf("POPFRAME\n");
     printf("RETURN\n");
     printf("LABEL substr$end\n");
