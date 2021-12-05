@@ -852,7 +852,7 @@ psa_error_t psa (p_data_ptr_t data)
                         }
                         generate_operation(rule);
                         break;
-                    case NOT_A_RULE:                                        
+                    case NOT_A_RULE:                      
                         err = E_SYNTAX;
                         return PSA_ERR;
                         break;

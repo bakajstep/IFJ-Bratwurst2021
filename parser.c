@@ -1119,7 +1119,7 @@ parser_error_t parser ()
     //print(data);
     
     if (!valid_token(data->token))
-    {                         
+    {                                 
         err = E_SYNTAX; 
         delete_data(data);
 
@@ -1151,7 +1151,7 @@ parser_error_t parser ()
     if (!prog(data))
     {
         if (err == E_NO_ERR)
-        {                                                                                 
+        {                                                                                             
             err = E_SYNTAX;
         }
         
@@ -1313,7 +1313,7 @@ bool main_b (p_data_ptr_t data)
 
         /* 2. <main_b> -> function id (<params>) <ret_func_types> <stats> end <main_b> */
         if (token_type == T_KEYWORD && data->token->attribute.keyword == K_FUNCTION)
-        {           
+        {                
             next_token(data);
             VALIDATE_TOKEN(data->token);
             TEST_EOF(data->token);
@@ -2090,7 +2090,7 @@ bool stats (p_data_ptr_t data)
     }    
     /* 10. <stats> -> id <id_func> <stats> */
     else if (token_type == T_IDENTIFIER)
-    {        
+    {                
         if (data->func_name != NULL)
         {
             free(data->func_name);
@@ -2121,7 +2121,7 @@ bool stats (p_data_ptr_t data)
         token_type = data->token->type;
 
         if (token_type == T_LEFT_BRACKET)
-        {
+        {            
             if (!check_function_is_declared(data->tbl_list, data->func_name))
             {
                 //printf("\nESD: %d\n", 9);
@@ -2154,7 +2154,7 @@ bool stats (p_data_ptr_t data)
         } */                       
 
         if (err != E_NO_ERR)
-        {
+        {            
             return false;
         }        
 
@@ -2163,7 +2163,7 @@ bool stats (p_data_ptr_t data)
         //printf("\ndata ids list: %s\n", data->ids_list->id);
 
         if (id_func(data))
-        {                        
+        {                                
             ret_val = stats(data);
         }
     }    
@@ -2202,7 +2202,7 @@ bool id_func (p_data_ptr_t data)
       
     /* 13. <id_func> -> (<args>) */
     if (token_type == T_LEFT_BRACKET)
-    {     
+    { 
         /* -------------- SEMANTIC --------------*/           
         
         if (data->param != NULL)
@@ -2218,7 +2218,7 @@ bool id_func (p_data_ptr_t data)
         }
         else
         {
-            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;
+            data->param = symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->first_param;                        
         }         
 
         /* ----------- END OF SEMANTIC ----------*/
@@ -2230,7 +2230,7 @@ bool id_func (p_data_ptr_t data)
         param_stack_init(data->stack);
 
         if (args(data))
-        {              
+        {                             
             VALIDATE_TOKEN(data->token); 
             TEST_EOF(data->token); 
             token_type = data->token->type;
@@ -3489,7 +3489,7 @@ bool args (p_data_ptr_t data)
     }                
     /* 33. <args> -> <term> <n_args> */    
     else if (term(data))
-    {             
+    {                      
         //printf("\nfunc name: %s\n", data->func_name);
         /* -------------- SEMANTIC --------------*/
         if (strcmp(data->func_name, "write") != 0)
@@ -3513,9 +3513,16 @@ bool args (p_data_ptr_t data)
                 data->param = data->param->param_next;        
             }
             else
-            {                                                
-                //printf("\nhere\n"); 
+            {
+                if (data->type == NIL && 
+                    symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->params_count == 0 && 
+                    symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->params_type_count == 0) 
+                {
+                    err = E_SEM_PARAM;
+                }
+                
                 return false;
+                                            
             }
         }   
         else
