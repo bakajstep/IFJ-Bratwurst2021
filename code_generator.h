@@ -16,6 +16,8 @@
 #define TABLE_SIZE 10
 
 void generate_operation(psa_rules_enum operation);
+void generate_IntToFloat1();
+void generate_IntToFloat2();
 void codeGen_init();
 void codeGen_built_in_function();
 void codeGen_main_start();

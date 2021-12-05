@@ -521,7 +521,7 @@ void generate_IntToFloat1(){
 void generate_IntToFloat2(){
     printf("POPS GF@tmp3\n");
     printf("INT2FLOATS\n");
-    printf("PUSHS GF@tmp3");
+    printf("PUSHS GF@tmp3\n");
 }
 
 void generate_operation(psa_rules_enum operation){
@@ -540,11 +540,23 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_DIV_NT:
             // rule E -> E / E
-            printf("DIVS\n");
+            printf("POPS GF@tmp1\n");
+            printf("POPS GF@tmp2\n");
+            printf("JUMPIFNEQ notZero GF@tmp1 float@0x0p+0\n");
+            printf("EXIT int@9\n");
+            printf("LABEL notZero\n");
+            printf("DIV GF@tmp1 GF@tmp2 GF@tmp1\n");
+            printf("PUSHS GF@tmp1\n");
             break;
         case NT_IDIV_NT:
             // rule E -> E // E
-            printf("IDIVS\n");
+            printf("POPS GF@tmp1\n");
+            printf("POPS GF@tmp2\n");
+            printf("JUMPIFNEQ notZero GF@tmp1 int@0\n");
+            printf("EXIT int@9\n");
+            printf("LABEL notZero\n");
+            printf("IDIV GF@tmp1 GF@tmp2 GF@tmp1\n");
+            printf("PUSHS GF@tmp1\n");
             break;
         case NT_CONCAT_NT:
             // rule E -> E .. E
