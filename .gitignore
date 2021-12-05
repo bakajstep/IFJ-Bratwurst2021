@@ -53,5 +53,8 @@ dkms.conf
 # Idea files
 .idea/
 
+#Runablle
+compiler
+
 # VScode files
 .vscode/
