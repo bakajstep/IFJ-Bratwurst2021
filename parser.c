@@ -3513,16 +3513,9 @@ bool args (p_data_ptr_t data)
                 data->param = data->param->param_next;        
             }
             else
-            {
-                if (data->type == NIL && 
-                    symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->params_count == 0 && 
-                    symTableSearch(LL_GetFirst(data->tbl_list), data->func_name)->params_type_count == 0) 
-                {
-                    err = E_SEM_PARAM;
-                }
-                
-                return false;
-                                            
+            {                
+                err = E_SEM_PARAM;                                
+                return false;                                            
             }
         }   
         else
