@@ -174,7 +174,7 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
             return NOT_A_RULE;
         case 3:
             // rule E -> (E)
-            if (op1->symbol == LEFT_BRACKET && op2->symbol == NON_TERM && op3->symbol == RIGHT_BRACKET)
+            if (op3->symbol == LEFT_BRACKET && op2->symbol == NON_TERM && op1->symbol == RIGHT_BRACKET)
                 return LBR_NT_RBR;
 
             if (op1->symbol == NON_TERM && op3->symbol == NON_TERM)
@@ -219,6 +219,7 @@ static psa_rules_enum test_rule(int num, sym_stack_item* op1, sym_stack_item* op
                         return NT_GTN_NT;
                     // invalid operator
                     default:
+
                         return NOT_A_RULE;
                 }
             }
