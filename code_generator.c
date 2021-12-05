@@ -280,7 +280,7 @@ void codeGen_substr(){
     printf("AND TF@l_limit TF@l_limit TF@r_limit\n");
     printf("JUMPIFNEQ _sub_end TF@l_limit bool@true\n");
     printf("DEFVAR TF@cnt_of_loaded\n");
-    printf("MOVE TF@cnt_of_loaded int@0\n");
+    printf("MOVE TF@cnt_of_loaded TF@i\n");
     printf("LABEL _sub_while\n");
     printf("LT TF@l_limit TF@i TF@str_len\n");
     printf("LT TF@r_limit TF@cnt_of_loaded TF@n\n");
