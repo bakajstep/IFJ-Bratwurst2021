@@ -11,7 +11,6 @@ testy z discordu:
 	Ondroid 18
 	Ondroid 19
 	Ondroid 20
-	Ondroid 22
 	Ondroid 23
 	Ondroid 24
 	Rostik 1
