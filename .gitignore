@@ -53,8 +53,13 @@ dkms.conf
 # Idea files
 .idea/
 
+#Tests discord
+tests/disc_test/tmp/
+
 #Runablle
 compiler
+
+
 
 # VScode files
 .vscode/

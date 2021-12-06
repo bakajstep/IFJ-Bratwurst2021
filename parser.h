@@ -41,11 +41,13 @@ typedef struct p_data {
     ids_list_t* ids_list;
 
     param_stack* stack;
+    bool return_func_body;
 } *p_data_ptr_t;
 
 parser_error_t parser ();
 bool check_identifier_is_defined (LList* tbl_list, char* id);
 data_type_t identifier_type (LList* tbl_list, char* id);
 void next_token(p_data_ptr_t data);
+bool is_func(LList* tbl_list, char* id);
 
 #endif //IFJ_BRATWURST2021_PARSER_H

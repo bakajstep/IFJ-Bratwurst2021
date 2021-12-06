@@ -25,6 +25,7 @@ typedef struct shadowStack{
     struct shadowStack* next;
 } shadowStack_t;
 
+void generate_errorOp();
 void generate_operation(psa_rules_enum operation);
 void generate_IntToFloat1();
 void generate_IntToFloat2();

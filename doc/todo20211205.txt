@@ -8,11 +8,9 @@ vlastni gen testy shadowing:
 
 testy z discordu:
 	Ondroid 10
-	Ondroid 15 -> porovnani datoveho typu s datovym typem nil
-	Ondroid 16
 	Ondroid 18
 	Ondroid 19
-	Ondroid 22
+	Ondroid 20
 	Ondroid 23
 	Ondroid 24
 	Rostik 1
@@ -35,4 +33,8 @@ automat diagram (dokumentace):
 	
 zmena precedencni tabulky obrazek (dokumentace)
 
-zmena LL gramatiky NIL (dokumentace)
+zmena LL gramatiky NIL (dokumentace) -> TODO zmena v LL tabulce
+
+-------------------------------
+TODO
+odkazy na tabulky, gramatiku v textu atd. -> citace
