@@ -15,6 +15,8 @@
 #include <stdio.h>
 
 #define PROLOG "ifj21"
+#define IS_NIL true
+#define NOT_NIL false
 #define VALIDATE_TOKEN(token)    \
         if (!valid_token(token)) \
         {                        \
@@ -1938,7 +1940,7 @@ bool stats (p_data_ptr_t data)
                     
                     /* -------------- CODE GEN --------------*/
                     codeGen_push_nil();
-                    codeGen_assign_var(data->func_name);
+                    codeGen_assign_var(data->func_name, IS_NIL);
                     /* ----------- END OF CODE GEN ----------*/
 
                     if (assign(data))
@@ -2419,7 +2421,7 @@ bool params (p_data_ptr_t data)
                 /* -------------- CODE GEN --------------*/
 
                 codeGen_new_var(id);
-                codeGen_assign_var(id);
+                codeGen_assign_var(id, NOT_NIL);
 
                 /* ----------- END OF CODE GEN ----------*/
 
@@ -2502,7 +2504,7 @@ bool n_params (p_data_ptr_t data)
                     /* -------------- CODE GEN --------------*/
 
                     codeGen_new_var(id);
-                    codeGen_assign_var(id);
+                    codeGen_assign_var(id, NOT_NIL);
 
                     /* ----------- END OF CODE GEN ----------*/
 
@@ -2808,7 +2810,7 @@ bool n_vals (p_data_ptr_t data)
     {
         while (data->ids_list != NULL)
         {                                                                                                 
-            codeGen_assign_var(get_last_id(data->ids_list));
+            codeGen_assign_var(get_last_id(data->ids_list), NOT_NIL);
             delete_last_id(&(data->ids_list));
             //ids_list_copy = ids_list_copy->next;
         }  
@@ -3061,7 +3063,7 @@ bool as_vals (p_data_ptr_t data)
                         
                         while (ids_list_copy != NULL)
                         {                                                                                                 
-                            codeGen_assign_var(get_last_id(ids_list_copy));
+                            codeGen_assign_var(get_last_id(ids_list_copy), NOT_NIL);
                             delete_last_id(&ids_list_copy);
                             //ids_list_copy = ids_list_copy->next;
                         }       
@@ -3232,7 +3234,7 @@ bool assign_val (p_data_ptr_t data)
             {
                 /* -------------- CODE GEN --------------*/
 
-                codeGen_assign_var(data->func_name);
+                codeGen_assign_var(data->func_name, NOT_NIL);
 
                 /* ----------- END OF CODE GEN ----------*/
 
@@ -3382,7 +3384,7 @@ bool assign_val (p_data_ptr_t data)
                     codeGen_function_call(data->func_name, params_count_code_gen);
                             
                     //printf("\nto pop: %s\n", data->ids_list->id);                                                           
-                    codeGen_assign_var(data->ids_list->id);
+                    codeGen_assign_var(data->ids_list->id, NOT_NIL);
 
                     data->ids_list = data->ids_list->next;
                                             
@@ -3400,7 +3402,7 @@ bool assign_val (p_data_ptr_t data)
     {     
         /* -------------- CODE GEN --------------*/
 
-        codeGen_assign_var(data->func_name);
+        codeGen_assign_var(data->func_name, NOT_NIL);
 
         /* ----------- END OF CODE GEN ----------*/
 

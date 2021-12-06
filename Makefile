@@ -101,7 +101,7 @@ CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
 .PHONY: all $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean $(GEN)-test $(GEN)-clean
 
 all:
-	$(CC) $(CFLAGS) -o compiler $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c
+	$(CC) $(CFLAGS) -o compiler $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h
 
 $(LEX)-test:
 	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(LEX)_test.c
