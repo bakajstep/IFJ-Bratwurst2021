@@ -692,6 +692,7 @@ void codeGen_while_end(){
     printf("JUMP while$%d$start\n", stack[stackTop]);
     printf("LABEL while$%d$end\n", stack[stackTop]);
     shStack = shStackDelByScale(shStack, scale);
+    isWhile = 0;
     stackTop--;
     scale--;
 }
@@ -729,28 +730,64 @@ void codeGen_function_call(char* name, unsigned parameters){
  */
 
 void generate_IntToFloat1(){
-    printf("INT2FLOATS\n");
+    if(isWhiled == 0){
+        printf("INT2FLOATS\n");
+    }else{
+        char* str = (char*)malloc(INST_LEN);
+        sprintf(str, "INT2FLOATS\n");
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 void generate_IntToFloat2(){
-    printf("POPS GF@tmp3\n");
-    printf("INT2FLOATS\n");
-    printf("PUSHS GF@tmp3\n");
+    if(isWhile == 0){
+        printf("POPS GF@tmp3\n");
+        printf("INT2FLOATS\n");
+        printf("PUSHS GF@tmp3\n");
+    }else{
+        char* str = (char*)malloc(INST_LEN);
+        sprintf(str, "POPS GF@tmp3\n");
+        DLL_InsertLast(list, str);
+        free(str);
+        char* str2 = (char*)malloc(INST_LEN);
+        sprintf(str2, "INT2FLOATS\n";
+        DLL_InsertLast(list, str2);
+        free(str2);
+        char* str3 = (char*)malloc(INST_LEN);
+        sprintf(str3, "PUSHS GF@tmp3\n");
+        DLL_InsertLast(list, str3);
+        free(str3);
+    }
+
 }
 
 void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
-            printf("ADDS\n");
+            if(isWhile){
+                printf("ADDS\n");
+            }else{
+                DLL_InsertLast(list, "ADDS\n");
+            }
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
-            printf("SUBS\n");
+            if(isWhile){
+                printf("SUBS\n");
+            }else{
+                DLL_InsertLast(list, "SUBS\n");
+            }
             break;
         case NT_MUL_NT:
             // rule E -> E * E
-            printf("MULS\n");
+            if(isWhile == 0){
+                printf("MULS\n");
+            }else{
+                DLL_InsertLast(list, "MULS\n");
+            }
             break;
         case NT_DIV_NT:
             // rule E -> E / E
@@ -774,40 +811,79 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_CONCAT_NT:
             // rule E -> E .. E
-            printf("POPS GF@tmp1\n");
-            printf("POPS GF@tmp2\n");
-            printf("CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
-            printf("PUSHS GF@tmp1\n");
+            if(isWhile == 0){
+                printf("POPS GF@tmp1\n");
+                printf("POPS GF@tmp2\n");
+                printf("CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
+                printf("PUSHS GF@tmp1\n");
+            }else{
+                DLL_InsertLast(list, "POPS GF@tmp1\n");
+                DLL_InsertLast(list, "POPS GF@tmp2\n");
+                DLL_InsertLast(list, "CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
+                DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+            }
+
             break;
         case NT_EQ_NT:
             // rule E -> E == E
-            printf("EQS\n");
+            if(isWhile == 0){
+                printf("EQS\n");
+            }else{
+                DLL_InsertLast(list, "EQS\n");
+            }
             break;
         case NT_NEQ_NT:
             // rule E -> E ~= E
-            printf("EQS\nNOTS\n");
+            if(isWhile == 0){
+                printf("EQS\nNOTS\n");
+            }else{
+                DLL_InsertLast(list, "EQS\nNOTS\n");
+            }
             break;
         case NT_LEQ_NT:
             // rule E -> E <= E
-            printf("GTS\nNOTS\n");
+            if(isWhile == 0){
+                printf("GTS\nNOTS\n");
+            }else{
+                DLL_InsertLast(list, "GTS\nNOTS\n");
+            }
             break;
         case NT_GEQ_NT:
             // rule E -> E >= E
-            printf("LTS\nNOTS\n");
+            if(isWhile == 0){
+                printf("LTS\nNOTS\n");
+            }else{
+                DLL_InsertLast(list, "LTS\nNOTS\n");
+            }
             break;
         case NT_LTN_NT:
             // rule E -> E < E
-            printf("LTS\n");
+            if(isWhile == 0){
+                printf("LTS\n");
+            }else{
+                DLL_InsertLast(list, "LTS\n");
+            }
+
             break;
         case NT_GTN_NT:
             // rule E -> E > E
-            printf("GTS\n");
+            if(isWhile == 0){
+                printf("GTS\n");
+            }else{
+                DLL_InsertLast(list, "GTS\n");
+            }
             break;
         case NT_HASHTAG:
             // rule E -> #E
-            printf("POPS GF@tmp1\n");
-            printf("STRLEN GF@tmp4 GF@tmp1\n");
-            printf("PUSHS GF@tmp4\n");
+            if(iswhile == 0){
+                printf("POPS GF@tmp1\n");
+                printf("STRLEN GF@tmp4 GF@tmp1\n");
+                printf("PUSHS GF@tmp4\n");
+            }else{
+                DLL_InsertLast(list, "POPS GF@tmp1\n");
+                DLL_InsertLast(list, "STRLEN GF@tmp4 GF@tmp1\n");
+                DLL_InsertLast(list, "PUSHS GF@tmp4\n");
+            }
             break;
         default:break;
     }
