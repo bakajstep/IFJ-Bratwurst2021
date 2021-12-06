@@ -538,9 +538,7 @@ void generate_checkifNIL2ops(){
 }
 void generate_checkifNIL1op(){
 	printf("POPS GF@tmp1\n");
-	printf("JUMPIFNEQ ERR8 GF@tmp1 nil@nil\n");
-	printf("EXIT int@8");
-        printf("LABEL notNil1\n");
+	printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
         printf("PUSHS GF@tmp1\n");
 }
 
