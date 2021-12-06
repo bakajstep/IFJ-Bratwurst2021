@@ -531,12 +531,8 @@ void generate_IntToFloat2(){
 void generate_checkifNIL2ops(){
 	printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
-            printf("JUMPIFNEQ notNil1 GF@tmp1 nil@nil\n");
-            printf("EXIT int@8");
-            printf("LABEL notNil1\n");
-            printf("JUMPIFNEQ notNil2 GF@tmp2 nil@nil\n");
-            printf("EXIT int@8");
-            printf("LABEL notNil2\n");
+            printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
+            printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
             printf("PUSHS GF@tmp2\n");
             printf("PUSHS GF@tmp1\n");
 }
@@ -570,9 +566,7 @@ void generate_operation(psa_rules_enum operation){
             generate_checkifNIL2ops();
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
-            printf("JUMPIFNEQ notZero GF@tmp1 float@0x0p+0\n");
-            printf("EXIT int@9\n");
-            printf("LABEL notZero\n");
+            printf("JUMPIFEQ ERR9 GF@tmp1 float@0x0p+0\n");
             printf("DIV GF@tmp1 GF@tmp2 GF@tmp1\n");
             printf("PUSHS GF@tmp1\n");
             break;
@@ -581,9 +575,7 @@ void generate_operation(psa_rules_enum operation){
             generate_checkifNIL2ops();
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
-            printf("JUMPIFNEQ notZero GF@tmp1 int@0\n");
-            printf("EXIT int@9\n");
-            printf("LABEL notZero\n");
+            printf("JUMPIFNEQ ERR9 GF@tmp1 int@0\n");
             printf("IDIV GF@tmp1 GF@tmp2 GF@tmp1\n");
             printf("PUSHS GF@tmp1\n");
             break;
