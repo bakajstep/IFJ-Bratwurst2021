@@ -475,6 +475,7 @@ static int intToFloat2 = -1;
 static int scale = -1;
 static int function = 0;
 static int isWhile = 0;
+static int isNil = 0;
 DLList* list;
 shadowStack_t* shStack;
 
@@ -562,7 +563,6 @@ void codeGen_push_float(double value){
     if(isWhile == 0){
         printf("PUSHS float@%a\n", value);
     }else{
-        //TODO velikost float
         char* str = (char*)malloc(INST_LEN + 30);
         sprintf(str, "PUSHS float@%a\n", value);
         DLL_InsertLast(list, str);
@@ -572,6 +572,7 @@ void codeGen_push_float(double value){
 }
 
 void codeGen_push_nil(){
+    isNil = 1;
     if(isWhile == 0){
         printf("PUSHS nil@nil\n");
     }else{
@@ -592,13 +593,15 @@ void codeGen_new_var(char* name){
     printf("DEFVAR TF@%s\n", shStack->nameScale);
 }
 
-void codeGen_assign_var(char* name){
+void codeGen_assign_var(char* name, bool isNil){
     shadowStack_t* current = shStackNameScaleByName(shStack, name);
     if(current == NULL){
         err = E_INTERNAL;
         return;
     }
-    current->inicialized = 1;
+    if(!isNil){
+        current->inicialized = 1;
+    }
     if(isWhile == 0){
         printf("POPS TF@%s\n", current->nameScale);
     }else{
@@ -703,9 +706,13 @@ void codeGen_while_start(){
 }
 
 void codeGen_while_end(){
+    DLL_PrintAll(list);
+    DLL_Dispose(list);
     printf("JUMP while$%d$start\n", stack[stackTop]);
     printf("LABEL while$%d$end\n", stack[stackTop]);
+    isWhile = 0;
     stackTop--;
+    scale--;
 }
 
 
@@ -714,13 +721,19 @@ void codeGen_while_end(){
  */
 
 void codeGen_function_start(char* name){
+    scale++;
+    function++;
     printf("#----FUN-%s----\n", name);
     printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
     printf("POPS GF@trash\n");
 }
 
 void codeGen_function_return(){
-    printf("POPFRAME\nRETURN\n");
+    if(isWhile == 0){
+        printf("POPFRAME\nRETURN\n");
+    }else{
+        DLL_InsertLast(list, "POPFRAME\nRETURN\n");
+    }
 }
 
 void codeGen_function_end(char* name){
@@ -744,7 +757,6 @@ void codeGen_function_call(char* name, unsigned parameters){
         DLL_InsertLast(list, str2);
         free(str2);
     }
-
 }
 
 /*
@@ -752,104 +764,172 @@ void codeGen_function_call(char* name, unsigned parameters){
  */
 
 void generate_IntToFloat1(){
-    printf("POPS GF@tmp1\n");
-    printf("JUMPIFEQ nope%d GF@tmp1 nil@nil\n",++intToFloat1);
-    printf("PUSHS GF@tmp1\n");
-    printf("INT2FLOATS\n");
-    printf("LABEL nope%d\n",intToFloat1);
+    if(isWhile == 0){
+        printf("POPS GF@tmp1\n");
+        printf("JUMPIFEQ nope%d GF@tmp1 nil@nil\n",++intToFloat1);
+        printf("PUSHS GF@tmp1\n");
+        printf("INT2FLOATS\n");
+        printf("LABEL nope%d\n",intToFloat1);
+    }else{
+        DLL_InsertLast(list, "POPS GF@tmp1\n");
+        char* str = (char*)malloc(INST_LEN + numPlaces(++intToFloat1));
+        sprintf(str, "JUMPIFEQ nope%d GF@tmp1 nil@nil\n", intToFloat1);
+        DLL_InsertLast(list, str);
+        free(str);
+        DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+        DLL_InsertLast(list, "INT2FLOATS\n");
+        char* str2 = (char*)malloc(INST_LEN + numPlaces(intToFloat1));
+        sprintf(str2, "LABEL nope%d\n", intToFloat1);
+        DLL_InsertLast(list, str2);
+        free(str2);
+    }
 }
 
 void generate_IntToFloat2(){
-    printf("POPS GF@tmp3\n");
-    printf("POPS GF@tmp2\n");
-    printf("JUMPIFEQ no%d GF@tmp2 nil@nil\n",++intToFloat2);
-    printf("INT2FLOAT GF@tmp2 GF@tmp2\n");
-    printf("LABEL no%d\n",intToFloat2);
-    printf("PUSHS GF@tmp2\n");
-    printf("PUSHS GF@tmp3\n");
+    if(isWhile == 0){
+        printf("POPS GF@tmp3\n");
+        printf("POPS GF@tmp2\n");
+        printf("JUMPIFEQ no%d GF@tmp2 nil@nil\n",++intToFloat2);
+        printf("INT2FLOAT GF@tmp2 GF@tmp2\n");
+        printf("LABEL no%d\n",intToFloat2);
+        printf("PUSHS GF@tmp2\n");
+        printf("PUSHS GF@tmp3\n");
+    }else{
+        DLL_InsertLast(list, "POPS GF@tmp3\n");
+        DLL_InsertLast(list, "POPS GF@tmp2\n");
+        char* str = (char*)malloc(INST_LEN + numPlaces(++intToFloat2));
+        sprintf(str, "JUMPIFEQ no%d GF@tmp2 nil@nil\n", intToFloat2);
+        DLL_InsertLast(list, str);
+        free(str);
+        DLL_InsertLast(list, "INT2FLOAT GF@tmp2 GF@tmp2\n");
+        char* str2 = (char*)malloc(INST_LEN + numPlaces(intToFloat2));
+        sprintf(str2, "LABEL nope%d\n", intToFloat2);
+        DLL_InsertLast(list, str2);
+        free(str2);
+        DLL_InsertLast(list, "PUSHS GF@tmp2\n");
+        DLL_InsertLast(list, "PUSHS GF@tmp3\n");
+    }
 }
 
 void generate_checkifNIL2ops(){
-	printf("POPS GF@tmp1\n");
-            printf("POPS GF@tmp2\n");
-            printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
-            printf("JUMPIFEQ ERR8 GF@tmp2 nil@nil\n");
-            printf("PUSHS GF@tmp2\n");
-            printf("PUSHS GF@tmp1\n");
+    if(isWhile == 0){
+        printf("POPS GF@tmp1\n");
+        printf("POPS GF@tmp2\n");
+        printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
+        printf("JUMPIFEQ ERR8 GF@tmp2 nil@nil\n");
+        printf("PUSHS GF@tmp2\n");
+        printf("PUSHS GF@tmp1\n");
+    }else{
+        DLL_InsertLast(list, "POPS GF@tmp1\n");
+        DLL_InsertLast(list, "POPS GF@tmp2\n");
+        DLL_InsertLast(list, "JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
+        DLL_InsertLast(list, "JUMPIFEQ ERR8 GF@tmp2 nil@nil\n");
+        DLL_InsertLast(list, "PUSHS GF@tmp2\n");
+        DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+    }
 }
 void generate_checkifNIL1op(){
-	printf("POPS GF@tmp1\n");
-	printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
+    if(isWhile == 0){
+        printf("POPS GF@tmp1\n");
+        printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
         printf("PUSHS GF@tmp1\n");
+    }else{
+        DLL_InsertLast(list, "POPS GF@tmp1\n");
+        DLL_InsertLast(list, "JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
+        DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+    }
 }
 
 void generate_errorOp(){
-	printf("JUMP errorOp_End\n");
-	printf("LABEL ERR9\n");
-	printf("EXIT int@9\n");
-	printf("JUMP errorOp_End\n");
-	printf("LABEL ERR8\n");
-	printf("EXIT int@8\n");
-	printf("LABEL errorOp_End\n");
+    printf("JUMP errorOp_End\n");
+    printf("LABEL ERR9\n");
+    printf("EXIT int@9\n");
+    printf("JUMP errorOp_End\n");
+    printf("LABEL ERR8\n");
+    printf("EXIT int@8\n");
+    printf("LABEL errorOp_End\n");
+    free(list);
+    free(stack);
 }
 
 void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
+            generate_checkifNIL2ops();
             if(isWhile == 0){
                 printf("ADDS\n");
             }else{
                 DLL_InsertLast(list, "ADDS\n");
             }
-            generate_checkifNIL2ops();
-            printf("ADDS\n");
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
+            generate_checkifNIL2ops();
             if(isWhile == 0){
                 printf("SUBS\n");
             }else{
                 DLL_InsertLast(list, "SUBS\n");
             }
-            generate_checkifNIL2ops();
-            printf("SUBS\n");
             break;
         case NT_MUL_NT:
             // rule E -> E * E
+            generate_checkifNIL2ops();
             if(isWhile == 0){
                 printf("MULS\n");
             }else{
                 DLL_InsertLast(list, "MULS\n");
             }
-            generate_checkifNIL2ops();
-            printf("MULS\n");
             break;
         case NT_DIV_NT:
             // rule E -> E / E
             generate_checkifNIL2ops();
-            printf("POPS GF@tmp1\n");
-            printf("POPS GF@tmp2\n");
-            printf("JUMPIFEQ ERR9 GF@tmp1 float@0x0p+0\n");
-            printf("DIV GF@tmp1 GF@tmp2 GF@tmp1\n");
-            printf("PUSHS GF@tmp1\n");
+            if(isWhile == 0){
+                printf("POPS GF@tmp1\n");
+                printf("POPS GF@tmp2\n");
+                printf("JUMPIFEQ ERR9 GF@tmp1 float@0x0p+0\n");
+                printf("DIV GF@tmp1 GF@tmp2 GF@tmp1\n");
+                printf("PUSHS GF@tmp1\n");
+            }else{
+                DLL_InsertLast(list, "POPS GF@tmp1\n");
+                DLL_InsertLast(list, "POPS GF@tmp2\n");
+                DLL_InsertLast(list, "JUMPIFEQ ERR9 GF@tmp1 float@0x0p+0\n");
+                DLL_InsertLast(list, "DIV GF@tmp1 GF@tmp2 GF@tmp1\n");
+                DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+            }
+
             break;
         case NT_IDIV_NT:
             // rule E -> E // E
             generate_checkifNIL2ops();
-            printf("POPS GF@tmp1\n");
-            printf("POPS GF@tmp2\n");
-            printf("JUMPIFNEQ ERR9 GF@tmp1 int@0\n");
-            printf("IDIV GF@tmp1 GF@tmp2 GF@tmp1\n");
-            printf("PUSHS GF@tmp1\n");
+            if(isWhile == 0){
+                printf("POPS GF@tmp1\n");
+                printf("POPS GF@tmp2\n");
+                printf("JUMPIFNEQ ERR9 GF@tmp1 int@0\n");
+                printf("IDIV GF@tmp1 GF@tmp2 GF@tmp1\n");
+                printf("PUSHS GF@tmp1\n");
+            }else{
+                DLL_InsertLast(list, "POPS GF@tmp1\n");
+                DLL_InsertLast(list, "POPS GF@tmp2\n");
+                DLL_InsertLast(list, "JUMPIFNEQ ERR9 GF@tmp1 int@0\n");
+                DLL_InsertLast(list, "IDIV GF@tmp1 GF@tmp2 GF@tmp1\n");
+                DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+            }
             break;
         case NT_CONCAT_NT:
             // rule E -> E .. E
             generate_checkifNIL2ops();
-            printf("POPS GF@tmp1\n");
-            printf("POPS GF@tmp2\n");
-            printf("CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
-            printf("PUSHS GF@tmp1\n");
+            if(isWhile == 0){
+                printf("POPS GF@tmp1\n");
+                printf("POPS GF@tmp2\n");
+                printf("CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
+                printf("PUSHS GF@tmp1\n");
+            }else{
+                DLL_InsertLast(list, "POPS GF@tmp1\n");
+                DLL_InsertLast(list, "POPS GF@tmp2\n");
+                DLL_InsertLast(list, "CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
+                DLL_InsertLast(list, "PUSHS GF@tmp1\n");
+            }
             break;
         case NT_EQ_NT:
             // rule E -> E == E
@@ -870,29 +950,51 @@ void generate_operation(psa_rules_enum operation){
         case NT_LEQ_NT:
             // rule E -> E <= E
             generate_checkifNIL2ops();
-            printf("GTS\nNOTS\n");
+            if(isWhile == 0){
+                printf("GTS\nNOTS\n");
+            }else{
+                DLL_InsertLast(list, "GTS\nNOTS\n");
+            }
             break;
         case NT_GEQ_NT:
             // rule E -> E >= E
             generate_checkifNIL2ops();
-            printf("LTS\nNOTS\n");
+            if(isWhile == 0){
+                printf("LTS\nNOTS\n");
+            }else{
+                DLL_InsertLast(list, "LTS\nNOTS\n");
+            }
             break;
         case NT_LTN_NT:
             // rule E -> E < E
             generate_checkifNIL2ops();
-            printf("LTS\n");
+            if(isWhile == 0){
+                printf("LTS\n");
+            }else{
+                DLL_InsertLast(list, "LTS\n");
+            }
             break;
         case NT_GTN_NT:
             // rule E -> E > E
             generate_checkifNIL2ops();
-            printf("GTS\n");
+            if(isWhile == 0){
+                printf("GTS\n");
+            }else{
+                DLL_InsertLast(list, "GTS\n");
+            }
             break;
         case NT_HASHTAG:
             // rule E -> #E
             generate_checkifNIL1op();
-            printf("POPS GF@tmp1\n");
-            printf("STRLEN GF@tmp4 GF@tmp1\n");
-            printf("PUSHS GF@tmp4\n");
+            if(isWhile == 0){
+                printf("POPS GF@tmp1\n");
+                printf("STRLEN GF@tmp4 GF@tmp1\n");
+                printf("PUSHS GF@tmp4\n");
+            }else{
+                DLL_InsertLast(list, "POPS GF@tmp1\n");
+                DLL_InsertLast(list, "STRLEN GF@tmp4 GF@tmp1\n");
+                DLL_InsertLast(list, "PUSHS GF@tmp4\n");
+            }
             break;
         default:break;
     }
