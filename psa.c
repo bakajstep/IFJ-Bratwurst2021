@@ -506,19 +506,24 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 op3_to_number = true;
             }
 
-            if(op1_to_number == true){
-                //generovani kodu pro pretypovani (prvni na zasobniku)
-                generate_IntToFloat1();
-            }
-            if(op3_to_number == true){
-                //generovani kodu pro pretypovani (druhy na zasobniku)
-                generate_IntToFloat2();
-            }
+
             break;
         default: ;
 
             break;
     }
+
+    if(op1_to_number == true){
+        //generovani kodu pro pretypovani (prvni na zasobniku)
+       // printf("\n ahoj 1 \n");
+        generate_IntToFloat1();
+    }
+    if(op3_to_number == true){
+        //generovani kodu pro pretypovani (druhy na zasobniku)
+       // printf("\n ahoj \n");
+        generate_IntToFloat2();
+    }
+
     return true;
 }
 

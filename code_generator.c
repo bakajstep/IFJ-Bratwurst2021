@@ -388,6 +388,8 @@ static int whileCounter = 0;
 static int stackTop = -1;
 static int stackSize = TABLE_SIZE;
 static int* stack;
+static int intToFloat1 = -1;
+static int intToFloat2 = -1;
 
 void codeGen_init(){
     stack = malloc(sizeof(int) * stackSize);
@@ -526,12 +528,20 @@ void codeGen_function_call(char* name, unsigned parameters){
  */
 
 void generate_IntToFloat1(){
+    printf("POPS GF@tmp1\n");
+    printf("JUMPIFEQ nope%d GF@tmp1 nil@nil\n",++intToFloat1);
+    printf("PUSHS GF@tmp1\n");
     printf("INT2FLOATS\n");
+    printf("LABEL nope%d\n",intToFloat1);
 }
 
 void generate_IntToFloat2(){
     printf("POPS GF@tmp3\n");
-    printf("INT2FLOATS\n");
+    printf("POPS GF@tmp2\n");
+    printf("JUMPIFEQ no%d GF@tmp2 nil@nil\n",++intToFloat2);
+    printf("INT2FLOAT GF@tmp2 GF@tmp2\n");
+    printf("LABEL no%d\n",intToFloat2);
+    printf("PUSHS GF@tmp2\n");
     printf("PUSHS GF@tmp3\n");
 }
 
