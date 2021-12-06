@@ -10,8 +10,15 @@
  * ----------------------USEFULL FUNCTIONS-----------------------
  */
 
-char* convert_string(char* str_toconvert){
+char* convert_string(char* str_toconvert){    
     char* string = str_toconvert;
+
+    if (string[0] == '\0')
+    {
+        return "";
+    }
+    
+
     //char digits_buf[DIGITS_CNT];
     string_ptr_t string_res = string_init();
 
