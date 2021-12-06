@@ -987,6 +987,54 @@ bool push_params_code_gen(p_data_ptr_t data)
     return true;
 }
 
+char* get_last_id (ids_list_t* ids_list)
+{
+    ids_list_t* current = ids_list;
+
+    if (current == NULL)
+    {
+        return NULL;
+    }    
+
+    while (current->next != NULL)
+    {
+        current = current->next;
+    }
+    
+    return current->id;
+}
+
+void delete_last_id (ids_list_t** ids_list)
+{
+    ids_list_t* current = *ids_list;
+
+    if (current == NULL)
+    {
+        return;
+    }
+
+    /* Last element in list */
+    if (current->next == NULL)
+    {
+        free(current->id);
+        current->id = NULL;
+        free(current);
+        current = NULL;
+        *ids_list = current;
+        return;
+    }    
+
+    while (current->next->next != NULL)
+    {        
+        current = current->next;    
+    }
+
+    free(current->next->id);
+    current->next->id = NULL;
+    free(current->next);
+    current->next = NULL;
+}
+
 void insert_built_in_functions (LList* tbl_list)
 {    
     tbl_list = tbl_list;    
@@ -1268,6 +1316,7 @@ bool main_b (p_data_ptr_t data)
     function_params_t* param_val = NULL;
     char* func_name = NULL;
     unsigned params_count_code_gen = 0;
+    unsigned nil_count = 0;
 
     /* Create tree
 
@@ -1499,6 +1548,8 @@ bool main_b (p_data_ptr_t data)
                                                         
                                 /* ----------- END OF SEMANTIC ----------*/
 
+                                data->return_func_body = false;
+
                                 if (stats(data))
                                 {                                    
                                     VALIDATE_TOKEN(data->token);
@@ -1515,7 +1566,15 @@ bool main_b (p_data_ptr_t data)
                                         /* ----------- END OF SEMANTIC ----------*/
 
                                         /* -------------- CODE GEN --------------*/
-                 
+                                        
+                                        nil_count = symTableSearch(LL_GetFirst(data->tbl_list), func_name)->returns_count;
+
+                                        while (nil_count > 0)
+                                        {
+                                            codeGen_push_nil();
+                                            nil_count--;
+                                        }                                        
+
                                         codeGen_function_end(func_name);
 
                                         /* ----------- END OF CODE GEN ----------*/
@@ -1790,9 +1849,7 @@ bool stats (p_data_ptr_t data)
             /* DONE free */
             id = (char *) malloc(strlen(data->token->attribute.string) + 1);
             strcpy(id, data->token->attribute.string);
-            tree = LL_GetLast(data->tbl_list);            
-            
-
+            tree = LL_GetLast(data->tbl_list);                        
         
             //printf("\n tree: %s \n", tree->key);
                         
@@ -2082,6 +2139,12 @@ bool stats (p_data_ptr_t data)
     /* 9. <stats> -> return <ret_vals> <stats> */
     else if (token_type == T_KEYWORD && data->token->attribute.keyword == K_RETURN)
     {        
+        if (data->tbl_list->lastElement->nextElement != NULL &&
+            data->tbl_list->lastElement->nextElement->nextElement == NULL)
+        {
+            data->return_func_body = true;
+        }        
+
         next_token(data);
 
         if (ret_vals(data))
@@ -2994,9 +3057,10 @@ bool as_vals (p_data_ptr_t data)
                         codeGen_function_call(data->func_name, params_count_code_gen);                                                                                                
                         
                         while (ids_list_copy != NULL)
-                        {                            
-                            codeGen_assign_var(ids_list_copy->id);
-                            ids_list_copy = ids_list_copy->next;
+                        {                                                                                                 
+                            codeGen_assign_var(get_last_id(ids_list_copy));
+                            delete_last_id(&ids_list_copy);
+                            //ids_list_copy = ids_list_copy->next;
                         }       
                         
                         /* ----------- END OF CODE GEN ----------*/

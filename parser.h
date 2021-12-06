@@ -41,6 +41,7 @@ typedef struct p_data {
     ids_list_t* ids_list;
 
     param_stack* stack;
+    bool return_func_body;
 } *p_data_ptr_t;
 
 parser_error_t parser ();
