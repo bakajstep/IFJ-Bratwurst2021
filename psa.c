@@ -14,7 +14,7 @@
 
 static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 /*    *//* #   +   -   *   /   //  ..  <   >   <=  >=  ~=  ==  (   )   i   s   $*/
-/* #  */ {' ','>','>','>','>','>',' ','>','>','>','>','>','>','<','>','<','<','>'},
+/* #  */ {' ','>','>','>',' ','>',' ','>','>','>','>','>','>','<','>','<','<','>'},
 /* +  */ {'<','>','>','<','<','<',' ','>','>','>','>','>','>','<','>','<',' ','>'},
 /* -  */ {'<','>','>','<','<','<',' ','>','>','>','>','>','>','<','>','<',' ','>'},
 /* *  */ {'<','>','>','>','>','>',' ','>','>','>','>','>','>','<','>','<',' ','>'},
@@ -30,15 +30,15 @@ static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 /* (  */ {'<','<','<','<','<','<','<','<','<','<','<','<','<','<','=','<','<',' '},
 /* )  */ {' ','>','>','>','>','>','>','>','>','>','>','>','>',' ','>',' ',' ','>'},
 /* i  */ {' ','>','>','>','>','>','>','>','>','>','>','>','>',' ','>',' ',' ','>'},
-/* s  */ {' ',' ',' ',' ',' ',' ','>','>','>','>','>','>','>',' ','>',' ',' ','>'},
+/* s  */ {' ','>','>','>',' ','>','>','>','>','>','>','>','>',' ','>',' ',' ','>'},
 /* $  */ {'<','<','<','<','<','<','<','<','<','<','<','<','<','<',' ','<','<',' '},
 
 };
 
 
 
-int get_index_token(token_t* token){
-    switch (token->type) {
+int get_index_token(p_data_ptr_t data){
+    switch (data->token->type) {
         case T_MUL:
             return 3;
         case T_DIV:
@@ -70,6 +70,9 @@ int get_index_token(token_t* token){
         case T_RIGHT_BRACKET:
             return 14;
         case T_IDENTIFIER:
+            if (is_func(data->tbl_list,data->token->attribute.string)) {
+                return 17;
+            }
             return 15;
         case T_COMMA:
             return 17;
@@ -82,13 +85,13 @@ int get_index_token(token_t* token){
         case T_DECIMAL_W_EXP:
             return 15;
         case T_KEYWORD:
-            if(token->attribute.keyword == K_THEN || token->attribute.keyword == K_DO
-                || token->attribute.keyword == K_LOCAL || token->attribute.keyword == K_IF
-                || token->attribute.keyword == K_WHILE || token->attribute.keyword == K_RETURN
-                || token->attribute.keyword == K_END || token->attribute.keyword == K_ELSE) {
+            if(data->token->attribute.keyword == K_THEN || data->token->attribute.keyword == K_DO
+                || data->token->attribute.keyword == K_LOCAL || data->token->attribute.keyword == K_IF
+                || data->token->attribute.keyword == K_WHILE || data->token->attribute.keyword == K_RETURN
+                || data->token->attribute.keyword == K_END || data->token->attribute.keyword == K_ELSE) {
                 return 17;//continue to case $
             }
-            else if(token->attribute.keyword == K_NIL){
+            else if(data->token->attribute.keyword == K_NIL){
                 return 15;
             }
             else{
@@ -526,7 +529,6 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
 //ze stacku budu dále pomocí typů kontrolovat sémantiku
 psa_error_t psa (p_data_ptr_t data)
 {
-    //printf("\nenter psa\n");
     sym_stack stack;
     sym_stack_init(&stack);
     symbol_stack_push(&stack,DOLLAR,ELSE);
@@ -543,7 +545,7 @@ psa_error_t psa (p_data_ptr_t data)
         //indexy tokenů v tabulce
         ind_a = get_index_enum(a->symbol);
 
-        ind_b = get_index_token(data->token);        
+        ind_b = get_index_token(data);
 
         if(data->token->type == T_ASSIGN){
             err = E_INTERNAL;
@@ -692,16 +694,17 @@ psa_error_t psa (p_data_ptr_t data)
                 switch (rule) {                    
                     case OPERAND:
                         // rule E -> i
-                        if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){    
-                        
+
+                        //printf("\nredukuju identifikátor\n");
+                        if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){
+
                             err = E_INTERNAL;
                             return PSA_ERR;
                         }
-                //printf("\nredukuju identifikátor\n");                        
                         break;
                     case NT_HASHTAG:
                         // rule E -> #E
-                //printf("\npushnul jsem nonterm s int\n");  
+                        //printf("\npushnul jsem nonterm s int\n");
                         if(symbol1.data != STR){
                             err = E_SEM_INCOMPATIBLE;
                             return PSA_ERR;
@@ -865,6 +868,7 @@ psa_error_t psa (p_data_ptr_t data)
                 
             default:
                 err = E_INTERNAL;
+            //printf("tady");
                 return PSA_ERR;                
         }
 
