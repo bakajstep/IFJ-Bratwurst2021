@@ -3,6 +3,9 @@
 //
 
 #include <ctype.h>
+#include <stdlib.h>
+#include <limits.h>
+
 
 #include "code_generator.h"
 
@@ -163,6 +166,85 @@ char* convert_string(char* str_toconvert){
         string++;
     }
     return string_res->string;
+}
+
+shadowStack_t* shStackPush(shadowStack_t* shade, char* name, int scale, int function){
+    shadowStack_t* newNode = malloc(sizeof(struct shadowStack));
+    if(newNode == NULL){
+        err = E_INTERNAL;
+        return NULL;
+    }
+    newNode->name = malloc(sizeof(strlen(name)));
+    if(newNode->name == NULL){
+        err = E_INTERNAL;
+        return NULL;
+    }
+    strcpy(newNode->name, name);
+    newNode->scale = scale;
+    newNode->inicialized = 0;
+    newNode->nameScale = malloc(sizeof(strlen(name)) + sizeof(scale));
+    if(newNode->nameScale == NULL){
+        err = E_INTERNAL;
+        return NULL;
+    }
+    char funCnt[function+1];
+    for(int i = 0; i < function; i++){
+        funCnt[i] = '%';
+    }
+    funCnt[function] = '\0';
+    sprintf(newNode->nameScale, "%s%s$%d", funCnt,  name,  scale);
+    newNode->next = shade;
+    return shade = newNode;
+}
+
+shadowStack_t * shStackNameScaleByName(shadowStack_t* shade, char* name){
+    shadowStack_t* current = shade;
+    while(current != NULL){
+        if(strcmp(current->name, name) == 0){
+            return current;
+        }else{
+            current = current->next;
+        }
+    }
+    return NULL;
+}
+
+shadowStack_t * shStackNameScaleByNameInitialized(shadowStack_t* shade, char* name){
+    shadowStack_t* current = shade;
+    while(current != NULL){
+        if((strcmp(current->name, name) == 0) && current->inicialized == 1){
+            return current;
+        }else{
+            current = current->next;
+        }
+    }
+    return NULL;
+}
+
+shadowStack_t* shStackDelByScale(shadowStack_t* shade, int scale){
+    shadowStack_t* del;
+    while(shade != NULL){
+        if(shade->scale == scale){
+            del = shade;
+            shade = shade->next;
+            free(del->name);
+            free(del->nameScale);
+            free(del);
+        }else{
+            return shade;
+        }
+    }
+    return NULL;
+}
+
+int numPlaces (int n) {
+    int r = 1;
+    if (n < 0) n = (n == INT_MIN) ? INT_MAX: -n;
+    while (n > 9) {
+        n /= 10;
+        r++;
+    }
+    return r;
 }
 
 /*
@@ -377,9 +459,25 @@ static int whileCounter = 0;
 static int stackTop = -1;
 static int stackSize = TABLE_SIZE;
 static int* stack;
+static int scale = -1;
+static int function = 0;
+static int isWhile = 0;
+DLList* list;
+shadowStack_t* shStack;
 
 void codeGen_init(){
     stack = malloc(sizeof(int) * stackSize);
+    if(stack == NULL){
+        err = E_INTERNAL;
+        return;
+    }
+    list = malloc(sizeof(DLList));
+    if(list == NULL){
+        err = E_INTERNAL;
+        return;
+    }
+    DLL_Init(list);
+    shStack = NULL;
     printf(".IFJcode21\n");
     printf("DEFVAR GF@expr\n");
     printf("DEFVAR GF@tmp1\n");
@@ -406,31 +504,95 @@ void codeGen_built_in_function(){
  */
 
 void codeGen_push_var(char* name){
-    printf("PUSHS TF@%s\n", name);
+    shadowStack_t* current = shStackNameScaleByNameInitialized(shStack, name);
+    if(current == NULL){
+        err = E_INTERNAL;
+        return;
+    }
+    if(isWhile == 0){
+        printf("PUSHS TF@%s\n", current->nameScale);
+    }else{
+        char* str = (char*)malloc(INST_LEN + strlen(current->nameScale));
+        sprintf(str, "PUSHS TF@%s\n", current->nameScale);
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 void codeGen_push_string(char* value){
-    printf("PUSHS string@%s\n", convert_string(value));
+    if(isWhile == 0){
+        printf("PUSHS string@%s\n", convert_string(value));
+    }else{
+        char* str = (char*)malloc(INST_LEN + strlen(convert_string(value)));
+        sprintf(str, "PUSHS string@%s\n", convert_string(value));
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 void codeGen_push_int(int value){
-    printf("PUSHS int@%d\n", value);
+    if(isWhile){
+        printf("PUSHS int@%d\n", value);
+    }else{
+        char* str = (char*)malloc(INST_LEN + numPlaces(value));
+        sprintf(str, "PUSHS int@%d\n", value);
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 void codeGen_push_float(double value){
-    printf("PUSHS float@%a\n", value);
+    if(isWhile == 0){
+        printf("PUSHS float@%a\n", value);
+    }else{
+        char* str = (char*)malloc(INST_LEN + sizeof(value));
+        sprintf(str, "PUSHS float@%a\n", value);
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 void codeGen_push_nil(){
-    printf("PUSHS nil@nil\n");
+    if(isWhile == 0){
+        printf("PUSHS nil@nil\n");
+    }else{
+        char* str = (char*)malloc(INST_LEN);
+        sprintf(str, "PUSHS nil@nil\n");
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 void codeGen_new_var(char* name){
-    printf("DEFVAR TF@%s\n", name);
+    shStack = shStackPush(shStack, name, scale, function);
+    if(shStack == NULL){
+        err = E_INTERNAL;
+        return;
+    }
+    printf("DEFVAR TF@%s\n", shStack->nameScale);
 }
 
 void codeGen_assign_var(char* name){
-    printf("POPS TF@%s\n", name);
+    shadowStack_t* current = shStackNameScaleByName(shStack, name);
+    if(current == NULL){
+        err = E_INTERNAL;
+        return;
+    }
+    current->inicialized = 1;
+    if(isWhile == 0){
+        printf("POPS TF@%s\n", current->nameScale);
+    }else{
+        char* str = (char*)malloc(INST_LEN + strlen(current->nameScale));
+        sprintf(str, "POPS TF@%s\n", current->nameScale);
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+
 }
 
 /*
@@ -439,25 +601,56 @@ void codeGen_assign_var(char* name){
 
 void codeGen_if_start(){
     stackTop++;
+    scale++;
     if(stackTop >= stackSize){
         stackSize += stackSize;
         stack = realloc(stack, sizeof(int) * stackSize);
     }
     stack[stackTop] = ifCounter;
     ifCounter++;
-    printf("POPS GF@expr\n");
-    printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", stack[stackTop]);
-
+    if(isWhile == 0){
+        printf("POPS GF@expr\n");
+        printf("JUMPIFNEQ if$%d$else GF@expr bool@true\n", stack[stackTop]);
+    }else{
+        char* str = (char*)malloc(INST_LEN);
+        sprintf(str, "POPS GF@expr\n");
+        DLL_InsertLast(list, str);
+        free(str);
+        char* str2 = (char*)malloc(INST_LEN + stack[stackTop] + 1);
+        sprintf(str2, "JUMPIFNEQ if$%d$else GF@expr bool@true\n", stack[stackTop]);
+        DLL_InsertLast(list, str2);
+        free(str2);
+    }
 }
 
 void codeGen_if_else(){
-    printf("JUMP if$%d$end\n", stack[stackTop]);
-    printf("LABEL if$%d$else\n", stack[stackTop]);
+    if(isWhile == 0) {
+        printf("JUMP if$%d$end\n", stack[stackTop]);
+        printf("LABEL if$%d$else\n", stack[stackTop]);
+    }else{
+        char* str = (char*)malloc(INST_LEN + stack[stackTop] + 1);
+        sprintf(str, "JUMP if$%d$end\n", stack[stackTop]);
+        DLL_InsertLast(list, str);
+        free(str);
+        char* str2 = (char*)malloc(INST_LEN + stack[stackTop] + 1);
+        sprintf(str2, "LABEL if$%d$else\n", stack[stackTop]);
+        DLL_InsertLast(list, str2);
+        free(str2);
+    }
 }
 
 void codeGen_if_end(){
-    printf("LABEL if$%d$end\n", stack[stackTop]);
+    if(isWhile == 0){
+        printf("LABEL if$%d$end\n", stack[stackTop]);
+    }else{
+        char* str = (char*)malloc(INST_LEN + stack[stackTop] + 1);
+        sprintf(str, "LABEL if$%d$end\n", stack[stackTop]);
+        DLL_InsertLast(list, str);
+        free(str);
+    }
+    shStack = shStackDelByScale(shStack, scale);
     stackTop--;
+    scale--;
 }
 
 /*
@@ -466,6 +659,8 @@ void codeGen_if_end(){
 
 void codeGen_while_body_start(){
     stackTop++;
+    scale++;
+    isWhile = 1;
     if(stackTop >= stackSize){
         stackSize += stackSize;
         stack = realloc(stack, sizeof(int) * stackSize);
@@ -476,14 +671,29 @@ void codeGen_while_body_start(){
 }
 
 void codeGen_while_start(){
-    printf("POPS GF@expr\n");
-    printf("JUMPIFNEQ while$%d$end GF@expr bool@true\n", stack[stackTop]);
+    if(isWhile == 0) {
+        printf("POPS GF@expr\n");
+        printf("JUMPIFNEQ while$%d$end GF@expr bool@true\n", stack[stackTop]);
+    }else{
+        char* str = (char*)malloc(INST_LEN);
+        sprintf(str, "POPS GF@expr\n");
+        DLL_InsertLast(list, str);
+        free(str);
+        char* str2 = (char*)malloc(INST_LEN + numPlaces(stack[stackTop]) + 1);
+        sprintf(str2, "JUMPIFNEQ while$%d$end GF@expr bool@true\n", stack[stackTop]);
+        DLL_InsertLast(list, str2);
+        free(str2);
+    }
 }
 
 void codeGen_while_end(){
+    DLL_PrintAll(list);
+    DLL_Dispose(list);
     printf("JUMP while$%d$start\n", stack[stackTop]);
     printf("LABEL while$%d$end\n", stack[stackTop]);
+    shStack = shStackDelByScale(shStack, scale);
     stackTop--;
+    scale--;
 }
 
 
@@ -492,6 +702,8 @@ void codeGen_while_end(){
  */
 
 void codeGen_function_start(char* name){
+    scale++;
+    function++;
     printf("#----FUN-%s----\n", name);
     printf("JUMP %s$end\nLABEL %s\nPUSHFRAME\nCREATEFRAME\n", name, name);
     printf("POPS GF@trash\n");
@@ -503,6 +715,8 @@ void codeGen_function_return(){
 
 void codeGen_function_end(char* name){
     printf("POPFRAME\nRETURN\nLABEL %s$end\n", name);
+    shStack = shStackDelByScale(shStack, scale);
+    scale--;
 }
 
 void codeGen_function_call(char* name, unsigned parameters){

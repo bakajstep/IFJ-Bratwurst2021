@@ -32,7 +32,6 @@ void DLL_Dispose( DLList *list ) {
         tmp = NULL;
         tmp = list->firstElement;
     }
-    list->activeElement = NULL;
     list->lastElement = NULL;
 }
 
@@ -42,7 +41,7 @@ void DLL_InsertLast( DLList *list, char *data ) {
     if (tmp != NULL){
         tmp->data = (char *) malloc(sizeof(strlen(data)));
         if (tmp->data != NULL) {
-            strcpy_s(data,tmp->data);
+            strcpy(data,tmp->data);
         } else {
             free(tmp);
             err = E_INTERNAL;
@@ -60,4 +59,6 @@ void DLL_InsertLast( DLList *list, char *data ) {
         err = E_INTERNAL;
     }
 }
+
+
 

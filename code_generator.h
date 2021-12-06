@@ -9,11 +9,21 @@
 #include <string.h>
 #include "scanner.h"
 #include "symtable.h"
+#include "error.h"
 #include "dll.h"
 #include "string.h"
 #include "psa.h"
 
 #define TABLE_SIZE 10
+#define INST_LEN 39
+
+typedef struct shadowStack{
+    char* nameScale;
+    int scale;
+    char* name;
+    int inicialized;
+    struct shadowStack* next;
+} shadowStack_t;
 
 void generate_operation(psa_rules_enum operation);
 void generate_IntToFloat1();
