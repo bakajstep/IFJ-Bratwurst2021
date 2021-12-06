@@ -16,7 +16,7 @@
 /** Prvek dvousměrně vázaného seznamu. */
 typedef struct DLLElement {
     /** Užitečná data. */
-    char *data;
+    char* data;
     /** Ukazatel na předcházející prvek seznamu. */
     struct DLLElement *previousElement;
     /** Ukazatel na následující prvek seznamu. */

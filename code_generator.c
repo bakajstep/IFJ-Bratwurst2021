@@ -509,6 +509,7 @@ void codeGen_push_var(char* name){
         err = E_INTERNAL;
         return;
     }
+
     if(isWhile == 0){
         printf("PUSHS TF@%s\n", current->nameScale);
     }else{
@@ -533,7 +534,7 @@ void codeGen_push_string(char* value){
 }
 
 void codeGen_push_int(int value){
-    if(isWhile){
+    if(isWhile == 0){
         printf("PUSHS int@%d\n", value);
     }else{
         char* str = (char*)malloc(INST_LEN + numPlaces(value));
@@ -548,7 +549,8 @@ void codeGen_push_float(double value){
     if(isWhile == 0){
         printf("PUSHS float@%a\n", value);
     }else{
-        char* str = (char*)malloc(INST_LEN + sizeof(value));
+        //TODO velikost float
+        char* str = (char*)malloc(INST_LEN + 30);
         sprintf(str, "PUSHS float@%a\n", value);
         DLL_InsertLast(list, str);
         free(str);
@@ -716,13 +718,26 @@ void codeGen_function_return(){
 
 void codeGen_function_end(char* name){
     printf("POPFRAME\nRETURN\nLABEL %s$end\n", name);
+
     shStack = shStackDelByScale(shStack, scale);
     scale--;
 }
 
 void codeGen_function_call(char* name, unsigned parameters){
-    printf("PUSHS int@%i\n", parameters);
-    printf("CALL %s\n", name);
+    if(isWhile == 0){
+        printf("PUSHS int@%i\n", parameters);
+        printf("CALL %s\n", name);
+    }else{
+        char* str = (char*)malloc(INST_LEN + numPlaces(parameters));
+        sprintf(str, "PUSHS int@%i\n", parameters);
+        DLL_InsertLast(list, str);
+        free(str);
+        char* str2 = (char*)malloc(INST_LEN + strlen(name));
+        sprintf(str2, "CALL %s\n", name);
+        DLL_InsertLast(list, str2);
+        free(str2);
+    }
+
 }
 
 /*
@@ -730,7 +745,7 @@ void codeGen_function_call(char* name, unsigned parameters){
  */
 
 void generate_IntToFloat1(){
-    if(isWhiled == 0){
+    if(isWhile == 0){
         printf("INT2FLOATS\n");
     }else{
         char* str = (char*)malloc(INST_LEN);
@@ -738,7 +753,6 @@ void generate_IntToFloat1(){
         DLL_InsertLast(list, str);
         free(str);
     }
-
 }
 
 void generate_IntToFloat2(){
@@ -752,7 +766,7 @@ void generate_IntToFloat2(){
         DLL_InsertLast(list, str);
         free(str);
         char* str2 = (char*)malloc(INST_LEN);
-        sprintf(str2, "INT2FLOATS\n";
+        sprintf(str2, "INT2FLOATS\n");
         DLL_InsertLast(list, str2);
         free(str2);
         char* str3 = (char*)malloc(INST_LEN);
@@ -760,7 +774,6 @@ void generate_IntToFloat2(){
         DLL_InsertLast(list, str3);
         free(str3);
     }
-
 }
 
 void generate_operation(psa_rules_enum operation){
@@ -775,7 +788,7 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
-            if(isWhile){
+            if(isWhile == 0){
                 printf("SUBS\n");
             }else{
                 DLL_InsertLast(list, "SUBS\n");
@@ -875,7 +888,7 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_HASHTAG:
             // rule E -> #E
-            if(iswhile == 0){
+            if(isWhile == 0){
                 printf("POPS GF@tmp1\n");
                 printf("STRLEN GF@tmp4 GF@tmp1\n");
                 printf("PUSHS GF@tmp4\n");
