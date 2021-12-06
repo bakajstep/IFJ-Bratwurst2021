@@ -184,6 +184,10 @@ void codeGen_write(){
     printf("LT GF@expr TF@cnt TF@cnt_of_parameter\n");
     printf("JUMPIFNEQ _print_while_end GF@expr bool@true\n");
     printf("POPS TF@to_print\n");
+    printf("JUMPIFNEQ exprint TF@to_print nil@nil \n");
+    printf("PUSHS string@nil\n");
+    printf("POPS TF@to_print\n");
+    printf("LABEL exprint\n");
     printf("WRITE TF@to_print\n");
     printf("ADD TF@cnt TF@cnt int@1\n");
     printf("JUMP _print_while_start\n");
