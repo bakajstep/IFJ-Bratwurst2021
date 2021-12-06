@@ -15,7 +15,7 @@
 #include "psa.h"
 
 #define TABLE_SIZE 10
-#define INST_LEN 39
+#define INST_LEN 100
 
 typedef struct shadowStack{
     char* nameScale;

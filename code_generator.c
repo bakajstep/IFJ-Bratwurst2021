@@ -189,7 +189,7 @@ shadowStack_t* shStackPush(shadowStack_t* shade, char* name, int scale, int func
     }
     char funCnt[function+1];
     for(int i = 0; i < function; i++){
-        funCnt[i] = '%';
+        funCnt[i] = '$';
     }
     funCnt[function] = '\0';
     sprintf(newNode->nameScale, "%s%s$%d", funCnt,  name,  scale);
@@ -513,7 +513,7 @@ void codeGen_push_var(char* name){
     if(isWhile == 0){
         printf("PUSHS TF@%s\n", current->nameScale);
     }else{
-        char* str = (char*)malloc(INST_LEN + strlen(current->nameScale));
+        char* str = (char*)malloc(12 + strlen(current->nameScale));
         sprintf(str, "PUSHS TF@%s\n", current->nameScale);
         DLL_InsertLast(list, str);
         free(str);
@@ -525,7 +525,7 @@ void codeGen_push_string(char* value){
     if(isWhile == 0){
         printf("PUSHS string@%s\n", convert_string(value));
     }else{
-        char* str = (char*)malloc(INST_LEN + strlen(convert_string(value)));
+        char* str = (char*)malloc(15 + strlen(convert_string(value)));
         sprintf(str, "PUSHS string@%s\n", convert_string(value));
         DLL_InsertLast(list, str);
         free(str);
@@ -669,7 +669,11 @@ void codeGen_while_body_start(){
     }
     stack[stackTop] = whileCounter;
     whileCounter++;
-    printf("LABEL while$%d$start\n", stack[stackTop]);
+    char* str = (char*)malloc(INST_LEN);
+    sprintf(str, "LABEL while$%d$start\n", stack[stackTop]);
+    DLL_InsertLast(list, str);
+    free(str);
+
 }
 
 void codeGen_while_start(){
@@ -677,10 +681,7 @@ void codeGen_while_start(){
         printf("POPS GF@expr\n");
         printf("JUMPIFNEQ while$%d$end GF@expr bool@true\n", stack[stackTop]);
     }else{
-        char* str = (char*)malloc(INST_LEN);
-        sprintf(str, "POPS GF@expr\n");
-        DLL_InsertLast(list, str);
-        free(str);
+        DLL_InsertLast(list, "POPS GF@expr\n");
         char* str2 = (char*)malloc(INST_LEN + numPlaces(stack[stackTop]) + 1);
         sprintf(str2, "JUMPIFNEQ while$%d$end GF@expr bool@true\n", stack[stackTop]);
         DLL_InsertLast(list, str2);
@@ -713,7 +714,11 @@ void codeGen_function_start(char* name){
 }
 
 void codeGen_function_return(){
-    printf("POPFRAME\nRETURN\n");
+    if(isWhile == 0){
+        printf("POPFRAME\nRETURN\n");
+    }else{
+        DLL_InsertLast(list, "POPFRAME\nRETURN\n");
+    }
 }
 
 void codeGen_function_end(char* name){
@@ -780,7 +785,7 @@ void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
-            if(isWhile){
+            if(isWhile == 0){
                 printf("ADDS\n");
             }else{
                 DLL_InsertLast(list, "ADDS\n");

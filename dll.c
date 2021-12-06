@@ -40,7 +40,7 @@ void DLL_InsertLast( DLList *list, char *data ) {
 
     DLLElementPtr tmp = (DLLElementPtr)malloc(sizeof(struct DLLElement));
     if (tmp != NULL){
-        tmp->data = (char *) malloc(strlen(data));
+        tmp->data = (char *) malloc(strlen(data)+1);
         if (tmp->data != NULL) {
             strcpy(tmp->data, data);
         } else {
