@@ -524,22 +524,46 @@ void generate_IntToFloat2(){
     printf("PUSHS GF@tmp3\n");
 }
 
+void generate_checkifNIL2ops(){
+	printf("POPS GF@tmp1\n");
+            printf("POPS GF@tmp2\n");
+            printf("JUMPIFNEQ notNil1 GF@tmp1 nil@nil\n");
+            printf("EXIT int@8");
+            printf("LABEL notNil1\n");
+            printf("JUMPIFNEQ notNil2 GF@tmp2 nil@nil\n");
+            printf("EXIT int@8");
+            printf("LABEL notNil2\n");
+            printf("PUSHS GF@tmp2\n");
+            printf("PUSHS GF@tmp1\n");
+}
+void generate_checkifNIL1op(){
+	printf("POPS GF@tmp1\n");
+	printf("JUMPIFNEQ notNil1 GF@tmp1 nil@nil\n");
+	printf("EXIT int@8");
+        printf("LABEL notNil1\n");
+        printf("PUSHS GF@tmp1\n");
+}
+
 void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
             //rule E -> E + E
+            generate_checkifNIL2ops();
             printf("ADDS\n");
             break;
         case NT_MINUS_NT:
             //rule E -> E - E
+            generate_checkifNIL2ops();
             printf("SUBS\n");
             break;
         case NT_MUL_NT:
             // rule E -> E * E
+            generate_checkifNIL2ops();
             printf("MULS\n");
             break;
         case NT_DIV_NT:
             // rule E -> E / E
+            generate_checkifNIL2ops();
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
             printf("JUMPIFNEQ notZero GF@tmp1 float@0x0p+0\n");
@@ -550,6 +574,7 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_IDIV_NT:
             // rule E -> E // E
+            generate_checkifNIL2ops();
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
             printf("JUMPIFNEQ notZero GF@tmp1 int@0\n");
@@ -560,6 +585,7 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_CONCAT_NT:
             // rule E -> E .. E
+            generate_checkifNIL2ops();
             printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
             printf("CONCAT GF@tmp1 GF@tmp2 GF@tmp1\n");
@@ -591,6 +617,7 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_HASHTAG:
             // rule E -> #E
+            generate_checkifNIL1op();
             printf("POPS GF@tmp1\n");
             printf("STRLEN GF@tmp4 GF@tmp1\n");
             printf("PUSHS GF@tmp4\n");
