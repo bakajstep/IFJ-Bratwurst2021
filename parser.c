@@ -576,14 +576,8 @@ bool check_identifier_is_defined (LList* tbl_list, char* id)
          */                
         //printf("\njsem zde\n");
         if (table_elem != NULL)
-        {                            
-          //  printf("\nprvek je v tabulce\n");                            
-            if (table_elem->defined == true)
-            {                
-                ret_val = true;                
-            }
-
-            //break;            
+        {                                                                  
+            ret_val = true;                            
         }        
 
         elem = elem->nextElement;        

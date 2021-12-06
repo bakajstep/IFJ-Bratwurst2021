@@ -35,4 +35,8 @@ automat diagram (dokumentace):
 	
 zmena precedencni tabulky obrazek (dokumentace)
 
-zmena LL gramatiky NIL (dokumentace)
+zmena LL gramatiky NIL (dokumentace) -> TODO zmena v LL tabulce
+
+-------------------------------
+TODO
+odkazy na tabulky, gramatiku v textu atd. -> citace
