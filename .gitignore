@@ -56,5 +56,8 @@ dkms.conf
 #Runablle
 compiler
 
+#Tests discord
+tests/disc_test/tmp/
+
 # VScode files
 .vscode/
