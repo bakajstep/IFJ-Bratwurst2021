@@ -10,6 +10,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 #include "dll.h"
 #include "error.h"
@@ -59,6 +60,18 @@ void DLL_InsertLast( DLList *list, char *data ) {
         err = E_INTERNAL;
     }
 }
+
+
+void DLL_Dispose( DLList *list ){
+
+    DLLElementPtr tmp = list->firstElement;
+
+    while (tmp != NULL){
+        printf("%s",tmp->data);
+        tmp = tmp->nextElement;
+    }
+}
+
 
 
 
