@@ -3505,6 +3505,9 @@ bool term (p_data_ptr_t data)
 
             break;
 
+        case NIL:            
+            param_stack_push(data->stack, P_NIL, *attribute);
+
         default:            
             break;
         }
