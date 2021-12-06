@@ -532,7 +532,7 @@ void generate_checkifNIL2ops(){
 	printf("POPS GF@tmp1\n");
             printf("POPS GF@tmp2\n");
             printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
-            printf("JUMPIFEQ ERR8 GF@tmp1 nil@nil\n");
+            printf("JUMPIFEQ ERR8 GF@tmp2 nil@nil\n");
             printf("PUSHS GF@tmp2\n");
             printf("PUSHS GF@tmp1\n");
 }
@@ -543,13 +543,13 @@ void generate_checkifNIL1op(){
 }
 
 void generate_errorOp(){
-	printf("JUMP errorOp_End");
-	printf("LABEL ERR9");
-	printf("EXIT int@9");
-	printf("JUMP errorOp_End");
-	printf("LABEL ERR8");
-	printf("EXIT int@8");
-	printf("LABEL errorOp_End");
+	printf("JUMP errorOp_End\n");
+	printf("LABEL ERR9\n");
+	printf("EXIT int@9\n");
+	printf("JUMP errorOp_End\n");
+	printf("LABEL ERR8\n");
+	printf("EXIT int@8\n");
+	printf("LABEL errorOp_End\n");
 }
 
 void generate_operation(psa_rules_enum operation){

@@ -1241,6 +1241,8 @@ bool prog (p_data_ptr_t data)
             }            
 
             /* ----------- END OF SEMANTIC ----------*/                  
+            
+            generate_errorOp();
         }                                
     }    
 
