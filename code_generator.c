@@ -550,7 +550,7 @@ void generate_errorOp(){
 	printf("EXIT int@9");
 	printf("JUMP errorOp_End");
 	printf("LABEL ERR8");
-	printf("EXIT int@9");
+	printf("EXIT int@8");
 	printf("LABEL errorOp_End");
 }
 
