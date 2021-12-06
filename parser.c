@@ -2631,11 +2631,11 @@ bool vals (p_data_ptr_t data)
 
             /* -------------- CODE GEN --------------*/
 
-            codeGen_assign_var(data->ids_list->id);
+            //codeGen_assign_var(data->ids_list->id);
 
             /* ----------- END OF CODE GEN ----------*/
 
-            data->ids_list = data->ids_list->next;
+            //data->ids_list = data->ids_list->next;
         }                        
         else
         {                                                                   
@@ -2757,65 +2757,68 @@ bool n_vals (p_data_ptr_t data)
         (data->token->attribute.keyword == K_ELSE))
     {
         ret_val = true;
-    }
-    else if (stats(data))
+    }                
+    /* 21. <n_vals> -> , exp <n_vals> */    
+    else if (token_type == T_COMMA)
     {
-        ret_val = true;
-    }    
-    else
-    {        
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);
+        next_token(data);        
 
-        token_type = data->token->type;
-
-        /* 21. <n_vals> -> , exp <n_vals> */    
-        if (token_type == T_COMMA)
+        if (expression(data))
         {
-            next_token(data);        
-
-            if (expression(data))
+            /* -------------- SEMANTIC --------------*/    
+            if (data->ids_list != NULL)
             {
-                /* -------------- SEMANTIC --------------*/    
-                if (data->ids_list != NULL)
+                if (data->psa_data_type != data->ids_list->type)
                 {
-                    if (data->psa_data_type != data->ids_list->type)
+                    if (data->psa_data_type == NIL ||
+                        (data->ids_list->type == NUMBER && data->psa_data_type == INT))
                     {
-                        if (data->psa_data_type == NIL ||
-                            (data->ids_list->type == NUMBER && data->psa_data_type == INT))
-                        {
-                            // VALID
-                        }
-                        else
-                        {                                                                                     
-                            err = E_SEM_ASSIGN;
-                            return false;
-                        }
+                        // VALID
                     }
+                    else
+                    {                                                                                     
+                        err = E_SEM_ASSIGN;
+                        return false;
+                    }
+                }
 
-                    set_identifier_defined(data->tbl_list, data->ids_list->id);
+                set_identifier_defined(data->tbl_list, data->ids_list->id);
 
-                    /* -------------- CODE GEN --------------*/
+                /* -------------- CODE GEN --------------*/
 
-                    codeGen_assign_var(data->ids_list->id);
+                // codeGen_assign_var(data->ids_list->id);
 
-                    /* ----------- END OF CODE GEN ----------*/
+                /* ----------- END OF CODE GEN ----------*/
 
-                    data->ids_list = data->ids_list->next;
-                }                        
-                else
-                {     
-                    //printf("\nhere error 4\n");                                          
-                    err = E_SEM_ASSIGN;
-                    return false;
-                }        
-                
-                /* ----------- END OF SEMANTIC ----------*/
+                // data->ids_list = data->ids_list->next;
+            }                        
+            else
+            {     
+                //printf("\nhere error 4\n");                                          
+                err = E_SEM_ASSIGN;
+                return false;
+            }        
+            
+            /* ----------- END OF SEMANTIC ----------*/
 
-                ret_val = n_vals(data);
-            }                   
-        }           
-    }
+            ret_val = n_vals(data);
+        }                   
+    } 
+    else
+    {
+        while (data->ids_list != NULL)
+        {                                                                                                 
+            codeGen_assign_var(get_last_id(data->ids_list));
+            delete_last_id(&(data->ids_list));
+            //ids_list_copy = ids_list_copy->next;
+        }  
+
+        if (stats(data))
+        {
+            ret_val = true;
+        }        
+    }              
+    
     
     return ret_val;
 }
