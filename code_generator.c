@@ -612,18 +612,22 @@ void generate_operation(psa_rules_enum operation){
             break;
         case NT_LEQ_NT:
             // rule E -> E <= E
+            generate_checkifNIL2ops();
             printf("GTS\nNOTS\n");
             break;
         case NT_GEQ_NT:
             // rule E -> E >= E
+            generate_checkifNIL2ops();
             printf("LTS\nNOTS\n");
             break;
         case NT_LTN_NT:
             // rule E -> E < E
+            generate_checkifNIL2ops();
             printf("LTS\n");
             break;
         case NT_GTN_NT:
             // rule E -> E > E
+            generate_checkifNIL2ops();
             printf("GTS\n");
             break;
         case NT_HASHTAG:
