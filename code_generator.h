@@ -14,7 +14,7 @@
 #include "psa.h"
 
 #define TABLE_SIZE 10
-
+void generate_errorOp();
 void generate_operation(psa_rules_enum operation);
 void generate_IntToFloat1();
 void generate_IntToFloat2();

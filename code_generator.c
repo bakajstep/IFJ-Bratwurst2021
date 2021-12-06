@@ -534,10 +534,20 @@ void generate_checkifNIL2ops(){
 }
 void generate_checkifNIL1op(){
 	printf("POPS GF@tmp1\n");
-	printf("JUMPIFNEQ notNil1 GF@tmp1 nil@nil\n");
+	printf("JUMPIFNEQ ERR8 GF@tmp1 nil@nil\n");
 	printf("EXIT int@8");
         printf("LABEL notNil1\n");
         printf("PUSHS GF@tmp1\n");
+}
+
+void generate_errorOp(){
+	printf("JUMP errorOp_End");
+	printf("LABEL ERR9");
+	printf("EXIT int@9");
+	printf("JUMP errorOp_End");
+	printf("LABEL ERR8");
+	printf("EXIT int@9");
+	printf("LABEL errorOp_End");
 }
 
 void generate_operation(psa_rules_enum operation){
