@@ -867,7 +867,7 @@ psa_error_t psa (p_data_ptr_t data)
                 break;
                 
             default:
-                err = E_INTERNAL;
+                err = E_SYNTAX;
             //printf("tady");
                 return PSA_ERR;                
         }
