@@ -1877,6 +1877,11 @@ bool stats (p_data_ptr_t data)
                     /* TODO uncomment */
                     idInsert(&(data->ids_list), data->type, data->func_name);                    
                     
+                    /* -------------- CODE GEN --------------*/
+                    codeGen_push_nil();
+                    codeGen_assign_var(data->func_name);
+                    /* ----------- END OF CODE GEN ----------*/
+
                     if (assign(data))
                     {
                         /* -------------- SEMANTIC --------------*/

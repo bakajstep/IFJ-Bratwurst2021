@@ -8,10 +8,9 @@ vlastni gen testy shadowing:
 
 testy z discordu:
 	Ondroid 10
-	Ondroid 15 -> porovnani datoveho typu s datovym typem nil
-	Ondroid 16
 	Ondroid 18
 	Ondroid 19
+	Ondroid 20
 	Ondroid 22
 	Ondroid 23
 	Ondroid 24
