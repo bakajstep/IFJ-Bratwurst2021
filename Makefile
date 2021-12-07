@@ -514,7 +514,7 @@ $(GEN)-test:
 	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG61).tl > $(GENPATH)$(GENTEST)$(PROG61).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG61).code < $(GENPATH)$(PROG61).in > $(GENPATH)$(GENTEST)$(PROG61).out
 	@echo "\nTest case 'whitespaces' output differences:"
-	diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0	
+	@diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0	
 	
 $(GEN)-clean:
 	cd $(GENPATH) && rm -f \
