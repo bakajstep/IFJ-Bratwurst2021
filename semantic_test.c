@@ -1,6 +1,12 @@
-//
-// Created by adam on 25.11.21.
-//
+/**
+ * Project: Compiler for IFJ21 language
+ *
+ * Brief:   Semantic tester
+ *
+ * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
+ *
+ * Date:    25-11-2021
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
