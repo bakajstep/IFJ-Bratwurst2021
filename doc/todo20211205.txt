@@ -1,35 +1,5 @@
-vlastni syntax testy:
-	str_func_err_1
-
-vlastni gen testy shadowing:
-	fun
-	multiassign
-	visibility
-
-testy z discordu:
-	Ondroid 10
-	Ondroid 18
-	Ondroid 19
-	Ondroid 20
-	Ondroid 23
-	Ondroid 24
-	Rostik 1
-	Rostik 36
-	Rostik 41
-	Rostik 42
-
-testy z discordu upraveno (promyslet):
-	Rostik 16
-	Rostik 17
-	
-TODO chyby 8 vyresit (neocekavana prace s hodnotou nil) - psa
-	
 -------------------------------
 TODO
-
-automat diagram (dokumentace):
-	q2 -> init   EOL, EOF
-	v identifikatoru pridat cislice (a..z, A..Z, _, TODO cislice)	
 	
 zmena precedencni tabulky obrazek (dokumentace)
 
