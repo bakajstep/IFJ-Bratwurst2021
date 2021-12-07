@@ -1,14 +1,13 @@
 /**
- * Project: Compiler for IFJ21 language
+ * Project: IFJ21 imperative language compilter
  * 
  * Brief:   Lexical Analysis for IFJ21 compiler
  * 
- * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
- * Author:  Stepan Bakaj     <xbakaj00@stud.fit.vutbr.cz>
- * Author:  Radek Serejch    <xserej00@stud.fit.vutbr.cz>
- * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
+ * Author:  Adam Kankovsky   <xkanko00>
+ * Author:  Stepan Bakaj     <xbakaj00>
+ * Author:  Radek Serejch    <xserej00>
+ * Author:  David Chocholaty <xchoch09>
  * 
- * Date:    23-10-2021
  */
 
 #include <ctype.h>
@@ -75,8 +74,7 @@ void set_id_keyword (token_t* token, char* str){
         token->attribute.keyword = K_WHILE;
         token->type = T_KEYWORD;
     }else{
-        token->type = T_IDENTIFIER;
-        //token->attribute.string = str;
+        token->type = T_IDENTIFIER;        
     }
 }
 
@@ -440,8 +438,7 @@ token_t* get_next_token ()
             case (S_STRING_CONTENT):            
                 if (symbol == '"')
                 {                    
-                    token->type = T_STRING;
-                    /* DONE free */
+                    token->type = T_STRING;                    
 
                     if (str->lenght != 0)
                     {
@@ -958,8 +955,7 @@ token_t* get_next_token ()
                     set_id_keyword(token, id_keyword);                                      
                     
                     if (token->type == T_IDENTIFIER)
-                    {
-                        /* DONE free */
+                    {                        
                         token->attribute.string = (char*) malloc(strlen(get_char_arr(str))+1);
 
                         if (token->attribute.string == NULL)
