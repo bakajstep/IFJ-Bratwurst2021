@@ -38,8 +38,10 @@ void DLL_Dispose( DLList *list ) {
 void DLL_InsertLast( DLList *list, char *data ) {
 
     DLLElementPtr tmp = (DLLElementPtr)malloc(sizeof(struct DLLElement));
-    if (tmp != NULL){
-        tmp->data = (char *) malloc(strlen(data)+1);
+    if (tmp != NULL){        
+        //tmp->data = (char *) malloc(strlen(data)+1+24);
+        //printf("data: %s", data);
+        tmp->data = (char *) malloc(strlen(data)+1+24);
         if (tmp->data != NULL) {
             strcpy(tmp->data, data);
         } else {
@@ -66,7 +68,7 @@ void DLL_PrintAll( DLList *list ){
     DLLElementPtr tmp = list->firstElement;
 
     while (tmp != NULL){
-        printf("%s", tmp->data);
+        printf("%s", tmp->data);        
         tmp = tmp->nextElement;
     }
 }
