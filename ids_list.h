@@ -1,11 +1,8 @@
 /**
- * Project: Compiler for IFJ21 language
- *
- * Brief:   Linked list for symtables
- *
- * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
- *
- * Date:    12-11-2021
+ * Project: Compiler for IFJ21 language  
+ * 
+ * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
+ *  
  */
 
 #ifndef IFJ_BRATWURST2021_IDS_LIST_H

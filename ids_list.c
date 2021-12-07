@@ -1,3 +1,12 @@
+/**
+ * Project: Compiler for IFJ21 language
+ * 
+ * Brief:   Linked list for identifiers used in parser
+ * 
+ * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
+ *  
+ */
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -6,16 +15,14 @@
 #include "data_types.h"
 
 void idInsert(ids_list_t** ids_list, data_type_t type, char* id)
-{    
-    /* DONE free */
+{        
     ids_list_t* newId = (ids_list_t*) malloc(sizeof(ids_list_t));
 
     if(!newId){
         err = E_INTERNAL;
         return;
     }
-
-    /* DONE free */
+    
     newId->id = (char*) malloc(strlen(id)+1);
 
     if (newId->id == NULL)
@@ -49,8 +56,7 @@ void save_ids_list(ids_list_t* orig, ids_list_t** dest)
     ids_list_t* current = orig;
 
     while (current != NULL)
-    {
-        //printf("\ncurrent id: %s\n", current->id);
+    {        
         idInsert(dest, current->type, current->id);
 
         current = current->next;

@@ -1,6 +1,11 @@
-//
-// Created by adam on 29.11.21.
-//
+/**
+ * Project: IFJ21 imperative language compilter 
+ * 
+ * Author:  Adam Kankovsky   <xkanko00>
+ * Author:  Stepan Bakaj     <xbakaj00>
+ * Author:  Radek Serejch    <xserej00> 
+ * 
+ */
 
 #ifndef IFJ_BRATWURST2021_CODE_GENERATOR_H
 #define IFJ_BRATWURST2021_CODE_GENERATOR_H

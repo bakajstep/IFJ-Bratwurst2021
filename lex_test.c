@@ -1,11 +1,10 @@
 /**
- * Project: Compiler for IFJ21 language
- *
+ * Project: IFJ21 imperative language compilter
+ * 
  * Brief:   Testing Lexical Analysis
- *
- * Author:  Stepan Bakaj     <xbakaj00@stud.fit.vutbr.cz>
- *
- * Date:    07-11-2021
+ *  
+ * Author:  Stepan Bakaj     <xbakaj00> 
+ * 
  */
 
 #include <stdio.h>

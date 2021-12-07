@@ -1,6 +1,13 @@
-//
-// Created by adam on 03.12.21.
-//
+/**
+ * Project: IFJ21 imperative language compilter
+ * 
+ * Brief:   Code Generator for IFJ21 compiler
+ * 
+ * Author:  Adam Kankovsky   <xkanko00>
+ * Author:  Stepan Bakaj     <xbakaj00>
+ * Author:  Radek Serejch    <xserej00> 
+ * 
+ */
 
 #include <ctype.h>
 #include <stdlib.h>

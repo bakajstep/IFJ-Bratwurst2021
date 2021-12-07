@@ -1,14 +1,11 @@
 /**
- * Project: Compiler for IFJ21 language
+ * Project: IFJ21 imperative language compilter
  * 
- * Brief:   Interface of scanner
+ * Brief:   Lexical Analysis for IFJ21 compiler
  * 
- * Author:  Adam Kankovsky   <xkanko00@stud.fit.vutbr.cz>
- * Author:  Stepan Bakaj     <xbakaj00@stud.fit.vutbr.cz>
- * Author:  Radek Serejch    <xserej00@stud.fit.vutbr.cz>
- * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
+ * Author:  Adam Kankovsky   <xkanko00> 
+ * Author:  David Chocholaty <xchoch09>
  * 
- * Date:    23-10-2021
  */
 
 #ifndef IFJ_BRATWURST2021_SCANNER_H

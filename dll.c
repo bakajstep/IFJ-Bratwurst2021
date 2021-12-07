@@ -1,11 +1,10 @@
 /**
- * Project: Compiler for IFJ21 language
- *
- * Brief:   Double linked list for code generator
- *
- * Author:  Stepan Bakaj     <xbakaj00@stud.fit.vutbr.cz>
- *
- * Date:    23-10-2021
+ * Project: IFJ21 imperative language compilter
+ * 
+ * Brief:   Double Linked List used in Code Generator for IFJ21 compiler
+ *  
+ * Author:  Stepan Bakaj     <xbakaj00> 
+ * 
  */
 
 #include <stdlib.h>

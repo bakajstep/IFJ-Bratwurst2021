@@ -1,11 +1,10 @@
 /**
  * Project: Compiler for IFJ21 language
  * 
- * Brief:   Interface of error handler
+ * Brief:   Error codes for IFJ2021 compiler project
  * 
  * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
- * 
- * Date:    28-10-2021
+ *  
  */
 
 #ifndef IFJ_BRATWURST2021_ERROR_H

@@ -1,33 +1,29 @@
 /**
- * Project: Compiler for IFJ21 language
- *
- * Brief:   Double linked list for code generator
- *
- * Author:  Stepan Bakaj     <xbakaj00@stud.fit.vutbr.cz>
- *
- * Date:    23-10-2021
+ * Project: IFJ21 imperative language compilter  
+ *  
+ * Author:  Stepan Bakaj     <xbakaj00> 
+ * 
  */
-
 
 #ifndef IFJ_BRATWURST2021_DLL_H
 #define IFJ_BRATWURST2021_DLL_H
 
 
-/** Prvek dvousměrně vázaného seznamu. */
+/** Two-way bound list element */
 typedef struct DLLElement {
-    /** Užitečná data. */
+    /** Useful data */
     char* data;
-    /** Ukazatel na předcházející prvek seznamu. */
+    /** Pointer to the previous list element */
     struct DLLElement *previousElement;
-    /** Ukazatel na následující prvek seznamu. */
+    /** Pointer to the next list element */
     struct DLLElement *nextElement;
 } *DLLElementPtr;
 
-/** Dvousměrně vázaný seznam. */
+/** Two-way bound list */
 typedef struct {
-    /** Ukazatel na první prvek seznamu. */
+    /** Pointer to the first element of the list */
     DLLElementPtr firstElement;
-    /** Ukazatel na posledni prvek seznamu. */
+    /** Pointer to the last element of the list */
     DLLElementPtr lastElement;
 } DLList;
 
