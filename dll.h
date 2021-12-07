@@ -33,6 +33,6 @@ void DLL_Dispose( DLList * );
 
 void DLL_PrintAll( DLList * );
 
-void DLL_InsertLast( DLList *, char * );
+void DLL_InsertLast( DLList *, char *, unsigned size);
 
 #endif //IFJ_BRATWURST2021_DLL_H
