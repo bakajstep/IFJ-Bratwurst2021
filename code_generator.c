@@ -485,6 +485,7 @@ static int scale = -1;
 static int function = 0;
 static int isWhile = 0;
 static int isNil = 0;
+static int toBool = -1;
 DLList* list;
 shadowStack_t* shStack;
 
@@ -1011,5 +1012,38 @@ void generate_operation(psa_rules_enum operation){
             }
             break;
         default:break;
+    }
+}
+
+void generate_toBool() {
+    if(isWhile == 0){
+        printf("POPS GF@tmp1\n");
+        printf("JUMPIFEQ toBoolTru%d GF@tmp1 nil@nil\n",++toBool);
+        printf("PUSHS bool@true\n");
+        printf("JUMP toBoolFalse%d\n",toBool);
+        printf("LABEL toBoolTru%d\n",toBool);
+        printf("PUSHS bool@false\n");
+        printf("LABEL toBoolFalse%d\n",toBool);
+    }else{
+        DLL_InsertLast(list, "POPS GF@tmp1\n");
+        char* str = (char*)malloc(INST_LEN + numPlaces(++toBool));
+        sprintf(str, "JUMPIFEQ toBoolTru%d GF@tmp1 nil@nil\n", toBool);
+        DLL_InsertLast(list, str);
+        free(str);
+        DLL_InsertLast(list, "PUSHS bool@true\n");
+        char* str2 = (char*)malloc(INST_LEN + numPlaces(toBool));
+        sprintf(str2, "JUMPIFEQ toBoolTru%d GF@tmp1 nil@nil\n", toBool);
+        DLL_InsertLast(list, str2);
+        free(str2);
+        DLL_InsertLast(list, "POPS GF@tmp1\n");
+        char* str3 = (char*)malloc(INST_LEN + numPlaces(toBool));
+        sprintf(str3, "JUMPIFEQ toBoolTru%d GF@tmp1 nil@nil\n", toBool);
+        DLL_InsertLast(list, str3);
+        free(str3);
+        DLL_InsertLast(list, "PUSHS bool@false\n");
+        char* str4 = (char*)malloc(INST_LEN + numPlaces(toBool));
+        sprintf(str4, "LABEL toBoolFalse%d\n", toBool);
+        DLL_InsertLast(list, str4);
+        free(str4);
     }
 }
