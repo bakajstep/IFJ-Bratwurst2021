@@ -196,6 +196,9 @@ char* convert_string(char* str_toconvert){
 
         string++;
     }
+
+    string_append_character(string_res, '\0');
+
     return string_res->string;
 }
 
