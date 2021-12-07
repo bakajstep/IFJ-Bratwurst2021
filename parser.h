@@ -37,6 +37,7 @@ typedef struct p_data {
 
     param_stack* stack;
     bool return_func_body;
+    bool if_while;
 } *p_data_ptr_t;
 
 parser_error_t parser ();

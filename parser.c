@@ -1136,7 +1136,8 @@ bool prog (p_data_ptr_t data)
             data->body_func_name = NULL;
             data->param = NULL;
             data->ret = NULL;
-            data->ids_list = NULL;                        
+            data->ids_list = NULL;          
+            data->if_while = false;              
             
             /* ----------- END OF SEMANTIC ----------*/
 
@@ -1877,6 +1878,8 @@ bool stats (p_data_ptr_t data)
     {             
         next_token(data);
         
+        data->if_while = true;
+
         if (expression(data))
         {            
             VALIDATE_TOKEN(data->token);
@@ -1970,6 +1973,8 @@ bool stats (p_data_ptr_t data)
         /* ----------- END OF CODE GEN ----------*/
 
         next_token(data);
+
+        data->if_while = true;
 
         if (expression(data))
         {
@@ -2495,6 +2500,8 @@ bool vals (p_data_ptr_t data)
 {
     bool ret_val = false;
 
+    data->if_while = false;
+
     /* 20. <vals> -> exp <n_vals> */
     if (expression(data))
     {        
@@ -2546,6 +2553,8 @@ bool r_vals (p_data_ptr_t data)
     bool ret_val = false;
     symTree_t* glb_tbl;
     symData_t* func_data;
+
+    data->if_while = false;
 
     /* 20. <vals> -> exp <n_vals> */
     if (expression(data))
@@ -2653,6 +2662,8 @@ bool n_vals (p_data_ptr_t data)
     {
         next_token(data);        
 
+        data->if_while = false;
+
         if (expression(data))
         {
             /* -------------- SEMANTIC --------------*/    
@@ -2727,6 +2738,8 @@ bool r_n_vals (p_data_ptr_t data)
     if (token_type == T_COMMA)
     {
         next_token(data);        
+
+        data->if_while = false;
 
         if (expression(data))
         {
@@ -3116,6 +3129,8 @@ bool assign_val (p_data_ptr_t data)
 
         if (!is_func(data->tbl_list, func_name))
         {
+            data->if_while = false;
+
             if (expression(data))
             {
                 /* -------------- CODE GEN --------------*/
@@ -3285,21 +3300,27 @@ bool assign_val (p_data_ptr_t data)
             }            
             //}
         }                        
-    }    
+    }       
     /* 29. <assign_val> -> exp */
-    else if (expression(data))
-    {     
-        /* -------------- CODE GEN --------------*/
+    else
+    { 
+        data->if_while = false; 
 
-        codeGen_assign_var(data->func_name, NOT_NIL);
+        if (expression(data))
+        { 
 
-        /* ----------- END OF CODE GEN ----------*/
+            /* -------------- CODE GEN --------------*/
 
-        free(data->ids_list->id);
-        data->ids_list->id = NULL;
-        data->ids_list = data->ids_list->next;
+            codeGen_assign_var(data->func_name, NOT_NIL);
 
-        ret_val = true;
+            /* ----------- END OF CODE GEN ----------*/
+
+            free(data->ids_list->id);
+            data->ids_list->id = NULL;
+            data->ids_list = data->ids_list->next;
+
+            ret_val = true;
+        }        
     }        
 
     free(func_name);
