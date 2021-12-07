@@ -823,6 +823,8 @@ bool check_func_assign (p_data_ptr_t data)
         //symTableSearch(LL_GetLast(data->tbl_list), data->ids_list->id)->defined = true;
         
         func_returns = func_returns->ret_next;
+        free(data->ids_list->id);
+        data->ids_list->id = NULL;
         data->ids_list = data->ids_list->next;
     }
     /* The function returns fewer values ​​than the variables expect */
@@ -3123,6 +3125,8 @@ bool assign_val (p_data_ptr_t data)
 
                 /* ----------- END OF CODE GEN ----------*/
 
+                free(data->ids_list->id);
+                data->ids_list->id = NULL;
                 data->ids_list = data->ids_list->next;
 
                 ret_val = true;
@@ -3271,6 +3275,8 @@ bool assign_val (p_data_ptr_t data)
                     //printf("\nto pop: %s\n", data->ids_list->id);                                                           
                     codeGen_assign_var(data->ids_list->id, NOT_NIL);
 
+                    free(data->ids_list->id);
+                    data->ids_list->id = NULL;
                     data->ids_list = data->ids_list->next;
                                             
                     /* ----------- END OF CODE GEN ----------*/
@@ -3291,6 +3297,8 @@ bool assign_val (p_data_ptr_t data)
 
         /* ----------- END OF CODE GEN ----------*/
 
+        free(data->ids_list->id);
+        data->ids_list->id = NULL;
         data->ids_list = data->ids_list->next;
 
         ret_val = true;
