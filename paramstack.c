@@ -11,9 +11,6 @@
 #include <stdbool.h>
 #include <string.h>
 
-/* TODO smazat */
-#include <stdio.h>
-
 #include "paramstack.h"
 
 void param_stack_init (param_stack* stack)

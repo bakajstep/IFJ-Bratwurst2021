@@ -44,47 +44,10 @@ char* convert_string(char* str_toconvert){
     {
         return "";
     }
-
-
-    //char digits_buf[DIGITS_CNT];
+    
     string_ptr_t string_res = string_init();
 
-
-    while(*string != '\0'){
-        //iteruji přes vstupní string
-/*
-        if (*string == '#' ||
-            *string == '\\' ||            
-            !isprint(*string))
-        {
-            if (*(string+1) != 0)
-            {
-                string_append_character(string_res, '\\');
-                sprintf(digits_buf, "%03d", *(string));            
-                
-                for (int i = 0; i < DIGITS_CNT - 1; i++)
-                {
-                    string_append_character(string_res, digits_buf[i]);
-                }                                            
-            }
-            else
-            {
-                string_append_character(string_res, *string);
-            }                                          
-        }
-        else if (*string <= 32)
-        {
-            string_append_character(string_res, '\\');
-            string_append_character(string_res, '0');
-            string_append_character(string_res, ((*string / 10) + 48));
-            string_append_character(string_res, ((*string % 10) + 48));
-        }        
-        else
-        {
-            string_append_character(string_res, *string);
-        }
-  */      
-        
+    while(*string != '\0'){          
         if(*string == 92){                        
             string_append_character(string_res, '\\');
             
@@ -157,29 +120,7 @@ char* convert_string(char* str_toconvert){
                 default:
                     break;
                 }                                       
-            }
-            
-            /*
-            if (*(string+1) == 'n')
-            {
-                string_append_character(string_res, '\\');
-                string_append_character(string_res, '0');
-                string_append_character(string_res, '1');
-                string_append_character(string_res, '0');
-                string++;
-            }
-            else if (*(string+1) == '0')
-            {
-                string_append_character(string_res, *string);
-            }                
-            else
-            {
-                
-                string_append_character(string_res, '0');
-                string_append_character(string_res, '9');
-                string_append_character(string_res, '2');
-            }     
-            */       
+            }                               
         }else if(*string == 35){
             string_append_character(string_res, '\\');
             string_append_character(string_res, '0');
@@ -615,8 +556,7 @@ void codeGen_new_var(char* name){
         err = E_INTERNAL;
         return;
     }
-    
-    //printf("\nname scale AA\n");
+        
     printf("DEFVAR TF@%s\n", shStack->nameScale);
 }
 
@@ -903,7 +843,7 @@ void generate_errorOp(){
 void generate_operation(psa_rules_enum operation){
     switch (operation){
         case NT_PLUS_NT:
-            //rule E -> E + E
+            // rule E -> E + E
             generate_checkifNIL2ops();
             if(isWhile == 0){
                 printf("ADDS\n");
@@ -912,7 +852,7 @@ void generate_operation(psa_rules_enum operation){
             }
             break;
         case NT_MINUS_NT:
-            //rule E -> E - E
+            // rule E -> E - E
             generate_checkifNIL2ops();
             if(isWhile == 0){
                 printf("SUBS\n");

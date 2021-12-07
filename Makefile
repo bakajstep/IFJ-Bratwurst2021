@@ -105,8 +105,7 @@ GENPATH=$(TESTSDIR)/$(GEN)/
 EXPLPATH=$(TESTSDIR)/$(EXPLDIR)/
 
 CC=gcc
-# TODO smazat -g
-CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
+CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11
 
 .PHONY: all $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean $(GEN)-test $(GEN)-clean
 
@@ -114,8 +113,7 @@ all:
 	$(CC) $(CFLAGS) -o compiler $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 
 $(LEX)-test:
-	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(LEX)_test.c
-#	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(LEX)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h	
+	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).h $(LEX)_test.c
 
 	@echo "\n------------------------------------ 'fact_iter' ------------------------------------\n"
 	@./$(LEXPATH)$(LEX)-test < $(EXPLPATH)$(PROG1).tl > $(LEXPATH)$(LEX)$(CURTEST)$(PROG1).output	
@@ -136,9 +134,7 @@ $(LEX)-clean:
 	cd $(LEXPATH) && rm -f $(LEX)$(CURTEST)$(PROG1).output $(LEX)$(CURTEST)$(PROG2).output $(LEX)$(CURTEST)$(PROG3).output $(LEX)-test
 
 $(STX)-test:
-#	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(STX)_test.c $(SYMSTK).c $(SYMSTK).h
-#	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(STX)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h
-	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(STX)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
+	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(STX)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 	
 	@echo "\n------------------------------------ 'fact_iter' ------------------------------------\n"
 	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG1).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG1).output
@@ -216,10 +212,8 @@ $(STX)-clean:
 	$(STX)$(CURTEST)$(PROG12).output \
 	$(STX)-test
 
-#TODO smazat code_generator
 $(SEM)-test:
-#	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c
-	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
+	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err1' ------------------------------------\n"
 	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
@@ -520,14 +514,7 @@ $(GEN)-test:
 	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG61).tl > $(GENPATH)$(GENTEST)$(PROG61).code
 	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(PROG61).code < $(GENPATH)$(PROG61).in > $(GENPATH)$(GENTEST)$(PROG61).out
 	@echo "\nTest case 'whitespaces' output differences:"
-	diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0
-
-	@echo "\n------------------------------------ 'disc_test' ------------------------------------\n"
-	./$(GENPATH)$(GEN)-test < $(GENPATH)$(DISCTEST).tl > $(GENPATH)$(GENTEST)$(DISCTEST).code
-	@$(GENPATH)ic21int $(GENPATH)$(GENTEST)$(DISCTEST).code < $(GENPATH)input > $(GENPATH)$(GENTEST)$(DISCTEST).out
-	@echo "\nTest case 'whitespaces' output differences:"
-	@diff -su $(GENPATH)$(GENTEST)$(DISCTEST).out $(GENPATH)output || exit 0
-
+	diff -su $(GENPATH)$(GENTEST)$(PROG61).out $(GENPATH)$(PROG61).out || exit 0	
 	
 $(GEN)-clean:
 	cd $(GENPATH) && rm -f \
@@ -549,9 +536,4 @@ $(GEN)-clean:
 	$(GENTEST)$(PROG59).out \
 	$(GENTEST)$(PROG60).out \
 	$(GENTEST)$(PROG61).out \
-	$(GENTEST)$(DISCTEST).out \
-	$(GENTEST)$(DISCTEST).code \
-	input \
-	output \
-	program.tl \
 	$(GEN)-test	
