@@ -88,7 +88,8 @@ int get_index_token(p_data_ptr_t data){
             if(data->token->attribute.keyword == K_THEN || data->token->attribute.keyword == K_DO
                 || data->token->attribute.keyword == K_LOCAL || data->token->attribute.keyword == K_IF
                 || data->token->attribute.keyword == K_WHILE || data->token->attribute.keyword == K_RETURN
-                || data->token->attribute.keyword == K_END || data->token->attribute.keyword == K_ELSE) {
+                || data->token->attribute.keyword == K_END || data->token->attribute.keyword == K_ELSE
+                || data->token->attribute.keyword == K_FUNCTION || data->token->attribute.keyword == K_GLOBAL) {
                 return 17;//continue to case $
             }
             else if(data->token->attribute.keyword == K_NIL){
