@@ -16,8 +16,9 @@
 #include <stdio.h>
 
 #define PROLOG "ifj21"
-#define IS_NIL true
-#define NOT_NIL false
+#define IS_NIL 1
+#define NOT_NIL 0
+#define DEF 2
 #define VALIDATE_TOKEN(token)    \
         if (!valid_token(token)) \
         {                        \
@@ -1716,7 +1717,7 @@ bool stats (p_data_ptr_t data)
     bool ret_val = false;
     token_type_t token_type;    
     symTree_t* tree = NULL;
-    data_type_t data_type;
+    data_type_t data_type;    
     char* id = NULL;
 
     VALIDATE_TOKEN(data->token);
@@ -1850,14 +1851,14 @@ bool stats (p_data_ptr_t data)
                                 //printf("\ndata_type: %d, psa_data_type: %d\n", data_type, data->psa_data_type);                                                                                                                            
                                 err = E_SEM_ASSIGN;
                                 free(id);
-                                id = NULL;
+                                id = NULL;                                
                                 return false;
                             }                                                        
                         }                                                
 
                         symTableSearch(tree, id)->defined = true;                          
 
-                        /* ----------- END OF SEMANTIC ----------*/
+                        /* ----------- END OF SEMANTIC ----------*/                                                
 
                         if (stats(data))
                         {                                                        
@@ -1868,7 +1869,7 @@ bool stats (p_data_ptr_t data)
             }
 
             free(id);     
-            id = NULL;   
+            id = NULL;                           
         } // if (token_type == T_IDENTIFIER)       
     }    
     /* 7. <stats> -> if exp then <stats> else <stats> end <stats> */
@@ -3058,25 +3059,23 @@ bool assign (p_data_ptr_t data)
         data->psa_data_type = NIL;                
         ret_val = true;
     }    
-    else if (stats(data))
-    {    
-        data->psa_data_type = NIL;                
-        ret_val = true;
-    }
+    /* 27. <assign> -> = <assign_val> */
+    else if (token_type == T_ASSIGN)
+    {
+        next_token(data);            
+        ret_val = assign_val(data);            
+    }   
+    /* 28. <assign> -> epsilon */                
     else
-    {              
-        VALIDATE_TOKEN(data->token);
-        TEST_EOF(data->token);     
+    {
+        codeGen_assign_var(data->func_name, DEF);
 
-        token_type = data->token->type;
-
-        /* 27. <assign> -> = <assign_val> */
-        if (token_type == T_ASSIGN)
-        {
-            next_token(data);            
-            ret_val = assign_val(data);            
-        }                   
-    }    
+        if (stats(data))
+        {    
+            data->psa_data_type = NIL;                
+            ret_val = true;
+        }    
+    }        
 
     return ret_val;
 }
@@ -3277,8 +3276,7 @@ bool assign_val (p_data_ptr_t data)
 
                     free(data->ids_list->id);
                     data->ids_list->id = NULL;
-                    data->ids_list = data->ids_list->next;
-                                            
+                    data->ids_list = data->ids_list->next;                            
                     /* ----------- END OF CODE GEN ----------*/
 
                     ret_val = true;

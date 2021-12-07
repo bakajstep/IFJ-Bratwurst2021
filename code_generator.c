@@ -9,6 +9,8 @@
 
 #include "code_generator.h"
 
+#define DEF 2
+
 /*
  * ----------------------USEFULL FUNCTIONS-----------------------
  */
@@ -532,7 +534,6 @@ void codeGen_push_var(char* name){
         DLL_InsertLast(list, str);
         free(str);
     }
-
 }
 
 void codeGen_push_string(char* value){
@@ -593,24 +594,30 @@ void codeGen_new_var(char* name){
     printf("DEFVAR TF@%s\n", shStack->nameScale);
 }
 
-void codeGen_assign_var(char* name, bool isNil){
+void codeGen_assign_var(char* name, unsigned nil){
     shadowStack_t* current = shStackNameScaleByName(shStack, name);
-    if(current == NULL){
-        err = E_INTERNAL;
-        return;
+    if (nil == DEF)
+    {
+        current->inicialized = 1;        
     }
-    if(!isNil){
-        current->inicialized = 1;
-    }
-    if(isWhile == 0){
-        printf("POPS TF@%s\n", current->nameScale);
-    }else{
-        char* str = (char*)malloc(INST_LEN + strlen(current->nameScale));
-        sprintf(str, "POPS TF@%s\n", current->nameScale);
-        DLL_InsertLast(list, str);
-        free(str);
-    }
-
+    else
+    {
+        if(current == NULL){
+            err = E_INTERNAL;
+            return;
+        }
+        if(nil == 0){
+            current->inicialized = 1;
+        }
+        if(isWhile == 0){
+            printf("POPS TF@%s\n", current->nameScale);
+        }else{
+            char* str = (char*)malloc(INST_LEN + strlen(current->nameScale));
+            sprintf(str, "POPS TF@%s\n", current->nameScale);
+            DLL_InsertLast(list, str);
+            free(str);
+        }
+    }        
 }
 
 /*
