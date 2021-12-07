@@ -30,22 +30,22 @@ typedef struct function_returns {
 } function_returns_t;
 
 typedef struct symData{    
-    bool declared;                  /* func / var */
-    bool defined;                   /* func / var (initialized) */
-    data_type_t data_type;          /* data type */
-    unsigned params_count;       /* func params count*/
-    unsigned params_type_count;       /* func params count*/
+    bool declared;                       /* func / var */
+    bool defined;                        /* func / var (initialized) */
+    data_type_t data_type;               /* data type */
+    unsigned params_count;               /* func params count*/
+    unsigned params_type_count;          /* func params count*/
     unsigned returns_def_count;
     unsigned returns_count;    
-    function_params_t* first_param; /* func params list */
+    function_params_t* first_param;      /* func params list */
     function_params_t* first_type_param; /* func type params list */
     function_returns_t* first_def_ret;
-    function_returns_t* first_ret;  /* func returns list */
+    function_returns_t* first_ret;       /* func returns list */
 } symData_t;
 
 typedef struct symTree{
-    char* key;                /* func / id name */
-    symData_t* data;                 /* data */
+    char* key;                           /* func / id name */
+    symData_t* data;                     /* data */
     struct symTree* nextLeft;
     struct symTree* nextRight;
 } symTree_t;

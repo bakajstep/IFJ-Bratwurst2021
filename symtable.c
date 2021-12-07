@@ -13,9 +13,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* TODO smazat */
-#include <stdio.h>
-
 /*     BACKEND FUNCTIONS    */
 void deep_copy_function_param (symData_t* data, function_params_t* orig)
 {
@@ -42,9 +39,7 @@ void deep_copy_function_type_param (symData_t* data, function_params_t* orig)
 
 void deep_copy_function_def_ret (symData_t* data, function_returns_t* orig)
 {
-    function_returns_t* elem = orig;
-
-    //printf("elem ret type: %d", elem->return_type);
+    function_returns_t* elem = orig;    
 
     while (elem != NULL)
     {
@@ -70,15 +65,10 @@ void symTableInit(symTree_t **tree){
     (*tree)->key = NULL;
     (*tree)->data = NULL;
     (*tree)->nextLeft = NULL;
-    (*tree)->nextRight = NULL;
-    /*if(!(*tree)){
-        return;
-    }
-    (*tree) = NULL;*/
+    (*tree)->nextRight = NULL;    
 }
 
-void symDataInit(symData_t** data){
-    /* DONE free */
+void symDataInit(symData_t** data){    
     *data = (symData_t*) malloc(sizeof(symData_t));
 
     if(!(*data)){
@@ -98,8 +88,7 @@ void symDataInit(symData_t** data){
     (*data)->first_ret = NULL;
 }
 
-void paramInsert(symData_t* data, data_type_t type, char* param_name){
-    /* DONE free */
+void paramInsert(symData_t* data, data_type_t type, char* param_name){    
     function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
 
     if(!newParam){
@@ -133,8 +122,7 @@ void paramInsert(symData_t* data, data_type_t type, char* param_name){
     }       
 }
 
-void paramTypeInsert(symData_t* data, data_type_t type){
-    /* DONE free */
+void paramTypeInsert(symData_t* data, data_type_t type){    
     function_params_t* newParam = (function_params_t*) malloc(sizeof(function_params_t));
 
     if(!newParam){
@@ -159,8 +147,7 @@ void paramTypeInsert(symData_t* data, data_type_t type){
     }
 }
 
-void returnDefInsert(symData_t* data, data_type_t type){
-    /* DONE free */
+void returnDefInsert(symData_t* data, data_type_t type){    
     function_returns_t* newReturn = (function_returns_t*) malloc(sizeof(function_returns_t));
 
     if(!newReturn){
@@ -186,8 +173,7 @@ void returnDefInsert(symData_t* data, data_type_t type){
 }
 
 
-void returnInsert(symData_t* data, data_type_t type){
-    /* DONE free */
+void returnInsert(symData_t* data, data_type_t type){    
     function_returns_t* newReturn = (function_returns_t*) malloc(sizeof(function_returns_t));
 
     if(!newReturn){
@@ -211,8 +197,7 @@ void returnInsert(symData_t* data, data_type_t type){
     }
 }
 
-symData_t* symTableSearch(symTree_t* tree, char* key){   
-    //printf("\nkey: %s\n", key);
+symData_t* symTableSearch(symTree_t* tree, char* key){       
     while(tree != NULL && tree->key != NULL){    
         if(strcmp(tree->key, key) == 0){        
             
@@ -230,14 +215,7 @@ symData_t* symTableSearch(symTree_t* tree, char* key){
 }
 
 void symTableInsert(symTree_t **tree, char* key, symData_t* data){
-    /*if(*tree == NULL){        
-        return;
-    }*/
-   
-
-    while((*tree) != NULL && (*tree)->key != NULL){
-
-        //printf("\ntree key: %s\n", (*tree)->key);
+    while((*tree) != NULL && (*tree)->key != NULL){        
 
         if(strcmp((*tree)->key, key) == 0){
             err = E_INTERNAL;
@@ -250,16 +228,13 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
             tree = &((*tree)->nextRight);
         }
     }
-
-    /* DONE free */
+    
     (*tree) = (symTree_t *)malloc(sizeof(symTree_t));
     if(!(*tree)){
         err = E_INTERNAL;
         return;
     }
-    //if((*tree) == NULL) return;
     
-    /* DONE free */
     (*tree)->key = (char*) malloc(strlen(key) + 1);    
 
     if ((*tree)->key == NULL)
@@ -270,10 +245,7 @@ void symTableInsert(symTree_t **tree, char* key, symData_t* data){
     
 
     strcpy((*tree)->key, key);    
-
-    //printf("\ntree key: %s\n", (*tree)->key);
-
-    /* DONE free */
+    
     (*tree)->data = (symData_t*) malloc(sizeof(symData_t));
 
     if ((*tree)->data == NULL)
@@ -354,4 +326,3 @@ void symTableDispose(symTree_t **tree){
         (*tree) = NULL;
     }
 }
-

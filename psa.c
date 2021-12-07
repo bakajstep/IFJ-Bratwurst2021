@@ -1,3 +1,13 @@
+/**
+ * Project: IFJ21 imperative language compiler
+ * 
+ * Brief:   Syntax and Semantic Analysis for IFJ21 compiler - psa part
+ *  
+ * Author:  Stepan Bakaj     <xbakaj00>
+ * Author:  Radek Serejch    <xserej00> 
+ * 
+ */
+
 #include <stdbool.h>
 #include <string.h>
 

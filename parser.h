@@ -1,3 +1,10 @@
+/**
+ * Project: IFJ21 imperative language compiler 
+ *  
+ * Author:  David Chocholaty <xchoch09>
+ * 
+ */
+
 #ifndef IFJ_BRATWURST2021_PARSER_H
 #define IFJ_BRATWURST2021_PARSER_H
 

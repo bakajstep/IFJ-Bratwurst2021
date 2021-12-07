@@ -1,3 +1,12 @@
+/**
+ * Project: IFJ21 imperative language compiler
+ * 
+ * Brief:   Syntax and Semantic Analysis for IFJ21 compiler - parser part
+ *  
+ * Author:  David Chocholaty <xchoch09>
+ * 
+ */
+
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
@@ -3752,7 +3761,7 @@ bool constant (p_data_ptr_t data)
          data->token->attribute.keyword == K_NIL))
     {
         /* -------------- SEMANTIC --------------*/
-        
+
         switch (token_type)
         {
         case T_INT:

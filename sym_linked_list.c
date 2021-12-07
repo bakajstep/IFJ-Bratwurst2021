@@ -11,9 +11,6 @@
 #include "sym_linked_list.h"
 #include "symtable.h"
 
-/* TODO smazat */
-#include <stdio.h>
-
 void LL_Init( LList* list ) {
     list->lastElement = NULL;
     list->activeElement = NULL;
@@ -41,8 +38,7 @@ void LL_Dispose( LList* list ) {
     list->activeElement = NULL;
 }
 
-void LL_InsertLast( LList* list, symTree_t* root) {
-    /* DONE free */
+void LL_InsertLast( LList* list, symTree_t* root) {    
     struct LLElement* newElement = (struct LLElement*) malloc(sizeof(struct LLElement));    
     
     newElement->root = root;

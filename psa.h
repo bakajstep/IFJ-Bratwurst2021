@@ -1,3 +1,11 @@
+/**
+ * Project: IFJ21 imperative language compiler 
+ *  
+ * Author:  Stepan Bakaj     <xbakaj00>
+ * Author:  Radek Serejch    <xserej00> 
+ * 
+ */
+
 #ifndef IFJ_BRATWURST2021_PSA_H
 #define IFJ_BRATWURST2021_PSA_H
 

@@ -79,8 +79,7 @@ void set_id_keyword (token_t* token, char* str){
 }
 
 token_t* create_token ()
-{
-    /* DONE free */
+{    
     return (token_t*) malloc(sizeof(token_t));
 }
 
@@ -102,7 +101,7 @@ void delete_token (token_t* token)
 
 token_t* get_next_token ()
 {
-    char symbol; //readed character from stdin    
+    char symbol;
     token_t* token;        
     string_ptr_t str = NULL;
     state_t state = S_INIT;    
