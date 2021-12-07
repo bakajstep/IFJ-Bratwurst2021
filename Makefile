@@ -18,6 +18,7 @@ SYMTBL=symtable
 SYMLL=sym_linked_list
 CDGEN=code_generator
 DLL=dll
+IDS=ids_list
 
 PROG1=fact_iter
 PROG2=fact_rec
@@ -101,7 +102,7 @@ CFLAGS=-Wall -Wextra -Werror -pedantic -std=c11 -g
 .PHONY: all $(LEX)-test $(LEX)-clean $(STX)-test $(STX)-clean $(SEM)-test $(SEM)-clean $(GEN)-test $(GEN)-clean
 
 all:
-	$(CC) $(CFLAGS) -o compiler $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h
+	$(CC) $(CFLAGS) -o compiler $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 
 $(LEX)-test:
 	$(CC) $(CFLAGS) -o $(LEXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(LEX)_test.c
@@ -128,7 +129,7 @@ $(LEX)-clean:
 $(STX)-test:
 #	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h  $(STX)_test.c $(SYMSTK).c $(SYMSTK).h
 #	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(STX)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h
-	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(STX)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h
+	$(CC) $(CFLAGS) -o $(STXPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(STX)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 	
 	@echo "\n------------------------------------ 'fact_iter' ------------------------------------\n"
 	@./$(STXPATH)$(STX)-test < $(EXPLPATH)$(PROG1).tl > $(STXPATH)$(STX)$(CURTEST)$(PROG1).output
@@ -209,7 +210,7 @@ $(STX)-clean:
 #TODO smazat code_generator
 $(SEM)-test:
 #	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c
-	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h
+	$(CC) $(CFLAGS) -o $(SEMPATH)$@ $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SEM)_test.c $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 
 	@echo "\n------------------------------------ 'bad_parameter_type_err1' ------------------------------------\n"
 	@./$(SEMPATH)$(SEM)-test < $(SEMPATH)$(EXPLDIR)/$(PROG13).tl > $(SEMPATH)$(SEM)$(CURTEST)$(PROG13).output
@@ -456,7 +457,7 @@ $(SEM)-clean:
 	$(SEM)-test
 
 $(GEN)-test:
-	$(CC) $(CFLAGS) -o $(GENPATH)$@ $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h
+	$(CC) $(CFLAGS) -o $(GENPATH)$@ $(MAIN).c $(SCAN).c $(SCAN).h $(STR).c $(STR).h $(ERR).c $(ERR).h $(PRS).c $(PRS).h $(PSA).c $(PSA).h $(SYMSTK).c $(SYMSTK).h $(PARAMSTK).c $(PARAMSTK).h $(SYMTBL).c $(SYMTBL).h $(SYMLL).c $(SYMLL).h $(CDGEN).h $(CDGEN).c $(DLL).c $(DLL).h $(IDS).c $(IDS).h
 
 	@echo "\n------------------------------------ 'example1' ------------------------------------\n"
 	@./$(GENPATH)$(GEN)-test < $(GENPATH)$(EXPLDIR)/$(PROG53).tl > $(GENPATH)$(GENTEST)$(PROG53).code
