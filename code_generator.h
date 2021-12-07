@@ -55,5 +55,6 @@ void codeGen_function_start(char* name);
 void codeGen_function_return();
 void codeGen_function_end(char* name);
 void codeGen_function_call(char* name, unsigned parameters);
+void generate_toBool();
 
 #endif //IFJ_BRATWURST2021_CODE_GENERATOR_H
