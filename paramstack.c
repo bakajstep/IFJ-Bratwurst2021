@@ -1,3 +1,12 @@
+/**
+ * Project: IFJ21 imperative language compiler
+ * 
+ * Brief:   Stack for function call parameters
+ *  
+ * Author:  David Chocholaty <xchoch09>
+ * 
+ */
+
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>

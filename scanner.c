@@ -1,5 +1,5 @@
 /**
- * Project: IFJ21 imperative language compilter
+ * Project: IFJ21 imperative language compiler
  * 
  * Brief:   Lexical Analysis for IFJ21 compiler
  * 

@@ -1,3 +1,12 @@
+#
+# Project: IFJ21 imperative language compiler
+# 
+# Brief:   Makefile for IFJ21 compiler
+#  
+# Author:  David Chocholaty <xchoch09>
+# 
+#
+
 PRJ=IFJ21
 PROG=$(PRJ)-test
 

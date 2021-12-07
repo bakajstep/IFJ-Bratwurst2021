@@ -1,9 +1,9 @@
 /**
- * Project: Compiler for IFJ21 language
+ * Project: IFJ21 imperative language compiler  
  * 
  * Brief:   Linked list for identifiers used in parser
  * 
- * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
+ * Author:  David Chocholaty <xchoch09>
  *  
  */
 

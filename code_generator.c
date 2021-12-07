@@ -1,5 +1,5 @@
 /**
- * Project: IFJ21 imperative language compilter
+ * Project: IFJ21 imperative language compiler
  * 
  * Brief:   Code Generator for IFJ21 compiler
  * 
@@ -19,7 +19,7 @@
 #define DEF 2
 
 /*
- * ----------------------USEFULL FUNCTIONS-----------------------
+ * ----------------------USEFUL FUNCTIONS-----------------------
  */
 
 char* convert_string(char* str_toconvert){

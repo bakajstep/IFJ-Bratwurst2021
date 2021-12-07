@@ -1,7 +1,7 @@
 /**
- * Project: Compiler for IFJ21 language  
+ * Project: IFJ21 imperative language compiler   
  * 
- * Author:  David Chocholaty <xchoch09@stud.fit.vutbr.cz>
+ * Author:  David Chocholaty <xchoch09>
  *  
  */
 

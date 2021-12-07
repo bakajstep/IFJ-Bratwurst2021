@@ -1,5 +1,5 @@
 /**
- * Project: IFJ21 imperative language compilter
+ * Project: IFJ21 imperative language compiler
  * 
  * Brief:   Double Linked List used in Code Generator for IFJ21 compiler
  *  
