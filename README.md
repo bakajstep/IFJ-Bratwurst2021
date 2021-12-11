@@ -51,9 +51,7 @@ Bratwursti
 
 * Testy od studentů FIT VUT BIT
 ```console    
-  make
-  cd tests/disc_test/
-  ./ifjtest 
+  make; cd tests/disc_test/; ./ifjtest; cd ..; cd .. 
 ```
 
 
