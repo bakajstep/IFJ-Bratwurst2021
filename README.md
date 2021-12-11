@@ -13,25 +13,37 @@ Bratwursti
 
 ## :spiral_notepad: Spuštění testů
 * Lexikální analýza
+```console
   make lex-test
   make lex-clean
+```
 
 * Syntaktická analýza
+```console
   make syntax-test
   make syntax-clean
-  
+```
+
 * Sémantická analýza
+```console
   make semantic-test
   make semantic-clean
-    
+```
+
 * Generování kódu
+```console
   make gen-test
   make gen-clean
+```
+
 
 * Testy od studentů FIT VUT BIT
+```console    
   make
   cd tests/disc_test/
   ./ifjtest 
+```
+
 
 ## :computer: Technologie
 * C - standard C99
@@ -47,7 +59,7 @@ Program je distribuován s otevřenými zdrojovými texty pod licencí [GNU GPL 
 
 ## :clap: Poděkování
 * [Overleaf](https://www.overleaf.com/)
-* [Autoři studentských testů](https://github.com/ondrej-mach/ifjtest?fbclid=IwAR2jtMZJNUb4I3rEZGhuyeYLSoOew-UNi9KxL7KChLGC2llYJJH0kM8SS-o)
+* [Autoři studentských testů](https://github.com/bakajstep/IFJ-Bratwurst2021/tree/main/tests/disc_test)
 
 ## :page_with_curl: Reference
 * [Zadání][zadani]
