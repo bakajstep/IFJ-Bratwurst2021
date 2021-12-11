@@ -15,24 +15,36 @@ Bratwursti
 * Lexikální analýza
 ```console
   make lex-test
+```
+  
+```console
   make lex-clean
 ```
 
 * Syntaktická analýza
 ```console
   make syntax-test
+```
+
+```console
   make syntax-clean
 ```
 
 * Sémantická analýza
 ```console
   make semantic-test
+```
+
+```console
   make semantic-clean
 ```
 
 * Generování kódu
 ```console
   make gen-test
+```
+
+```console
   make gen-clean
 ```
 
