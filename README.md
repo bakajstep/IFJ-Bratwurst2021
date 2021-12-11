@@ -12,7 +12,26 @@ Bratwursti
 - xserej00 - Radek Šerejch
 
 ## :spiral_notepad: Spuštění testů
-TODO
+* Lexikální analýza
+  make lex-test
+  make lex-clean
+
+* Syntaktická analýza
+  make syntax-test
+  make syntax-clean
+  
+* Sémantická analýza
+  make semantic-test
+  make semantic-clean
+    
+* Generování kódu
+  make gen-test
+  make gen-clean
+
+* Testy od studentů FIT VUT BIT
+  make
+  cd tests/disc_test/
+  ./ifjtest 
 
 ## :computer: Technologie
 * C - standard C99
@@ -28,6 +47,7 @@ Program je distribuován s otevřenými zdrojovými texty pod licencí [GNU GPL 
 
 ## :clap: Poděkování
 * [Overleaf](https://www.overleaf.com/)
+* [Autoři studentských testů](https://github.com/ondrej-mach/ifjtest?fbclid=IwAR2jtMZJNUb4I3rEZGhuyeYLSoOew-UNi9KxL7KChLGC2llYJJH0kM8SS-o)
 
 ## :page_with_curl: Reference
 * [Zadání][zadani]

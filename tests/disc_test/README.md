@@ -2,6 +2,9 @@
 
 Testing suite for IFJ project, VUT FIT.
 
+### Authors
+[Authors repozitory](https://github.com/ondrej-mach/ifjtest?fbclid=IwAR2jtMZJNUb4I3rEZGhuyeYLSoOew-UNi9KxL7KChLGC2llYJJH0kM8SS-o)
+
 ### Installation
 
 - Clone the repository to your linux machine
