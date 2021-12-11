@@ -26,6 +26,4 @@ typedef enum error {
 
 extern error_t err;
 
-void print_err (error_t err);
-
 #endif //IFJ_BRATWURST2021_ERROR_H
