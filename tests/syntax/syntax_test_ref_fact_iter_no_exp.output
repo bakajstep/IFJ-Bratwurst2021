@@ -20,6 +20,10 @@ LABEL _print_while_start
 LT GF@expr TF@cnt TF@cnt_of_parameter
 JUMPIFNEQ _print_while_end GF@expr bool@true
 POPS TF@to_print
+JUMPIFNEQ exprint TF@to_print nil@nil 
+PUSHS string@nil
+POPS TF@to_print
+LABEL exprint
 WRITE TF@to_print
 ADD TF@cnt TF@cnt int@1
 JUMP _print_while_start
@@ -185,13 +189,26 @@ LABEL main
 PUSHFRAME
 CREATEFRAME
 POPS GF@trash
-DEFVAR TF@c
-DEFVAR TF@a
-DEFVAR TF@b
+DEFVAR TF@$c$0
+PUSHS nil@nil
+POPS TF@$c$0
+DEFVAR TF@$a$0
+PUSHS nil@nil
+POPS TF@$a$0
+DEFVAR TF@$b$0
+PUSHS nil@nil
+POPS TF@$b$0
 POPFRAME
 RETURN
 LABEL main$end
 PUSHS int@0
 CALL main
+JUMP errorOp_End
+LABEL ERR9
+EXIT int@9
+JUMP errorOp_End
+LABEL ERR8
+EXIT int@8
+LABEL errorOp_End
 SYNTAX SUCCESS
 Err code: 0

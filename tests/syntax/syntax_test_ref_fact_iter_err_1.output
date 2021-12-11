@@ -20,6 +20,10 @@ LABEL _print_while_start
 LT GF@expr TF@cnt TF@cnt_of_parameter
 JUMPIFNEQ _print_while_end GF@expr bool@true
 POPS TF@to_print
+JUMPIFNEQ exprint TF@to_print nil@nil 
+PUSHS string@nil
+POPS TF@to_print
+LABEL exprint
 WRITE TF@to_print
 ADD TF@cnt TF@cnt int@1
 JUMP _print_while_start
@@ -185,18 +189,29 @@ LABEL main
 PUSHFRAME
 CREATEFRAME
 POPS GF@trash
-DEFVAR TF@a
-DEFVAR TF@vysl
+DEFVAR TF@$a$0
+PUSHS nil@nil
+POPS TF@$a$0
+DEFVAR TF@$vysl$0
+PUSHS nil@nil
+POPS TF@$vysl$0
 PUSHS int@0
-POPS TF@vysl
+POPS TF@$vysl$0
 PUSHS string@Zadejte\032cislo\032pro\032vypocet\032faktorialu\010
 PUSHS int@1
 CALL write
 PUSHS int@0
 CALL readi
-POPS TF@a
-PUSHS TF@a
+POPS TF@$a$0
+PUSHS TF@$a$0
 PUSHS nil@nil
+POPS GF@tmp3
+POPS GF@tmp2
+JUMPIFEQ no0 GF@tmp2 nil@nil
+INT2FLOAT GF@tmp2 GF@tmp2
+LABEL no0
+PUSHS GF@tmp2
+PUSHS GF@tmp3
 EQS
 POPS GF@expr
 JUMPIFNEQ if$0$else GF@expr bool@true
@@ -208,6 +223,20 @@ RETURN
 JUMP if$0$end
 LABEL if$0$else
 LABEL if$0$end
-PUSHS TF@a
+PUSHS TF@$a$0
+POPS GF@tmp1
+JUMPIFEQ toBoolTru0 GF@tmp1 nil@nil
+PUSHS bool@true
+JUMP toBoolFalse0
+LABEL toBoolTru0
+PUSHS bool@false
+LABEL toBoolFalse0
+JUMP errorOp_End
+LABEL ERR9
+EXIT int@9
+JUMP errorOp_End
+LABEL ERR8
+EXIT int@8
+LABEL errorOp_End
 SYNTAX ERROR
 Err code: 2

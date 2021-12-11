@@ -20,6 +20,10 @@ LABEL _print_while_start
 LT GF@expr TF@cnt TF@cnt_of_parameter
 JUMPIFNEQ _print_while_end GF@expr bool@true
 POPS TF@to_print
+JUMPIFNEQ exprint TF@to_print nil@nil 
+PUSHS string@nil
+POPS TF@to_print
+LABEL exprint
 WRITE TF@to_print
 ADD TF@cnt TF@cnt int@1
 JUMP _print_while_start
@@ -185,51 +189,80 @@ LABEL main
 PUSHFRAME
 CREATEFRAME
 POPS GF@trash
-DEFVAR TF@s1
+DEFVAR TF@$s1$0
+PUSHS nil@nil
+POPS TF@$s1$0
 PUSHS string@Toto\032je\032nejaky\032text
-POPS TF@s1
-DEFVAR TF@s2
-PUSHS TF@s1
+POPS TF@$s1$0
+DEFVAR TF@$s2$0
+PUSHS nil@nil
+POPS TF@$s2$0
+PUSHS TF@$s1$0
 PUSHS string@,\032ktery\032jeste\032trochu\032obohatime
+POPS GF@tmp1
+POPS GF@tmp2
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+JUMPIFEQ ERR8 GF@tmp2 nil@nil
+PUSHS GF@tmp2
+PUSHS GF@tmp1
 POPS GF@tmp1
 POPS GF@tmp2
 CONCAT GF@tmp1 GF@tmp2 GF@tmp1
 PUSHS GF@tmp1
-POPS TF@s2
-PUSHS TF@s2
+POPS TF@$s2$0
+PUSHS TF@$s2$0
 PUSHS string@\010
-PUSHS TF@s1
+PUSHS TF@$s1$0
 PUSHS int@3
 CALL write
-DEFVAR TF@s1len
-PUSHS TF@s1
+DEFVAR TF@$s1len$0
+PUSHS nil@nil
+POPS TF@$s1len$0
+PUSHS TF@$s1$0
+POPS GF@tmp1
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+PUSHS GF@tmp1
 POPS GF@tmp1
 STRLEN GF@tmp4 GF@tmp1
 PUSHS GF@tmp4
-POPS TF@s1len
-DEFVAR TF@s1len4
-PUSHS TF@s1len
-POPS TF@s1len4
-PUSHS TF@s1len
+POPS TF@$s1len$0
+DEFVAR TF@$s1len4$0
+PUSHS nil@nil
+POPS TF@$s1len4$0
+PUSHS TF@$s1len$0
+POPS TF@$s1len4$0
+PUSHS TF@$s1len$0
 PUSHS int@4
+POPS GF@tmp1
+POPS GF@tmp2
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+JUMPIFEQ ERR8 GF@tmp2 nil@nil
+PUSHS GF@tmp2
+PUSHS GF@tmp1
 SUBS
-POPS TF@s1len
-PUSHS TF@s1len4
-PUSHS TF@s1len
-PUSHS TF@s2
+POPS TF@$s1len$0
+PUSHS TF@$s1len4$0
+PUSHS TF@$s1len$0
+PUSHS TF@$s2$0
 PUSHS int@3
 CALL substr
-POPS TF@s1
-PUSHS TF@s1len
+POPS TF@$s1$0
+PUSHS TF@$s1len$0
 PUSHS int@1
+POPS GF@tmp1
+POPS GF@tmp2
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+JUMPIFEQ ERR8 GF@tmp2 nil@nil
+PUSHS GF@tmp2
+PUSHS GF@tmp1
 ADDS
-POPS TF@s1len
+POPS TF@$s1len$0
 PUSHS string@\010
-PUSHS TF@s1
+PUSHS TF@$s1$0
 PUSHS string@\034:
-PUSHS TF@s2
+PUSHS TF@$s2$0
 PUSHS string@.\032znaku\032v\032\034
-PUSHS TF@s1len
+PUSHS TF@$s1len$0
 PUSHS string@4\032znaky\032od
 PUSHS int@7
 CALL write
@@ -241,15 +274,15 @@ PUSHS int@1
 CALL write
 PUSHS int@0
 CALL reads
-POPS TF@s1
-PUSHS TF@s1
+POPS TF@$s1$0
+PUSHS TF@$s1$0
 PUSHS nil@nil
 EQS
 NOTS
 POPS GF@expr
 JUMPIFNEQ if$0$else GF@expr bool@true
 LABEL while$0$start
-PUSHS TF@s1
+PUSHS TF@$s1$0
 PUSHS string@abcdefgh
 EQS
 NOTS
@@ -261,7 +294,7 @@ PUSHS int@2
 CALL write
 PUSHS int@0
 CALL reads
-POPS TF@s1
+POPS TF@$s1$0
 JUMP while$0$start
 LABEL while$0$end
 JUMP if$0$end
@@ -272,5 +305,12 @@ RETURN
 LABEL main$end
 PUSHS int@0
 CALL main
+JUMP errorOp_End
+LABEL ERR9
+EXIT int@9
+JUMP errorOp_End
+LABEL ERR8
+EXIT int@8
+LABEL errorOp_End
 SYNTAX SUCCESS
 Err code: 0

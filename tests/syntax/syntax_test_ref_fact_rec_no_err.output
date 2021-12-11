@@ -20,6 +20,10 @@ LABEL _print_while_start
 LT GF@expr TF@cnt TF@cnt_of_parameter
 JUMPIFNEQ _print_while_end GF@expr bool@true
 POPS TF@to_print
+JUMPIFNEQ exprint TF@to_print nil@nil 
+PUSHS string@nil
+POPS TF@to_print
+LABEL exprint
 WRITE TF@to_print
 ADD TF@cnt TF@cnt int@1
 JUMP _print_while_start
@@ -185,18 +189,38 @@ LABEL factorial
 PUSHFRAME
 CREATEFRAME
 POPS GF@trash
-DEFVAR TF@n
-POPS TF@n
-DEFVAR TF@a
-DEFVAR TF@b
-DEFVAR TF@c
-DEFVAR TF@n1
-PUSHS TF@n
+DEFVAR TF@$n$0
+POPS TF@$n$0
+DEFVAR TF@$a$0
+PUSHS nil@nil
+POPS TF@$a$0
+DEFVAR TF@$b$0
+PUSHS nil@nil
+POPS TF@$b$0
+DEFVAR TF@$c$0
+PUSHS nil@nil
+POPS TF@$c$0
+DEFVAR TF@$n1$0
+PUSHS nil@nil
+POPS TF@$n1$0
+PUSHS TF@$n$0
 PUSHS int@1
+POPS GF@tmp1
+POPS GF@tmp2
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+JUMPIFEQ ERR8 GF@tmp2 nil@nil
+PUSHS GF@tmp2
+PUSHS GF@tmp1
 SUBS
-POPS TF@n1
-PUSHS TF@n
+POPS TF@$n1$0
+PUSHS TF@$n$0
 PUSHS int@2
+POPS GF@tmp1
+POPS GF@tmp2
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+JUMPIFEQ ERR8 GF@tmp2 nil@nil
+PUSHS GF@tmp2
+PUSHS GF@tmp1
 LTS
 POPS GF@expr
 JUMPIFNEQ if$0$else GF@expr bool@true
@@ -205,21 +229,24 @@ POPFRAME
 RETURN
 JUMP if$0$end
 LABEL if$0$else
-DEFVAR TF@tmp
-PUSHS TF@n1
+DEFVAR TF@$tmp$1
+PUSHS nil@nil
+POPS TF@$tmp$1
+PUSHS TF@$n1$0
 PUSHS int@1
 CALL factorial
-POPS TF@tmp
-PUSHS TF@n1
+POPS TF@$tmp$1
+PUSHS TF@$n1$0
 POPFRAME
 RETURN
 PUSHS int@1
-POPS TF@a
 PUSHS int@2
-POPS TF@b
 PUSHS int@3
-POPS TF@c
+POPS TF@$c$0
+POPS TF@$b$0
+POPS TF@$a$0
 LABEL if$0$end
+PUSHS nil@nil
 POPFRAME
 RETURN
 LABEL factorial$end
@@ -232,18 +259,33 @@ POPS GF@trash
 PUSHS string@Zadejte\032cislo\032pro\032vypocet\032faktorialu:\032
 PUSHS int@1
 CALL write
-DEFVAR TF@a
+DEFVAR TF@$$a$0
+PUSHS nil@nil
+POPS TF@$$a$0
 PUSHS int@0
 CALL readi
-POPS TF@a
-PUSHS TF@a
+POPS TF@$$a$0
+PUSHS TF@$$a$0
 PUSHS nil@nil
+POPS GF@tmp3
+POPS GF@tmp2
+JUMPIFEQ no0 GF@tmp2 nil@nil
+INT2FLOAT GF@tmp2 GF@tmp2
+LABEL no0
+PUSHS GF@tmp2
+PUSHS GF@tmp3
 EQS
 NOTS
 POPS GF@expr
 JUMPIFNEQ if$1$else GF@expr bool@true
-PUSHS TF@a
+PUSHS TF@$$a$0
 PUSHS int@0
+POPS GF@tmp1
+POPS GF@tmp2
+JUMPIFEQ ERR8 GF@tmp1 nil@nil
+JUMPIFEQ ERR8 GF@tmp2 nil@nil
+PUSHS GF@tmp2
+PUSHS GF@tmp1
 LTS
 POPS GF@expr
 JUMPIFNEQ if$2$else GF@expr bool@true
@@ -253,13 +295,15 @@ PUSHS int@2
 CALL write
 JUMP if$2$end
 LABEL if$2$else
-DEFVAR TF@vysl
-PUSHS TF@a
+DEFVAR TF@$$vysl$2
+PUSHS nil@nil
+POPS TF@$$vysl$2
+PUSHS TF@$$a$0
 PUSHS int@1
 CALL factorial
-POPS TF@vysl
+POPS TF@$$vysl$2
 PUSHS string@\010
-PUSHS TF@vysl
+PUSHS TF@$$vysl$2
 PUSHS string@Vysledek\032je\032
 PUSHS int@3
 CALL write
@@ -275,5 +319,12 @@ RETURN
 LABEL main$end
 PUSHS int@0
 CALL main
+JUMP errorOp_End
+LABEL ERR9
+EXIT int@9
+JUMP errorOp_End
+LABEL ERR8
+EXIT int@8
+LABEL errorOp_End
 SYNTAX SUCCESS
 Err code: 0
