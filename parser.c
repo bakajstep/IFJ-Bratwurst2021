@@ -1168,8 +1168,7 @@ bool main_b (p_data_ptr_t data)
                  * Check multiple definition of function
                  */
                 if (!check_function_is_not_defined(data->tbl_list, data->func_name))
-                {                    
-                    //printf("\nESD: %d\n", 2);
+                {                                        
                     err = E_SEM_DEF;
                     return false;
                 }                                    
@@ -2256,8 +2255,7 @@ bool n_ids (p_data_ptr_t data)
              * Check if identifier is declared
              */
             if (!check_identifier_is_declared(data->tbl_list, data->token->attribute.string))
-            {
-                //printf("\nESD: %d\n", 10);
+            {                
                 err = E_SEM_DEF;
                 return false;
             }            

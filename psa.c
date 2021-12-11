@@ -1,3 +1,13 @@
+/**
+ * Project: IFJ21 imperative language compiler
+ * 
+ * Brief:   Syntax and Semantic Analysis for IFJ21 compiler - psa part
+ *  
+ * Author:  Stepan Bakaj     <xbakaj00>
+ * Author:  Radek Serejch    <xserej00> 
+ * 
+ */
+
 #include <stdbool.h>
 #include <string.h>
 
@@ -7,7 +17,6 @@
 #include "data_types.h"
 #include "error.h"
 #include "code_generator.h"
-#include <stdio.h>
 
 #define P_TAB_SIZE 18
 
@@ -35,7 +44,7 @@ static char prec_table[P_TAB_SIZE][P_TAB_SIZE] = {
 };
 
 
-//funkce pro získání indexu precedenční tabulky z tokenu
+// Function to get the index of the precedent table from the token
 int get_index_token(p_data_ptr_t data){
     switch (data->token->type) {
         case T_MUL:
@@ -87,7 +96,8 @@ int get_index_token(p_data_ptr_t data){
             if(data->token->attribute.keyword == K_THEN || data->token->attribute.keyword == K_DO
                 || data->token->attribute.keyword == K_LOCAL || data->token->attribute.keyword == K_IF
                 || data->token->attribute.keyword == K_WHILE || data->token->attribute.keyword == K_RETURN
-                || data->token->attribute.keyword == K_END || data->token->attribute.keyword == K_ELSE) {
+                || data->token->attribute.keyword == K_END || data->token->attribute.keyword == K_ELSE
+                || data->token->attribute.keyword == K_FUNCTION || data->token->attribute.keyword == K_GLOBAL) {
                 return 17;//continue to case $
             }
             else if(data->token->attribute.keyword == K_NIL){
@@ -101,7 +111,8 @@ int get_index_token(p_data_ptr_t data){
     }
     return -1;
 }
-//funkce pro získání indexu precedenční tabulky ze symbolu
+
+// Function to get the index of the precedent table from the symbol
 int get_index_enum(psa_table_symbol_enum e){
     switch (e) {
         case MUL:
@@ -290,7 +301,8 @@ static psa_table_symbol_enum get_symbol_from_token(token_t *token)
             return DOLLAR;
     }
 }
-//funkce pro získání datového typu pro sémantickou analýzu
+
+// Function for obtaining data type for semantic analysis
 data_type_t get_type(p_data_ptr_t data){
     switch(data->token->type){
         case T_MUL:
@@ -335,14 +347,14 @@ data_type_t get_type(p_data_ptr_t data){
             return NUMBER;
         case T_DECIMAL_W_EXP:
             return NUMBER;
-        case T_IDENTIFIER:
-                //u identifikátoru musím zkontrolovat, zda byl definován
+        case T_IDENTIFIER:  
+            // For the identifier have to check if it has been defined                   
             if(!check_identifier_is_defined(data->tbl_list,data->token->attribute.string)){                
                 return DERR;
             }
             return identifier_type(data->tbl_list,data->token->attribute.string);
         case T_KEYWORD:
-            if(data->token->attribute.keyword == K_NIL){ 
+            if(data->token->attribute.keyword == K_NIL){
                 return NIL;
             }else{
                 return ELSE;
@@ -354,21 +366,13 @@ data_type_t get_type(p_data_ptr_t data){
     }
 }
 
-//funkce pro kontrolu sématiky při redukování výrazu
+// Function for checking semantics when reducing expression
 static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_item* op2, sym_stack_item* op3, data_type_t* final_type){
 
     bool op1_to_number = false;
     bool op3_to_number = false;
 
-    switch (rule) {
-        case OPERAND:;
-
-            break;
-        case LBR_NT_RBR: ;
-
-            break;
-
-        // podsud
+    switch (rule) {                
         case NT_HASHTAG: ;
             if (op2->data != STR){
                 err = E_SEM_INCOMPATIBLE;
@@ -386,7 +390,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
         case NT_PLUS_NT: ;
         case NT_MINUS_NT: ;
         case NT_MUL_NT: ;
-            //chyba
+            // Error
             if (op1->data == STR || op3->data == STR){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
@@ -401,7 +405,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 break;
             }
 
-            //pretypovani
+            // Retotyping
             if (op1->data == INT){
                 op1_to_number = true;
                 *final_type = NUMBER;
@@ -414,13 +418,13 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
         case NT_DIV_NT: ;
             *final_type = NUMBER;
 
-            //chyba
+            // Error
             if (op1->data == STR || op3->data == STR){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
             }
 
-            //pretypovani
+            // Retotyping
             if (op1->data == INT){
                 op1_to_number = true;
             }
@@ -432,7 +436,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
         case NT_IDIV_NT: ;
             *final_type = INT;
 
-            //chyba
+            // Error
             if (op1->data == STR || op3->data == STR){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
@@ -443,7 +447,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
         case NT_NEQ_NT: ;
             *final_type = ELSE;
 
-            // chyby
+            // Error
             if (op1->data == STR && ( op3->data == INT || op3->data == NUMBER )){
                 err = E_SEM_INCOMPATIBLE;
                 return false;
@@ -464,7 +468,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 break;
             }
 
-            //pretypovani
+            // Retotyping
             if (op1->data == INT){
                 op1_to_number = true;
             }
@@ -495,7 +499,7 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
                 break;
             }
 
-            //pretypovani
+            // Retotyping
             if (op1->data == INT){
                 op1_to_number = true;
             }
@@ -506,22 +510,20 @@ static bool check_semantic(psa_rules_enum rule, sym_stack_item* op1, sym_stack_i
 
             break;
         default: ;
-
             break;
     }
 
     if(op1_to_number == true){
-        //generovani kodu pro pretypovani (prvni na zasobniku)
+        // Generate code for retotyping (first on stack)       
         generate_IntToFloat1();
     }
     if(op3_to_number == true){
-        //generovani kodu pro pretypovani (druhy na zasobniku)
+        // Generate code for retotyping (second on stack)    
         generate_IntToFloat2();
     }
 
     return true;
 }
-
 
 psa_error_t psa (p_data_ptr_t data)
 {
@@ -535,10 +537,10 @@ psa_error_t psa (p_data_ptr_t data)
     bool end_while = false;
     data_type_t final_type = ELSE;
     do{
-        //token na zásobníku a vstupní token
+        // Stack token and input token
         a = symbol_stack_top_terminal(&stack);
         
-        //indexy tokenů v tabulce
+        // Indexes of tokens in the table
         ind_a = get_index_enum(a->symbol);
 
         ind_b = get_index_token(data);
@@ -547,22 +549,22 @@ psa_error_t psa (p_data_ptr_t data)
             err = E_INTERNAL;
             return PSA_ERR;
         }
-
-        //pokud mám za jedním identifikátorem další, je to již součást dalšího výrazu
+        
+        // If there is another after one identifier, it is already part of another expression
         if ((ind_b == 15 )&& (ind_a == 15 || ind_a == 16 || symbol_stack_top(&stack)->symbol == NON_TERM))
         {
             ind_b = 17;
         }        
 
 
-        //data z tabulky
-        char tbl_data = prec_table[ind_a][ind_b];
-        
-        //akce podle dat z precedenční tabulky
+        // Data from table
+        char tbl_data = prec_table[ind_a][ind_b];        
+
+        // Action according to data from the precedence table
         switch (tbl_data) {
             case '=': ;
                 if(get_type(data) == DERR){                                  
-                    err = E_SEM_DEF;
+                    err = E_SEM_DEF;                    
                     return PSA_ERR;
                 }
                 if(!symbol_stack_push(&stack, get_symbol_from_token(data->token),get_type(data))){
@@ -572,12 +574,14 @@ psa_error_t psa (p_data_ptr_t data)
                 next_token(data);
                 break;
             case '<': ;                
+                // Insert after top terminal
                 if(!symbol_stack_insert_after_top_terminal(&stack,STOP,ELSE)){                                     
                     err = E_INTERNAL;
                     return PSA_ERR;
                 }
-                if(get_type(data) == DERR){               
-                    err = E_SEM_DEF;
+                
+                if(get_type(data) == DERR){                                                                                              
+                    err = E_SEM_DEF;                    
                     return PSA_ERR;
                 }
                 if(!symbol_stack_push(&stack, get_symbol_from_token(data->token), get_type(data)))
@@ -586,8 +590,8 @@ psa_error_t psa (p_data_ptr_t data)
                     return PSA_ERR;
                 }
 
-                //generování kódu
-                //pokud se jedná o identifikátor, může se jednat o funkci
+                // Generate code
+                // If it is an identifier, it can be a function
                 if(data->token->type == T_IDENTIFIER){
                     char* id = (char*) malloc(strlen(data->token->attribute.string) + 1);
 
@@ -607,15 +611,18 @@ psa_error_t psa (p_data_ptr_t data)
                         id = NULL;                        
                         return PSA_ERR;
                     }
-                    //pokud to funkce není, vygeneruji kód pro pushnutí hodnoty proměnné na zásobník ve výsledném kódu
+                    /*
+                     * If it is not a function, I will generate code to push the value of the variable
+                     * to the stack in the resulting code
+                     */ 
                     else
                     {
+                        // If it's just a value, I'll run its value on the stack in the resulting code
                         codeGen_push_var(id);  
                         free(id);
                         id = NULL;
                     }                                                          
                 }else{
-                    //pokud je to pouze nějaká hodnota, pushnu její hodnotu na zásobník ve výsledném kódu
                     switch(get_type(data)){
                         case INT:
                             codeGen_push_int(data->token->attribute.integer);
@@ -634,19 +641,22 @@ psa_error_t psa (p_data_ptr_t data)
                     }
 
                     next_token(data);
-                }
+                }                                
+                
                 break;
             case '>': ;
-                //redukce
-                //zjistím kolik mám symbolů na stack do <
+                // Reduction
+                // Find out how many symbols I have on the stack by <
                 sym_stack_item symbol1;
                 sym_stack_item symbol2;
                 sym_stack_item symbol3;
                 int num=0;
+            
                 if(symbol_stack_top(&stack)->symbol != STOP){
                     symbol1 = *(symbol_stack_top(&stack));
                     symbol_stack_pop(&stack);
                     num++;
+                
                     if(symbol_stack_top(&stack)->symbol != STOP){
                         symbol2 = *(symbol_stack_top(&stack));
                         symbol_stack_pop(&stack);
@@ -656,7 +666,8 @@ psa_error_t psa (p_data_ptr_t data)
                             symbol3 = *(symbol_stack_top(&stack));
                             symbol_stack_pop(&stack);
                             num++;
-                            //maximálně bych měl mít tři symboly, a za posledním stopku
+                            
+                            // Ma three symbols, and behind the last stop sign
                             if(symbol_stack_top(&stack)->symbol != STOP)
                             {                                                      
                                 err = E_INTERNAL;
@@ -665,18 +676,21 @@ psa_error_t psa (p_data_ptr_t data)
                         }
                     }
                 }
-                //odstraním stopku ze zásobníku
+                // Remove the stopwatch from the stack
                 if(symbol_stack_top(&stack)->symbol == STOP){
                     symbol_stack_pop(&stack);
                 }
-
-                //zjistím jestli je pro danné symboly ze zásobníku nějaké pravidlo
+                                
+                // Find out if there is a rule for the given symbols from the stack
                 psa_rules_enum rule = test_rule(num,&symbol1,&symbol2,&symbol3);
-                
-                //podle pravidla zkontroluji sémantiku, vygeneruji kód pro dannou operaci, a na zásobník vrátím výsledný neterminál
+		
+                /*
+                 * According to the rule, the semantics are checked, the code for the given operation is generated, 
+                 * and the resulting nonterminal is returned to the stack
+                 */ 
                 switch (rule) {                    
                     case OPERAND:
-                        // rule E -> i
+                        // rule E -> i                        
                         if(!symbol_stack_push(&stack,NON_TERM,symbol1.data)){
 
                             err = E_INTERNAL;
@@ -684,8 +698,8 @@ psa_error_t psa (p_data_ptr_t data)
                         }
                         break;
                     case NT_HASHTAG:
-                        // rule E -> #E
-                        //kontrola sémantiky
+                        // rule E -> #E      
+                        // Check semantic                  
                         if(symbol1.data != STR){
                             err = E_SEM_INCOMPATIBLE;
                             return PSA_ERR;
@@ -841,23 +855,31 @@ psa_error_t psa (p_data_ptr_t data)
                         return PSA_ERR;
                         break;
                 }
-                //zkontroluji jestli nejsem na konci redukce
+                
+                // Check if I'm not at the end of the reduction
                 if(ind_b == 17 && symbol_stack_top_terminal(&stack)->symbol == DOLLAR){                    
                     end_while = true;
                 }
                 break;
                 
             default:
-                err = E_SYNTAX;
+                err = E_SYNTAX;            
                 return PSA_ERR;                
         }
 
     }while(!end_while);
 
-    //na konci redukce by měl být na vrcholu zásobníku netermínál
-    //uložím datový typ výsledného neteerminálu k následnému porovnání s typem proměnné, do které výraz uložím
+    /*
+     * At the end of the reduction there should be a nonterminal at the top of the stack
+     *
+     * Save the data type of the resulting terminal for subsequent comparison 
+     * with the type of variable in which I save the expression
+     */
     if(symbol_stack_top(&stack)->symbol == NON_TERM)
-    {
+    {        
+        if (data->if_while == true && symbol_stack_top(&stack)->data != ELSE){
+            generate_toBool();
+        }
         data->psa_data_type = symbol_stack_top(&stack)->data;
         symbol_stack_free(&stack);
         return PSA_NO_ERR;    
