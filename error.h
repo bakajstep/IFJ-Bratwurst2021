@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 
+/* Error codes */
 typedef enum error {
     E_NO_ERR     = 0,
     E_LEX        = 1,
