@@ -14,38 +14,22 @@ Bratwursti
 ## :spiral_notepad: Spuštění testů
 * Lexikální analýza
 ```console
-  make lex-test
-```
-  
-```console
-  make lex-clean
+  make lex-test; make lex-clean
 ```
 
 * Syntaktická analýza
 ```console
-  make syntax-test
-```
-
-```console
-  make syntax-clean
+  make syntax-test; make syntax-clean
 ```
 
 * Sémantická analýza
 ```console
-  make semantic-test
-```
-
-```console
-  make semantic-clean
+  make semantic-test; make semantic-clean
 ```
 
 * Generování kódu
 ```console
-  make gen-test
-```
-
-```console
-  make gen-clean
+  make gen-test; make gen-clean
 ```
 
 
