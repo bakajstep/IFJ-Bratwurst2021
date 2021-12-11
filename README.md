@@ -30,11 +30,11 @@ Program je distribuován s otevřenými zdrojovými texty pod licencí [GNU GPL 
 * [Overleaf](https://www.overleaf.com/)
 
 ## :page_with_curl: Reference
-[Zadání][zadani]
+* [Zadání][zadani]
 
 ## :writing_hand: Citace
-[Elements of Compiler Design][elements]
-[Průvodce labyrintem algoritmů][pruvodce]
+* [Elements of Compiler Design][elements]
+* [Průvodce labyrintem algoritmů][pruvodce]
 
 [fit]: https://www.fit.vut.cz/.en "VUT-FIT"
 [gpl]: https://github.com/bakajstep/IFJ-Bratwurst2021/blob/main/LICENSE "License"
