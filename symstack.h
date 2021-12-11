@@ -93,3 +93,4 @@ sym_stack_item* symbol_stack_top(sym_stack* stack);
 void symbol_stack_free(sym_stack* stack);
 
 #endif //IFJ_BRATWURST2021_SYMSTACK_H
+

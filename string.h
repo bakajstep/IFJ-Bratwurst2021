@@ -76,3 +76,4 @@ int string_to_int (string_ptr_t string);
 double string_to_dec (string_ptr_t string);
 
 #endif //IFJ_BRATWURST2021_STRING_H
+
