@@ -1,3 +1,0 @@
-dořešit porovnání stringů (myslím že jsme to zakazovali)
-dedělat generování pro přetypování
-musím opravit generování pro práci s proměnnými, takhle že si všechno pushnu na stack to dělat nemůžu
