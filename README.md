@@ -11,6 +11,26 @@ Bratwursti
 - xkanko00 - Adam Kaňkovský
 - xserej00 - Radek Šerejch
 
+## :medal_sports: Finální hodnocení
+
+Procentuální hodnocení modulů překladače:
+- Lexikální analýza (detekce chyb): 89 % (155/174)
+- Syntaktická analýza (detekce chyb): 90 % (174/192)
+- Sémantická analýza (detekce chyb): 93 % (274/294)
+- Sémantické/běhové chyby (detekce): 48 % (30/62)
+- Interpretace přeloženého kódu (základní): 98 % (300/305)
+- Interpretace přeloženého kódu (výrazy, vest. funkce): 72 % (144/198)
+- Interpretace přeloženého kódu (komplexní): 14 % (51/343)
+- BOOLTHEN 0 % (0/170)
+- CYCLES 0 % (0/150)
+- FUNEXP 0 % (0/150)
+- OPERATORS 0 % (0/50)
+- Celkem bez rozšíření: 71 % (1128/1568)
+
+Obdržené body:
+- Implementace: 12,37/15
+- Dokumentace: 5/5
+
 ## :spiral_notepad: Spuštění testů
 * Lexikální analýza
 ```console
